@@ -7,15 +7,13 @@ import java.util.ArrayList;
 
 public class MoviesToWatchService {
 
-
-
-    public void addMovieToList(User user, Movie movie) {
+    public void addMovieToList(final User user, final Movie movie) {
         if (!getList(user).contains(movie)) {
             getList(user).add(movie);
         }
     }
 
-    public void removeMovieFromList(User user, Movie movie) {
+    public void removeMovieFromList(final User user, final Movie movie) {
         if (!getList(user).contains(movie)) {
             throw new MovieIsNotOnTheListException("Movie" + movie + "is not on the list");
         } else {
@@ -23,7 +21,7 @@ public class MoviesToWatchService {
         }
     }
 
-    public ArrayList<Movie> getList(User user) {
+    public ArrayList<Movie> getList(final User user) {
         return user.getUsersMovieList();
     }
 }

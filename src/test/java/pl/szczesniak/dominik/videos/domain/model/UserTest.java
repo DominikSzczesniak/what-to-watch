@@ -9,8 +9,8 @@ class UserTest {
     @Test
     void two_users_should_have_different_id() {
         // when
-        User userOne = new User();
-        User userTwo = new User();
+        final User userOne = new User();
+        final User userTwo = new User();
 
         // then
         assertThat(userOne.getId()).isNotEqualTo(userTwo.getId());
