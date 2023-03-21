@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.videos.domain.model;
 
 import org.junit.jupiter.api.Test;
-import pl.szczesniak.dominik.videos.domain.model.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

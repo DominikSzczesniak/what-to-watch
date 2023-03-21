@@ -3,8 +3,6 @@ package pl.szczesniak.dominik.videos.domain.model.movie;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.videos.domain.exceptions.MovieIsNotOnTheListException;
 import pl.szczesniak.dominik.videos.domain.model.User;
-import pl.szczesniak.dominik.videos.domain.model.movie.Movie;
-import pl.szczesniak.dominik.videos.domain.model.movie.MoviesToWatchService;
 
 import java.util.ArrayList;
 
@@ -19,8 +17,10 @@ class MoviesToWatchServiceTest {
     void list_should_be_empty() {
         // given
         User user = new User();
+
         // when
         ArrayList<Movie> movies = tut.getList(user);
+
         // then
         assertThat(movies.isEmpty()).isTrue();
     }
