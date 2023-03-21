@@ -11,15 +11,15 @@ import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 
 class MoviesToWatchServiceTest {
 
-    MoviesToWatchService tut = new MoviesToWatchService();
+    final MoviesToWatchService tut = new MoviesToWatchService();
 
     @Test
     void list_should_be_empty() {
         // given
-        User user = new User();
+        final User user = new User();
 
         // when
-        ArrayList<Movie> movies = tut.getList(user);
+        final ArrayList<Movie> movies = tut.getList(user);
 
         // then
         assertThat(movies.isEmpty()).isTrue();
@@ -28,8 +28,8 @@ class MoviesToWatchServiceTest {
     @Test
     void user_should_add_movie_to_his_list() {
         // given
-        User userOne = new User();
-        Movie parasite = new Movie("Parasite");
+        final User userOne = new User();
+        final Movie parasite = new Movie("Parasite");
 
         // when
         tut.addMovieToList(userOne, parasite);
@@ -41,9 +41,9 @@ class MoviesToWatchServiceTest {
     @Test
     void user_should_not_be_able_to_add_duplicates() {
         // given
-        User userOne = new User();
-        Movie parasite = new Movie("Parasite");
-        Movie starWars = new Movie("Star Wars");
+        final User userOne = new User();
+        final Movie parasite = new Movie("Parasite");
+        final Movie starWars = new Movie("Star Wars");
 
         // when
         tut.addMovieToList(userOne, parasite);
@@ -57,9 +57,9 @@ class MoviesToWatchServiceTest {
     @Test
     void user_should_delete_movie_from_his_list() {
         // given
-        User userOne = new User();
-        Movie parasite = new Movie("Parasite");
-        Movie starWars = new Movie("Star Wars");
+        final User userOne = new User();
+        final Movie parasite = new Movie("Parasite");
+        final Movie starWars = new Movie("Star Wars");
         tut.addMovieToList(userOne, parasite);
         tut.addMovieToList(userOne, starWars);
 
@@ -73,15 +73,15 @@ class MoviesToWatchServiceTest {
     @Test
     void user_should_not_be_able_to_delete_movie_if_its_not_in_the_list() {
         // given
-        User userOne = new User();
-        Movie parasite = new Movie("Parasite");
-        Movie starWars = new Movie("Star Wars");
-        Movie lordOfTheRings = new Movie("Lord of the Rings");
+        final User userOne = new User();
+        final Movie parasite = new Movie("Parasite");
+        final Movie starWars = new Movie("Star Wars");
+        final Movie lordOfTheRings = new Movie("Lord of the Rings");
 
         // when
         tut.addMovieToList(userOne, parasite);
         tut.addMovieToList(userOne, starWars);
-        Throwable thrown = catchThrowable(() -> tut.removeMovieFromList(userOne, lordOfTheRings));
+        final Throwable thrown = catchThrowable(() -> tut.removeMovieFromList(userOne, lordOfTheRings));
 
         // then
         assertThat(thrown).isInstanceOf(MovieIsNotOnTheListException.class);
@@ -92,10 +92,10 @@ class MoviesToWatchServiceTest {
         // given
         final User userOne = new User();
         final User userTwo = new User();
-        Movie amsterdam = new Movie("Amsterdam");
-        Movie berlin = new Movie("Berlin");
-        Movie warszawa = new Movie("Warszawa");
-        Movie tokio = new Movie("Tokio");
+        final Movie amsterdam = new Movie("Amsterdam");
+        final Movie berlin = new Movie("Berlin");
+        final Movie warszawa = new Movie("Warszawa");
+        final Movie tokio = new Movie("Tokio");
         // when
         tut.addMovieToList(userOne, amsterdam);
         tut.addMovieToList(userOne, warszawa);
