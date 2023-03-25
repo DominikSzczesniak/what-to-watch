@@ -2,6 +2,6 @@ package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
 public interface UserRepository {
 
-    int saveUserId(User user);
-    int getUserId(User user);
+    int saveUserId(final User user);
+    int getUserId(final User user);
 }
