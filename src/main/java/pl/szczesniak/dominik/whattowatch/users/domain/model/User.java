@@ -7,10 +7,10 @@ public class User {
     @Getter
     private final UserId id;
     @Getter
-    private final String name;
+    private final String login;
 
     public User(final String name) {
-        this.name = name;
+        this.login = name;
         id = new UserId();
     }
 }

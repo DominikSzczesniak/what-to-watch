@@ -21,7 +21,7 @@ public class InFileUsersRepository implements UserRepository {
             FileWriter fw = new FileWriter(fileName, true);
             BufferedWriter bw = new BufferedWriter(fw);
             bw.newLine();
-            bw.write(user.getName() + "," + (userId + 1));
+            bw.write(user.getLogin() + "," + (userId + 1));
             bw.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
