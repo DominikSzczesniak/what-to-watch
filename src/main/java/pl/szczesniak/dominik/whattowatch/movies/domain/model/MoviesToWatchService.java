@@ -35,7 +35,7 @@ public class MoviesToWatchService {
         return repository.findAll(user.getId());
     }
 
-    public List<String> getMovieTitles(User user) {
+    public List<String> getMovieTitles(final User user) {
         List<String> movieTitles = new ArrayList<>();
         repository.findAll(user.getId()).forEach(movie -> movieTitles.add(movie.getTitle()));
         return movieTitles;
