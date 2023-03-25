@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.videos.domain.model;
+package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
 import org.junit.jupiter.api.Test;
 
@@ -9,8 +9,8 @@ class UserTest {
     @Test
     void two_users_should_have_different_id() {
         // when
-        final User userOne = new User();
-        final User userTwo = new User();
+        final User userOne = new User("Dominik");
+        final User userTwo = new User("Patryk");
 
         // then
         assertThat(userOne.getId()).isNotEqualTo(userTwo.getId());

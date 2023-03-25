@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.videos.domain.exceptions;
+package pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions;
 
 public class MovieIsNotOnTheListException extends RuntimeException {
 
