@@ -1,6 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
-import pl.szczesniak.dominik.whattowatch.movies.domain.infrastructure.persistence.InMemoryMoviesRepository;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence.InMemoryMoviesRepository;
 
 public class TestMoviesToWatchServiceConfiguration {
 

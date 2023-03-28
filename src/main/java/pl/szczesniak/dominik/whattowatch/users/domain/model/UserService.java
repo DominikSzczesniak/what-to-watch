@@ -1,17 +1,24 @@
 package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class UserService{
 
     private final UserRepository repository;
 
-    public int getUserId(final User user) {
-        return repository.getUserId(user);
+    UserService(final UserRepository repository) {
+        this.repository = repository;
     }
 
-    public void saveUser(final User user) {
-        repository.saveUserId(user);
+    public UserId getUserId(final String username) {
+        return repository.getUserId(username);
     }
+
+    public User createUser(String username) {
+        return new User(username);
+    }
+
+//    public User getUser(String username) {
+//        return new User("Grzegorz");
+//    }
+
 }

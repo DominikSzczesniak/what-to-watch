@@ -18,7 +18,7 @@ class MoviesToWatchServiceTest {
         final User user = new User("Dominik");
 
         // when
-        final List<Movie> movies = tut.getList(user);
+        final List<Movie> movies = tut.getList(user.getId());
 
         // then
         assertThat(movies.isEmpty()).isTrue();
@@ -33,7 +33,7 @@ class MoviesToWatchServiceTest {
         tut.addMovieToList(userOne, "Parasite", userOne.getId());
 
         // then
-        assertThat(tut.getList(userOne)).hasSize(1);
+        assertThat(tut.getList(userOne.getId())).hasSize(1);
     }
 
     @Test
@@ -48,8 +48,8 @@ class MoviesToWatchServiceTest {
         tut.addMovieToList(userOne, "Viking", userOne.getId());
 
         // then
-        assertThat(tut.getList(userOne)).hasSize(3);
-        assertThat(tut.getMovieTitles(userOne)).contains("Parasite", "Star Wars", "Viking");
+        assertThat(tut.getList(userOne.getId())).hasSize(3);
+        assertThat(tut.getList(userOne.getId())).extracting(Movie::getTitle).containsExactlyInAnyOrder("Parasite", "Star Wars", "Viking");
     }
 
     @Test
@@ -62,10 +62,10 @@ class MoviesToWatchServiceTest {
         tut.addMovieToList(userOne, "Star Wars", userOne.getId());
         tut.addMovieToList(userOne, "Viking", userOne.getId());
 
-        tut.removeMovieFromList(userOne, "Parasite");
+        tut.removeMovieFromList(userOne.getId(), "Parasite");
 
         // then
-        assertThat(tut.getList(userOne)).hasSize(2);
+        assertThat(tut.getList(userOne.getId())).hasSize(2);
     }
 
     @Test
@@ -80,10 +80,24 @@ class MoviesToWatchServiceTest {
         tut.addMovieToList(userOne, "Viking", userOne.getId());
 
         // then
-        assertThat(tut.getList(userOne)).isNotEqualTo(tut.getList(userTwo));
-        assertThat(tut.getList(userOne)).hasSize(2);
-        assertThat(tut.getList(userTwo)).hasSize(1);
-        assertThat(tut.getMovieTitles(userOne)).contains("Parasite", "Viking");
-        assertThat(tut.getMovieTitles(userTwo)).contains("Parasite");
+        assertThat(tut.getList(userOne.getId())).extracting(Movie::getTitle).containsExactlyInAnyOrder("Parasite", "Viking");
+        assertThat(tut.getList(userTwo.getId())).extracting(Movie::getTitle).containsExactlyInAnyOrder("Parasite");
+    }
+
+    @Test
+    void should_delete_movie_only_from_userOne_list() {
+        // given
+        final User userOne = new User("Dominik");
+        final User userTwo = new User("Patryk");
+
+        // when
+        tut.addMovieToList(userOne, "Parasite", userOne.getId());
+        tut.addMovieToList(userTwo, "Parasite", userTwo.getId());
+        tut.addMovieToList(userOne, "Viking", userOne.getId());
+        tut.removeMovieFromList(userOne.getId(), "Parasite");
+
+        // then
+        assertThat(tut.getList(userOne.getId())).extracting(Movie::getTitle).containsExactlyInAnyOrder("Viking");
+        assertThat(tut.getList(userTwo.getId())).extracting(Movie::getTitle).containsExactlyInAnyOrder("Parasite");
     }
 }
