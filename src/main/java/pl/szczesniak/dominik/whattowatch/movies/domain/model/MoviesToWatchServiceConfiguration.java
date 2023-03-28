@@ -4,8 +4,8 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserService;
 
 public class MoviesToWatchServiceConfiguration {
 
-    public  MoviesToWatchService moviesToWatchService(final MoviesRepository moviesRepository, final UserService userService) {
-        return new MoviesToWatchService(moviesRepository, userService);
+    public  MoviesToWatchService moviesToWatchService(final MoviesRepository moviesRepository) {
+        return new MoviesToWatchService(moviesRepository);
     }
 
 }

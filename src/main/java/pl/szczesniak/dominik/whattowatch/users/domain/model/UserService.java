@@ -5,11 +5,11 @@ public class UserService{
 
     private final UserRepository repository;
 
-    UserService(final UserRepository repository) {
+    public UserService(final UserRepository repository) {
         this.repository = repository;
     }
 
-    public UserId getUserId(final String username) {
+    public int getUserId(final String username) {
         return repository.getUserId(username);
     }
 
