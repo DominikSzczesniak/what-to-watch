@@ -12,13 +12,13 @@ import java.util.List;
 public class MoviesToWatchService {
 
     private final MoviesRepository repository;
-    private final UserService userService;
+//    private final UserService userService;
 
     public void addMovieToList(final User user, final String movieTitle, final UserId userId) {
-        if (userService.getUserId(user.getUserName()) != userId.getId()) {
-            System.out.println("exception no user");
-            return;
-        }
+//        if (userService.getUserId(user.getUserName()) != userId.getId()) {
+//            System.out.println("exception no user");
+//            return;
+//        }
         Movie movie = new Movie(new MovieId(repository.nextMovieId()), movieTitle, userId);
         if (isMovieTitleDuplicate(user, movieTitle)) {
             System.out.println("Ignoring movie to add, because movie title already exists in user's watchlist. "
@@ -37,7 +37,7 @@ public class MoviesToWatchService {
     public void removeMovieFromList(final UserId id, final String title) {
         getList(id).forEach(movie -> {
                     if (movie.getTitle().equals(title)) {
-                        repository.removeMovie(movie);
+                        repository.removeMovie(movie.getMovieId());
                     }
                 });
     }

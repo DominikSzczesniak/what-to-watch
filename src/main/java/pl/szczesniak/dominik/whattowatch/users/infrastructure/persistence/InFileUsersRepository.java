@@ -16,7 +16,7 @@ public class InFileUsersRepository implements UserRepository {
     }
 
     @Override
-    public UserId getUserId(final String username) {
+    public int getUserId(final String username) {
         createFile();
         saveUser(username);
         return getExistingUserId(username);

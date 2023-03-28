@@ -9,6 +9,6 @@ public interface MoviesRepository {
     int nextMovieId();
     void save(final Movie movie);
     List<Movie> findAll(final UserId userId);
-    void removeMovie(final Movie movie);
+    void removeMovie(final MovieId movieId);
 
 }

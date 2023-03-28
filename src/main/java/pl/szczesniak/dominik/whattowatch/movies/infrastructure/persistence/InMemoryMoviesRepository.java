@@ -36,8 +36,8 @@ public class InMemoryMoviesRepository implements MoviesRepository {
     }
 
     @Override
-    public void removeMovie(final Movie movie) {
-        movies.remove(movie.getMovieId(), movie);
+    public void removeMovie(final MovieId movieId) {
+        movies.remove(movieId);
     }
 
 }
