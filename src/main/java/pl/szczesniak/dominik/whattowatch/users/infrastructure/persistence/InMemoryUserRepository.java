@@ -23,6 +23,11 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
+    public List<UserId> findAll() {
+        return new ArrayList<>(users.values());
+    }
+
+    @Override
     public void createUser(final String username) {
         users.put(username, new UserId(nextUserId()));
     }
@@ -31,10 +36,5 @@ public class InMemoryUserRepository implements UserRepository {
     public int nextUserId() {
         return nextId.incrementAndGet();
     }
-
-    public List<UserId> findAll() {
-        return new ArrayList<>(users.values());
-    }
-
 
 }
