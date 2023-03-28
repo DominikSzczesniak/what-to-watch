@@ -7,24 +7,25 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class InFileUsersRepository implements UserRepository {
+public class InFileUserRepository implements UserRepository {
 
     final String fileName;
 
-    public InFileUsersRepository(final String fileName) {
+    public InFileUserRepository(final String fileName) {
         this.fileName = fileName;
     }
 
     @Override
-    public int getUserId(final String username) {
+    public UserId getUserId(final String username) {
         createFile();
-        saveUser(username);
-        return getExistingUserId(username);
+        createUser(username);
+        return new UserId(getExistingUserId(username));
         }
 
-    public void saveUser(final String username) {
+    @Override
+    public void createUser(final String username) {
         if (!userHasId(username)) {
-            int userId = getNewId();
+            int userId = nextUserId();
             try {
                 FileWriter fw = new FileWriter(fileName, true);
                 BufferedWriter bw = new BufferedWriter(fw);
@@ -36,6 +37,30 @@ public class InFileUsersRepository implements UserRepository {
             }
         }
     }
+
+    @Override
+    public int nextUserId() {
+        String lastLine = "";
+        int id = 0;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = br.readLine()) != null) {
+                lastLine = line;
+                List<String> listLine = Arrays.stream(lastLine.split("[,]")).toList();
+                id = Integer.parseInt(listLine.get(1));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
+    }
+
+    @Override
+    public List<UserId> findAll() {
+        return null; // TODO: dodać implementację
+    }
+
 
     private void createFile() {
         try {
@@ -81,23 +106,6 @@ public class InFileUsersRepository implements UserRepository {
             throw new RuntimeException(e);
         }
         return false;
-    }
-
-    private int getNewId() {
-        String lastLine = "";
-        int id = 0;
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
-            String line;
-            while ((line = br.readLine()) != null) {
-                lastLine = line;
-                List<String> listLine = Arrays.stream(lastLine.split("[,]")).toList();
-                id = Integer.parseInt(listLine.get(1));
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return id;
     }
 
 

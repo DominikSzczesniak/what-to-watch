@@ -1,7 +1,9 @@
 package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
 
-public class UserService{
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserDoesNotExistException;
+
+public class UserService {
 
     private final UserRepository repository;
 
@@ -9,16 +11,19 @@ public class UserService{
         this.repository = repository;
     }
 
-    public int getUserId(final String username) {
+    public UserId getUserId(final String username) {
         return repository.getUserId(username);
     }
 
-    public User createUser(String username) {
-        return new User(username);
+    public void createUser(String username) {
+        repository.createUser(username);
     }
 
-//    public User getUser(String username) {
-//        return new User("Grzegorz");
-//    }
+    public boolean exists(final UserId userId) {
+        if (!repository.findAll().contains(userId)) {
+            throw new UserDoesNotExistException("User does not exist");
+        }
+        return true;
+    }
 
 }
