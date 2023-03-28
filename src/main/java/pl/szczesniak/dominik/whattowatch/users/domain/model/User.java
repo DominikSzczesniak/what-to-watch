@@ -13,8 +13,8 @@ public class User {
     @Getter
     private final String userName;
 
-    public User(final String userName) {
+    public User(final String userName, final int id) {
         this.userName = userName;
-        id = new UserId();
+        this.id = new UserId(id);
     }
 }
