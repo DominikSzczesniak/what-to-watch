@@ -110,14 +110,14 @@ class MoviesToWatchServiceTest {
         assertThat(movies.isEmpty()).isTrue();
     }
 
-    @Test
-    void mockito_test() {
-        // given
-        userService.createUser("Dominik");
-        when(userService.getUserId("Dominik")).thenReturn(new UserId(1));
-
-        // when
-
-        // then
-    }
+//    @Test
+//    void mockito_test() {
+//        // given
+//        userService.createUser("Dominik");
+//        when(userService.getUserId("Dominik")).thenReturn(new UserId(1));
+//
+//        // when
+//
+//        // then
+//    }
 }
