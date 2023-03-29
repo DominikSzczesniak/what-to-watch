@@ -14,6 +14,7 @@ public class Main {
         UserService userService = new UserServiceConfiguration().userService(new InFileUserRepository("userList.csv"));
         UserService userService2 = new UserServiceConfiguration().userService(new InMemoryUserRepository());
         MoviesToWatchService service = new MoviesToWatchServiceConfiguration().moviesToWatchService(new InMemoryMoviesRepository(), userService);
+
         userService.createUser("Grzegorz");
         userService.createUser("Kamil");
         userService2.createUser("Kamil");
@@ -23,6 +24,7 @@ public class Main {
         userService2.createUser("Patryk");
         UserId id = userService.getUserId("Grzegorz");
         service.addMovieToList("Parasite", userService.getUserId("Grzegorz"));
+
         System.out.println(userService.getUserId("Grzegorz"));
         System.out.println(service.getList(id));
     }
