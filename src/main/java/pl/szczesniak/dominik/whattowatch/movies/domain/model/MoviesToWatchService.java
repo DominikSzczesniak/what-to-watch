@@ -41,7 +41,6 @@ public class MoviesToWatchService {
                 });
     }
 
-
     public List<Movie> getList(final UserId id) {
         return repository.findAll(id);
     }
