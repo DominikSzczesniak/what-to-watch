@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
 import org.junit.jupiter.api.Test;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserServiceConfiguration;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence.InMemoryUserRepository;
