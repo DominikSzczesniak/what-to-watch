@@ -11,21 +11,17 @@ import pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence.InMemo
 
 public class Main {
     public static void main(String[] args) {
-        UserService userService = new UserServiceConfiguration().userService(new InFileUserRepository("userList.csv"));
-        UserService userService2 = new UserServiceConfiguration().userService(new InMemoryUserRepository());
+        UserService userService = new UserServiceConfiguration().userService(new InMemoryUserRepository());
         MoviesToWatchService service = new MoviesToWatchServiceConfiguration().moviesToWatchService(new InMemoryMoviesRepository(), userService);
 
-        userService.createUser("Grzegorz");
         userService.createUser("Kamil");
-        userService2.createUser("Kamil");
         userService.createUser("Dominik");
-        userService2.createUser("Dominik");
         userService.createUser("Patryk");
-        userService2.createUser("Patryk");
+        userService.createUser("Grzegorz");
         UserId id = userService.getUserId("Grzegorz");
         service.addMovieToList("Parasite", userService.getUserId("Grzegorz"));
 
-        System.out.println(userService.getUserId("Grzegorz"));
         System.out.println(service.getList(id));
+        System.out.println(userService.findAllId());
     }
 }
