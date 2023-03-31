@@ -1,8 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
 
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserDoesNotExistException;
-
 import java.util.List;
 
 public class UserService {
@@ -13,12 +11,8 @@ public class UserService {
         this.repository = repository;
     }
 
-    public UserId getUserId(final String username) {
-        return repository.getUserId(username);
-    }
-
-    public void createUser(String username) {
-        repository.createUser(username);
+    public UserId createUser(String username) {
+        return repository.createUser(username);
     }
 
     public List<UserId> findAllId() {

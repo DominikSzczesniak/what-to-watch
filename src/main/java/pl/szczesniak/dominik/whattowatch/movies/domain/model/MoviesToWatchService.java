@@ -15,22 +15,11 @@ public class MoviesToWatchService {
 
     public void addMovieToList(final String movieTitle, final UserId userId) {
         if (!userService.exists(userId)) {
-            System.out.println("exception no user");
+            System.out.println("user does not exist");
             return;
         }
         Movie movie = new Movie(new MovieId(repository.nextMovieId()), movieTitle, userId);
-        if (isMovieTitleDuplicate(userId, movieTitle)) {
-            System.out.println("Ignoring movie to add, because movie title already exists in user's watchlist. "
-                    + "UserId = " + userId.getId() + " MovieTitle = " + movieTitle);
-            return;
-        }
         repository.save(movie);
-    }
-
-    private boolean isMovieTitleDuplicate(final UserId userId, final String movieTitle) {
-        return getList(userId)
-                .stream()
-                .anyMatch(title -> movieTitle.equals(title.getTitle()));
     }
 
     public void removeMovieFromList(final UserId id, final String title) {
