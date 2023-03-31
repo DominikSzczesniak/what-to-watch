@@ -12,15 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class InMemoryUserRepository implements UserRepository {
 
     private final Map<String, UserId> users = new HashMap<>();
-    public static final AtomicInteger nextId = new AtomicInteger();
-
-    @Override
-    public UserId getUserId(final String username) {
-        if (users.get(username) != null) {
-            return users.get(username);
-        } else
-            return new UserId(nextUserId());
-    }
+    public final AtomicInteger nextId = new AtomicInteger();
 
     @Override
     public List<UserId> findAll() {
@@ -28,8 +20,10 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public void createUser(final String username) {
-        users.put(username, new UserId(nextUserId()));
+    public UserId createUser(final String username) {
+        final UserId userId = new UserId(nextUserId());
+        users.put(username, userId);
+        return userId;
     }
 
     @Override

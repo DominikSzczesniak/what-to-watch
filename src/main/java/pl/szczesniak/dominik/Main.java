@@ -17,11 +17,15 @@ public class Main {
         userService.createUser("Kamil");
         userService.createUser("Dominik");
         userService.createUser("Patryk");
-        userService.createUser("Grzegorz");
-        UserId id = userService.getUserId("Grzegorz");
-        service.addMovieToList("Parasite", userService.getUserId("Grzegorz"));
+        UserId id = userService.createUser("Grzegorz");
+        service.addMovieToList("Parasite", id);
 
         System.out.println(service.getList(id));
+        System.out.println("User service memory ids:");
         System.out.println(userService.findAllId());
+
+        UserService userServiceFile = new UserServiceConfiguration().userService(new InFileUserRepository("userList.csv"));
+        System.out.println("User service file ids:");
+        System.out.println(userServiceFile.findAllId());
     }
 }

@@ -11,13 +11,14 @@ class UserServiceInFileTest {
 
     @Test
     void should_return_correct_user_id() {
-        // given
-        tut.createUser("Grzegorz");
-
         // when
-        int id = tut.getUserId("Grzegorz").getId();
+        final UserId idOne = tut.createUser("Grzegorz");
+        final UserId idTwo = tut.createUser("Maciej");
+        final UserId idThree = tut.createUser("Anna");
 
         // then
-        assertThat(id).isEqualTo(2);
+        assertThat(idOne.getId()).isEqualTo(1);
+        assertThat(idTwo.getId()).isEqualTo(2);
+        assertThat(idThree.getId()).isEqualTo(3);
     }
 }
