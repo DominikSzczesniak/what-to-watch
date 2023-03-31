@@ -24,12 +24,11 @@ class UserServiceInMemoryTest {
     }
 
     @Test
-    void should_throw_exception_user_does_not_exist() {
+    void should_throw_exception_when_user_does_not_exist() {
         // when
-        final Throwable thrown = catchThrowable(() -> tut.exists(tut.getUserId("Dominik")));
 
         // then
-        assertThat(thrown).isInstanceOf(UserDoesNotExistException.class);
+        assertThat(tut.exists(tut.getUserId("Dominik"))).isFalse();
     }
 
     @Test

@@ -10,7 +10,7 @@ class UserServiceInFileTest {
     UserService tut = new UserService(new InFileUserRepository("test.csv"));
 
     @Test
-    void should_return_userId_2() {
+    void should_return_correct_user_id() {
         // given
         tut.createUser("Grzegorz");
 
