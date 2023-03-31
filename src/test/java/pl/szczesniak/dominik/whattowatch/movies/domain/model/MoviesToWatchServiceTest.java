@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserServiceConfiguration;
@@ -14,16 +15,19 @@ import static pl.szczesniak.dominik.whattowatch.movies.domain.model.TestMoviesTo
 
 class MoviesToWatchServiceTest {
 
-//    MoviesToWatchService mocked = mock();
-    private final UserService userService = new UserServiceConfiguration().userService(new InMemoryUserRepository());
-    private final MoviesToWatchService tut = moviesToWatchService(userService);
+    private UserService userService; // mock tego
+    private MoviesToWatchService tut;
+
+    @BeforeEach
+    void setUp() {
+        userService = new UserServiceConfiguration().userService(new InMemoryUserRepository());
+        tut = moviesToWatchService(userService);
+    }
 
     @Test
     void user_should_add_movie_to_his_list() {
         // given
         userService.createUser("Dominik");
-
-//        when(mocked.getList(userService.getUserId("Dominik")));
 
         // when
         tut.addMovieToList("Parasite", userService.getUserId("Dominik"));
@@ -81,7 +85,7 @@ class MoviesToWatchServiceTest {
     }
 
     @Test
-    void should_delete_movie_only_from_userOne_list() {
+    void should_delete_movie_only_from_this_user_list_and_not_all_of_them() {
         // given
         userService.createUser("Dominik");
         userService.createUser("Patryk");
@@ -98,7 +102,7 @@ class MoviesToWatchServiceTest {
     }
 
     @Test
-    void list_should_be_empty() {
+    void list_should_be_empty_when_no_movie_added() {
         // given
         userService.createUser("Dominik");
 
@@ -109,14 +113,4 @@ class MoviesToWatchServiceTest {
         assertThat(movies.isEmpty()).isTrue();
     }
 
-//    @Test
-//    void mockito_test() {
-//        // given
-//        userService.createUser("Dominik");
-//        when(userService.getUserId("Dominik")).thenReturn(new UserId(1));
-//
-//        // when
-//
-//        // then
-//    }
 }

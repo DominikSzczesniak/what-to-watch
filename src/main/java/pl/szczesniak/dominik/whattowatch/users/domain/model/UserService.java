@@ -26,10 +26,7 @@ public class UserService {
     }
 
     public boolean exists(final UserId userId) {
-        if (!repository.findAll().contains(userId)) {
-            throw new UserDoesNotExistException("User does not exist");
-        }
-        return true;
+        return repository.findAll().contains(userId);
     }
 
 }
