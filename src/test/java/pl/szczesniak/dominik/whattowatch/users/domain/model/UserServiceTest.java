@@ -43,14 +43,4 @@ class UserServiceTest {
         assertThat(idOne.getId()).isNotEqualTo(idTwo.getId());
     }
 
-//    @Test
-//    void should_return_correct_user_id() {
-//        // when
-//        final UserId idOne = tut.createUser("Grzegorz");
-//        final UserId idTwo = tut.createUser("Maciej");
-//
-//        // then
-//        assertThat(idOne.getId()).isEqualTo(2);
-//        assertThat(idTwo.getId()).isEqualTo(5);
-//    }
 }
