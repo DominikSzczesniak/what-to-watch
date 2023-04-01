@@ -22,7 +22,7 @@ public class MoviesToWatchService {
         repository.save(movie);
     }
 
-    public void removeMovieFromList(final UserId id, final String title) {
+    public void removeMovieFromList(final String title, final UserId id) {
         getList(id).forEach(movie -> {
                     if (movie.getTitle().equals(title)) {
                         repository.removeMovie(movie.getMovieId());
@@ -30,8 +30,8 @@ public class MoviesToWatchService {
                 });
     }
 
-    public List<Movie> getList(final UserId id) {
-        return repository.findAll(id);
+    public List<Movie> getList(final UserId userId) {
+        return repository.findAll(userId);
     }
 }
 

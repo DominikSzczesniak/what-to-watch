@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.domain.model;
+package pl.szczesniak.dominik.whattowatch.tvshows.domain.model;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -7,20 +7,18 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @ToString
 @EqualsAndHashCode
-
-public class Movie {
+public class TvShow {
 
     @Getter
-    private final MovieId movieId;
+    private final TvShowId tvShowId;
     @Getter
     private final UserId userId;
     @Getter
     private final String title;
 
-    Movie(final MovieId movieId, final String title, UserId userId) {
-        this.movieId = movieId;
-        this.title = title;
+    public TvShow(final TvShowId tvShowId, final String title, final UserId userId) {
+        this.tvShowId = tvShowId;
         this.userId = userId;
+        this.title = title;
     }
-
 }

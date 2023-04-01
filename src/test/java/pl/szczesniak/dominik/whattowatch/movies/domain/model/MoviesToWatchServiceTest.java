@@ -64,7 +64,7 @@ class MoviesToWatchServiceTest {
         tut.addMovieToList("Star Wars", userId);
         tut.addMovieToList("Viking", userId);
 
-        tut.removeMovieFromList(userId, "Parasite");
+        tut.removeMovieFromList("Parasite", userId);
 
         // then
         assertThat(tut.getList(userId)).hasSize(2);
@@ -100,7 +100,8 @@ class MoviesToWatchServiceTest {
         tut.addMovieToList("Parasite",userIdOne);
         tut.addMovieToList("Parasite", userIdTwo);
         tut.addMovieToList("Viking", userIdOne);
-        tut.removeMovieFromList(userIdOne, "Parasite");
+
+        tut.removeMovieFromList("Parasite", userIdOne);
 
         // then
         assertThat(tut.getList(userIdOne)).extracting(Movie::getTitle).containsExactlyInAnyOrder("Viking");

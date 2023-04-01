@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
 
+import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserRepository;
@@ -9,13 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class InFileUserRepository implements UserRepository {
 
-    final String fileName;
+    private final String fileName;
+    private final int INDEX_WITH_ID_NUMBER_IN_CSV = 1;
+    private final int INDEX_WITH_USERNAME_IN_CSV = 0;
 
-    public InFileUserRepository(final String fileName) {
-        this.fileName = fileName;
-    }
 
     @Override
     public UserId createUser(final String username) {
@@ -26,7 +27,6 @@ public class InFileUserRepository implements UserRepository {
                 BufferedWriter bw = new BufferedWriter(fw);
                 bw.write(username + "," + (userId.getId() + 1));
                 bw.newLine();
-                bw.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -44,7 +44,7 @@ public class InFileUserRepository implements UserRepository {
             while ((line = br.readLine()) != null) {
                 lastLine = line;
                 List<String> listLine = Arrays.stream(lastLine.split("[,]")).toList();
-                id = Integer.parseInt(listLine.get(1));
+                id = Integer.parseInt(listLine.get(INDEX_WITH_ID_NUMBER_IN_CSV));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -59,7 +59,7 @@ public class InFileUserRepository implements UserRepository {
             String line;
             while ((line = br.readLine()) != null) {
                 List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
-                listLine.add(new UserId(Integer.parseInt(stringLine.get(1))));
+                listLine.add(new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_ID_NUMBER_IN_CSV))));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -87,7 +87,7 @@ public class InFileUserRepository implements UserRepository {
             while ((line = br.readLine()) != null) {
                 List<String> listLine = Arrays.stream(line.split("[,]")).toList();
                 if (listLine.get(0).equals(username)) {
-                    id = new UserId(Integer.parseInt(listLine.get(1)));
+                    id = new UserId(Integer.parseInt(listLine.get(INDEX_WITH_ID_NUMBER_IN_CSV)));
                     return id;
                 }
             }
@@ -102,7 +102,7 @@ public class InFileUserRepository implements UserRepository {
             String line;
             while ((line = br.readLine()) != null) {
                 List<String> listLine = Arrays.stream(line.split("[,]")).toList();
-                if (listLine.get(0).equals(username)) {
+                if (listLine.get(INDEX_WITH_USERNAME_IN_CSV).equals(username)) {
                     return true;
                 }
             }
