@@ -6,6 +6,8 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserService;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class MoviesToWatchService {
@@ -23,11 +25,9 @@ public class MoviesToWatchService {
     }
 
     public void removeMovieFromList(final String title, final UserId id) {
-        getList(id).forEach(movie -> {
-                    if (movie.getTitle().equals(title)) {
-                        repository.removeMovie(movie.getMovieId());
-                    }
-                });
+        List<Movie> result = getList(id).stream()
+                .filter(movie -> movie.getTitle().equals(title)).toList();
+        repository.removeMovie(result.get(0).getMovieId());
     }
 
     public List<Movie> getList(final UserId userId) {

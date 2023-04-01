@@ -54,6 +54,25 @@ class MoviesToWatchServiceTest {
     }
 
     @Test
+    void only_one_duplicated_title_should_be_deleted() {
+        // given
+        UserId userId = new UserId(1);
+        when(userService.exists(userId)).thenReturn(true);
+
+        // when
+        tut.addMovieToList("Parasite", userId);
+        tut.addMovieToList("Star Wars", userId);
+        tut.addMovieToList("Viking", userId);
+        tut.addMovieToList("Viking", userId);
+
+        tut.removeMovieFromList("Viking", userId);
+
+        // then
+        assertThat(tut.getList(userId)).hasSize(3);
+        assertThat(tut.getList(userId)).extracting(Movie::getTitle).containsExactlyInAnyOrder("Parasite", "Star Wars", "Viking");
+    }
+
+    @Test
     void user_should_delete_movie_from_his_list() {
         // given
         UserId userId = new UserId(1);
