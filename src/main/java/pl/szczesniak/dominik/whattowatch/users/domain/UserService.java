@@ -1,7 +1,8 @@
-package pl.szczesniak.dominik.whattowatch.users.domain.model;
+package pl.szczesniak.dominik.whattowatch.users.domain;
 
 
 import lombok.RequiredArgsConstructor;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
 
@@ -10,8 +11,12 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public UserId createUser(String username) {
-        return repository.createUser(username);
+    public UserId createUser(final User user) {
+        return repository.createUser(user);
+    }
+
+    public UserId nextUserId() {
+        return repository.nextUserId();
     }
 
     public List<User> findAllUsers() {

@@ -1,8 +1,9 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
 
-import pl.szczesniak.dominik.whattowatch.users.domain.model.User;
+import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserRepository;
+import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryUserRepository implements UserRepository {
 
-    private final Map<UserId, User> users = new HashMap<>(); // TU ZMIENILEM
+    private final Map<UserId, User> users = new HashMap<>();
     public final AtomicInteger nextId = new AtomicInteger();
 
     @Override
@@ -21,16 +22,21 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public UserId createUser(final String username) {
-        final UserId userId = new UserId(nextUserId());
-        final User user = new User(username, userId);
-        users.put(userId, user);
-        return userId;
+    public UserId createUser(final User user) {
+        if (usernameIsTaken(user.getUserName())) {
+            throw new UsernameIsTakenException("Please choose different name, " + user.getUserName() + " is already taken");
+        }
+        users.put(user.getUserId(), user);
+        return user.getUserId();
     }
 
     @Override
-    public int nextUserId() {
-        return nextId.incrementAndGet();
+    public UserId nextUserId() {
+        return new UserId(nextId.incrementAndGet());
+    }
+
+    private boolean usernameIsTaken(final String username) {
+        return findAll().stream().anyMatch(user -> username.equalsIgnoreCase(user.getUserName()));
     }
 
 }

@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.users.domain.model;
+package pl.szczesniak.dominik.whattowatch.users.domain;
 
 public class UserServiceConfiguration {
 
