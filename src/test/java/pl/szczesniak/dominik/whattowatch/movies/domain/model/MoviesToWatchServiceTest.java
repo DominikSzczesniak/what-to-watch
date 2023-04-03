@@ -2,6 +2,8 @@ package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesToWatchService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserService;
 

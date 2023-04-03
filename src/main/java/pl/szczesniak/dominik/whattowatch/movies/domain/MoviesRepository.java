@@ -1,5 +1,6 @@
-package pl.szczesniak.dominik.whattowatch.movies.domain.model;
+package pl.szczesniak.dominik.whattowatch.movies.domain;
 
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;

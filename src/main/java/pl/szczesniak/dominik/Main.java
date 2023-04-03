@@ -1,7 +1,7 @@
 package pl.szczesniak.dominik;
 
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoviesToWatchService;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoviesToWatchServiceConfiguration;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesToWatchService;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesToWatchServiceConfiguration;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence.InMemoryMoviesRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserService;
@@ -22,10 +22,11 @@ public class Main {
 
         System.out.println(service.getList(id));
         System.out.println("User service memory ids:");
-        System.out.println(userService.findAllId());
+        System.out.println(userService.findAllUsers());
 
         UserService userServiceFile = new UserServiceConfiguration().userService(new InFileUserRepository("userList.csv"));
-        System.out.println("User service file ids:");
-        System.out.println(userServiceFile.findAllId());
+        System.out.println("User service file users:");
+        System.out.println(userServiceFile.findAllUsers());
+
     }
 }
