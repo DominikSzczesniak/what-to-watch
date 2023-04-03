@@ -53,13 +53,13 @@ public class InFileUserRepository implements UserRepository {
     }
 
     @Override
-    public List<UserId> findAll() {
-        List<UserId> listLine = new ArrayList<>();
+    public List<User> findAll() {
+        List<User> listLine = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = br.readLine()) != null) {
                 List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
-                listLine.add(new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_ID_NUMBER_IN_CSV))));
+                listLine.add(new User(stringLine.get(0) ,new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_ID_NUMBER_IN_CSV)))));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

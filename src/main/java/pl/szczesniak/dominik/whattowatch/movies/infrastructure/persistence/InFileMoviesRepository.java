@@ -1,9 +1,9 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence;
 
 import lombok.RequiredArgsConstructor;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.Movie;
+import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoviesRepository;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.*;

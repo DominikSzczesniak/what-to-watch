@@ -14,12 +14,13 @@ public class UserService {
         return repository.createUser(username);
     }
 
-    public List<UserId> findAllId() {
+    public List<User> findAllUsers() {
         return repository.findAll();
     }
 
     public boolean exists(final UserId userId) {
-        return repository.findAll().contains(userId);
+        return repository.findAll().stream()
+                .anyMatch(user -> user.getUserId().equals(userId));
     }
 
 }

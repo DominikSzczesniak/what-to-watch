@@ -9,12 +9,12 @@ import lombok.ToString;
 public class User {
 
     @Getter
-    private final UserId id;
-    @Getter
     private final String userName;
+    @Getter
+    private final UserId userId;
 
-    public User(final String userName, final int id) {
+    public User(final String userName, final UserId userId) {
         this.userName = userName;
-        this.id = new UserId(id);
+        this.userId = userId;
     }
 }
