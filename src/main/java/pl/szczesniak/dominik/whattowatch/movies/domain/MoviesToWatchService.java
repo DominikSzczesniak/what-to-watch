@@ -3,8 +3,9 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.users.domain.UserProvider;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserService;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 
 import java.util.List;
 
@@ -12,12 +13,11 @@ import java.util.List;
 public class MoviesToWatchService {
 
     private final MoviesRepository repository;
-    private final UserService userService;
+    private final UserProvider userProvider;
 
     public void addMovieToList(final String movieTitle, final UserId userId) {
-        if (!userService.exists(userId)) {
-            System.out.println("user does not exist");
-            return;
+        if (!userProvider.exists(userId)) {
+            throw new UserDoesNotExistException("User doesn't exist. Didn't add movie to any list");
         }
         Movie movie = new Movie(new MovieId(repository.nextMovieId()), movieTitle, userId);
         repository.save(movie);

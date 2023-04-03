@@ -1,9 +1,9 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
 
 import lombok.RequiredArgsConstructor;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.User;
+import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserRepository;
+import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,43 +13,47 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InFileUserRepository implements UserRepository {
 
-    private final String fileName;
+    private final String fileName; // TODO: filepath
     private final int INDEX_WITH_ID_NUMBER_IN_CSV = 1;
     private final int INDEX_WITH_USERNAME_IN_CSV = 0;
+    private final int ID_OF_FIRST_CREATED_USER_EVER = 1;
 
 
     @Override
-    public UserId createUser(final String username) {
+    public UserId createUser(final User user) {
         createFile();
-        if (!userHasId(username)) {
-            UserId userId = new UserId(nextUserId());
-            try (FileWriter fw = new FileWriter(fileName, true)) {
+        if (!userHasId(user.getUserName())) {
+            UserId userId = nextUserId();
+            try {
+                FileWriter fw = new FileWriter(fileName, true);
                 BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(username + "," + (userId.getId() + 1));
+                bw.write(user.getUserName() + "," + (userId.getValue()));
                 bw.newLine();
+                bw.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            return getExistingUserId(username);
+            return getExistingUserId(user.getUserName());
         }
-        return getExistingUserId(username);
+        return getExistingUserId(user.getUserName());
     }
 
     @Override
-    public int nextUserId() {
+    public UserId nextUserId() {
+        createFile();
+        int id = ID_OF_FIRST_CREATED_USER_EVER;
         String lastLine = "";
-        int id = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = br.readLine()) != null) {
                 lastLine = line;
                 List<String> listLine = Arrays.stream(lastLine.split("[,]")).toList();
-                id = Integer.parseInt(listLine.get(INDEX_WITH_ID_NUMBER_IN_CSV));
+                id = Integer.parseInt(listLine.get(INDEX_WITH_ID_NUMBER_IN_CSV)) + 1;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return id;
+        return new UserId(id);
     }
 
     @Override

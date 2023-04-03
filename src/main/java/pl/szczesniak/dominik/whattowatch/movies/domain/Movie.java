@@ -13,14 +13,18 @@ public class Movie {
     @Getter
     private final MovieId movieId;
     @Getter
-    private final UserId userId;
-    @Getter
     private final String title;
+    @Getter
+    private final UserId userId;
 
     public Movie(final MovieId movieId, final String title, UserId userId) {
         this.movieId = movieId;
         this.title = title;
         this.userId = userId;
+    }
+
+    public static Movie recreate(final MovieId movieId, final String title, final UserId userId) {
+        return new Movie(movieId, title, userId);
     }
 
 }

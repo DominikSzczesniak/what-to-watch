@@ -9,9 +9,9 @@ import lombok.ToString;
 public class UserId {
 
     @Getter
-    private final int id;
+    private final int value;
 
-    public UserId(final int id) {
-        this.id = id;
+    public UserId(final int value) {
+        this.value = value;
     }
 }

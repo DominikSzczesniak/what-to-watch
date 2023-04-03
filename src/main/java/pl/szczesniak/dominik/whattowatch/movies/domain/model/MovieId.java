@@ -9,9 +9,9 @@ import lombok.ToString;
 public class MovieId {
 
     @Getter
-    private final int id;
+    private final int value;
 
-    public MovieId(final int id) {
-        this.id = id;
+    public MovieId(final int value) {
+        this.value = value;
     }
 }
