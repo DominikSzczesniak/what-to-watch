@@ -5,11 +5,11 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InMemoryUserProvider implements UserProvider {
+class InMemoryUserProvider implements UserProvider {
 
 	private final Set<UserId> existingUsers = new HashSet<>();
 
-	public void addUser(UserId userId) {
+	public void addUser(final UserId userId) {
 		existingUsers.add(userId);
 	}
 

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @ToString
 public class InMemoryMoviesRepository implements MoviesRepository {
 
-    public static final AtomicInteger nextId = new AtomicInteger();
+    private static final AtomicInteger nextId = new AtomicInteger();
     private final Map<MovieId, Movie> movies = new HashMap<>();
 
     @Override

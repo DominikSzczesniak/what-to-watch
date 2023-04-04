@@ -2,9 +2,8 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
 
@@ -18,12 +17,12 @@ public class MoviesToWatchService {
         if (!userProvider.exists(userId)) {
             throw new UserDoesNotExistException("User doesn't exist. Didn't add movie to any list");
         }
-        Movie movie = new Movie(repository.nextMovieId(), movieTitle, userId);
+        final Movie movie = new Movie(repository.nextMovieId(), movieTitle, userId);
         repository.save(movie);
     }
 
     public void removeMovieFromList(final String title, final UserId id) {
-        List<Movie> result = getList(id).stream()
+        final List<Movie> result = getList(id).stream()
                 .filter(movie -> movie.getTitle().equals(title)).toList();
         repository.removeMovie(result.get(0).getMovieId());
     }

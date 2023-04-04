@@ -83,7 +83,6 @@ public class InFileUserRepository implements UserRepository {
 		return listLine;
 	}
 
-
 	private void createFile() {
 		try {
 			File myObj = new File(fileName);
