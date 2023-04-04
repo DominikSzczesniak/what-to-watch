@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InFileUserRepository implements UserRepository {
 
-    private final String fileName; // TODO: filepath
+    private final String fileName;
     private final int INDEX_WITH_ID_NUMBER_IN_CSV = 1;
     private final int INDEX_WITH_USERNAME_IN_CSV = 0;
     private final int ID_OF_FIRST_CREATED_USER_EVER = 1;
