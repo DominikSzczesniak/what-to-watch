@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
 
 import java.io.File;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 class InFileUserRepositoryIntTest {
 
@@ -83,5 +85,17 @@ class InFileUserRepositoryIntTest {
 				new User("Agata", new UserId(2)),
 				new User("Magdalena", new UserId(3))
 		);
+	}
+
+	@Test
+	void should_throw_exception_when_trying_to_create_user_that_already_exists() {
+		// given
+		tut.createUser(new User("Anna", new UserId(1)));
+
+		// when
+		Throwable thrown = catchThrowable(() -> tut.createUser(new User("Anna", new UserId(1))));
+
+		// then
+		assertThat(thrown).isInstanceOf(UserAlreadyExistsException.class);
 	}
 }
