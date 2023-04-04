@@ -19,8 +19,8 @@ public class InMemoryMoviesRepository implements MoviesRepository {
     private final Map<MovieId, Movie> movies = new HashMap<>();
 
     @Override
-    public int nextMovieId() {
-        return nextId.incrementAndGet();
+    public MovieId nextMovieId() {
+        return new MovieId(nextId.incrementAndGet());
     }
 
     @Override

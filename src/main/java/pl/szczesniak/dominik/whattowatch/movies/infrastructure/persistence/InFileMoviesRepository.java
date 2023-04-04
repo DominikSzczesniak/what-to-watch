@@ -42,7 +42,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 	}
 
 	@Override
-	public int nextMovieId() {
+	public MovieId nextMovieId() {
 		createFile();
 		String lastLine = "";
 		int id = 1;
@@ -56,7 +56,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		return id;
+		return new MovieId(id);
 	}
 
 	@Override
