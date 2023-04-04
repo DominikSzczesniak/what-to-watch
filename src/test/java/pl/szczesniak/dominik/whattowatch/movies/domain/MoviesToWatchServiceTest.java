@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence.InMemoryMoviesRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence.InMemoryUserProvider;
 
 import java.util.List;
 
