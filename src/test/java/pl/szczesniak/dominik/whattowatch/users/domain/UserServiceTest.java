@@ -16,7 +16,7 @@ class UserServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		tut = new UserService(new InMemoryUserRepository());
+		tut = new UserServiceConfiguration().userService(new InMemoryUserRepository());
 	}
 
 	@Test
