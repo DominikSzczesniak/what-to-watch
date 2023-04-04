@@ -9,4 +9,5 @@ public interface UserRepository {
     List<User> findAll();
     UserId createUser(User user);
     UserId nextUserId();
+    boolean exists(UserId userId);
 }

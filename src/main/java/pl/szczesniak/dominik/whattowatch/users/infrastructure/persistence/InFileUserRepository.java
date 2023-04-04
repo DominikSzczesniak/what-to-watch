@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ public class InFileUserRepository implements UserRepository {
     @Override
     public UserId createUser(final User user) {
         createFile();
+        if (exists(user.getUserId())) {
+            throw new UserAlreadyExistsException("user already exists");
+        }
         if (!userHasId(user.getUserName())) {
             UserId userId = nextUserId();
             try {
@@ -54,6 +58,12 @@ public class InFileUserRepository implements UserRepository {
             throw new RuntimeException(e);
         }
         return new UserId(id);
+    }
+
+    @Override
+    public boolean exists(final UserId userId) {
+        return findAll().stream()
+                .anyMatch(user -> user.getUserId().equals(userId));
     }
 
     @Override

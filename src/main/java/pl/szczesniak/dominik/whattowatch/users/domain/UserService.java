@@ -24,8 +24,7 @@ public class UserService {
     }
 
     public boolean exists(final UserId userId) {
-        return repository.findAll().stream()
-                .anyMatch(user -> user.getUserId().equals(userId));
+        return repository.exists(userId);
     }
 
 }
