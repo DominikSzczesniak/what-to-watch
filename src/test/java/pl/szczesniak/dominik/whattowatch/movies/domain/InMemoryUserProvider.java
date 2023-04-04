@@ -1,6 +1,5 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
+package pl.szczesniak.dominik.whattowatch.movies.domain;
 
-import pl.szczesniak.dominik.whattowatch.users.domain.UserProvider;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashSet;
