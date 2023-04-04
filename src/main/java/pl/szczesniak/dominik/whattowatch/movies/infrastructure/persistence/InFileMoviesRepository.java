@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +35,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(movie.getUserId().getValue() + "," + movie.getMovieId().getValue() + "," + movie.getTitle());
 			bw.newLine();
+			bw.close();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -41,8 +43,9 @@ public class InFileMoviesRepository implements MoviesRepository {
 
 	@Override
 	public int nextMovieId() {
+		createFile();
 		String lastLine = "";
-		int id = 0;
+		int id = 1;
 		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -76,18 +79,39 @@ public class InFileMoviesRepository implements MoviesRepository {
 
 	@Override
 	public void removeMovie(final MovieId movieId) {
-		int lineInProgress = 0;
-		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				lineInProgress++;
-				List<String> listLine = Arrays.stream(line.split("[,]")).toList();
-				if (Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == movieId.getValue()) {
+		String tempFile = "temp.csv";
+		File oldFile = new File(fileName);
+		File newFile = new File(tempFile);
 
+		String currentLine;
+		try {
+			FileWriter fw = new FileWriter(tempFile, true);
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter pw = new PrintWriter(bw);
+
+			FileReader fr = new FileReader(fileName);
+			BufferedReader br = new BufferedReader(fr);
+
+			while ((currentLine = br.readLine()) != null) {
+				List<String> listLine = Arrays.stream(currentLine.split("[,]")).toList();
+				if (Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) != movieId.getValue()) {
+					pw.println(currentLine);
 				}
 			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+
+			pw.flush();
+			pw.close();
+			fr.close();
+			br.close();
+			bw.close();
+			fw.close();
+
+			oldFile.delete();
+			File dump = new File(fileName);
+			newFile.renameTo(dump);
+
+		} catch (Exception e) {
+			System.out.println("didn't work");
 		}
 	}
 
