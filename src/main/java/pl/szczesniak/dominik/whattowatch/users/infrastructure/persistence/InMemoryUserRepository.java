@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class InMemoryUserRepository implements UserRepository {
         if (usernameIsTaken(user.getUserName())) {
             throw new UsernameIsTakenException("Please choose different name, " + user.getUserName() + " is already taken");
         }
+        if (exists(user.getUserId())) {
+            throw new UserAlreadyExistsException("user already exists");
+        }
         users.put(user.getUserId(), user);
         return user.getUserId();
     }
@@ -33,6 +37,12 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public UserId nextUserId() {
         return new UserId(nextId.incrementAndGet());
+    }
+
+    @Override
+    public boolean exists(final UserId userId) {
+        return findAll().stream()
+                .anyMatch(user -> user.getUserId().equals(userId));
     }
 
     private boolean usernameIsTaken(final String username) {

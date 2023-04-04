@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence.InMemoryUserRepository;
 
@@ -92,4 +93,15 @@ class UserServiceTest {
 		);
 	}
 
+	@Test
+	void should_throw_exception_when_creating_already_existing_user() {
+		// given
+		tut.createUser(new User("Dominik", new UserId(1)));
+
+		// when
+		final Throwable thrown = catchThrowable(() -> tut.createUser(new User("Patryk", new UserId(1))));
+
+		// then
+		assertThat(thrown).isInstanceOf(UserAlreadyExistsException.class);
+	}
 }
