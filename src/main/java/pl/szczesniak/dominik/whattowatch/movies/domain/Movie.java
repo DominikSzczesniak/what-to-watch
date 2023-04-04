@@ -17,7 +17,7 @@ public class Movie {
     @Getter
     private final UserId userId;
 
-    public Movie(final MovieId movieId, final String title, UserId userId) {
+    public Movie(final MovieId movieId, final String title, final UserId userId) {
         this.movieId = movieId;
         this.title = title;
         this.userId = userId;

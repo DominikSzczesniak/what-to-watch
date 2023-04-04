@@ -9,6 +9,7 @@ import pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence.InMemo
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static pl.szczesniak.dominik.whattowatch.users.domain.TestUserServiceConfiguration.userService;
 
 class UserServiceTest {
 
@@ -16,7 +17,7 @@ class UserServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		tut = new UserServiceConfiguration().userService(new InMemoryUserRepository());
+		tut = userService(new InMemoryUserRepository());
 	}
 
 	@Test
