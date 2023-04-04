@@ -17,7 +17,6 @@ public class Main {
         MoviesToWatchService moviesService = moviesToWatchServiceConfiguration.moviesToWatchService(
                 new InFileMoviesRepository("movieMain.csv"), moviesToWatchServiceConfiguration.userProvider(userService));
 
-
         UserId dominik = userService.createUser(new User("Dominik", new UserId(userService.nextUserId().getValue())));
         UserId patryk = userService.createUser(new User("Patryk", new UserId(userService.nextUserId().getValue())));
         moviesService.addMovieToList("Parasite", dominik);

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MoviesRepository {
 
-    int nextMovieId();
+    MovieId nextMovieId();
     void save(final Movie movie);
     List<Movie> findAll(final UserId userId);
     void removeMovie(final MovieId movieId);

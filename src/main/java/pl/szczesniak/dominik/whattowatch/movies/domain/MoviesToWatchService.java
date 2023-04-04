@@ -18,7 +18,7 @@ public class MoviesToWatchService {
         if (!userProvider.exists(userId)) {
             throw new UserDoesNotExistException("User doesn't exist. Didn't add movie to any list");
         }
-        Movie movie = new Movie(new MovieId(repository.nextMovieId()), movieTitle, userId);
+        Movie movie = new Movie(repository.nextMovieId(), movieTitle, userId);
         repository.save(movie);
     }
 
