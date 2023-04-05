@@ -5,6 +5,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,18 +29,23 @@ public class InFileUserRepository implements UserRepository {
 	@Override
 	public UserId createUser(final User user) {
 		createFile();
+		if (usernameIsTaken(user.getUserName())) {
+			throw new UsernameIsTakenException("Please choose different name, " + user.getUserName() + " is already taken");
+		}
 		if (exists(user.getUserId())) {
 			throw new UserAlreadyExistsException("user already exists");
 		}
-		UserId userId = nextUserId();
-		try {
-			FileWriter fw = new FileWriter(fileName, true);
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(user.getUserName() + "," + (userId.getValue()));
-			bw.newLine();
-			bw.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		if (!userHasId(user.getUserName())) {
+			UserId userId = nextUserId();
+			try {
+				FileWriter fw = new FileWriter(fileName, true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write(user.getUserName() + "," + (userId.getValue()));
+				bw.newLine();
+				bw.close();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		return getExistingUserId(user.getUserName());
 	}
@@ -95,6 +101,21 @@ public class InFileUserRepository implements UserRepository {
 		}
 	}
 
+	private boolean usernameIsTaken(final String userName) {
+		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				List<String> listLine = Arrays.stream(line.split("[,]")).toList();
+				if (listLine.get(INDEX_WITH_USERNAME_IN_CSV).equals(userName)) {
+					return true;
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return false;
+	}
+
 	private UserId getExistingUserId(final String username) {
 		UserId id = new UserId(0);
 		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
@@ -110,6 +131,21 @@ public class InFileUserRepository implements UserRepository {
 			throw new RuntimeException(e);
 		}
 		return id;
+	}
+
+	private boolean userHasId(final String username) {
+		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				List<String> listLine = Arrays.stream(line.split("[,]")).toList();
+				if (listLine.get(INDEX_WITH_USERNAME_IN_CSV).equals(username)) {
+					return true;
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return false;
 	}
 
 }
