@@ -6,6 +6,7 @@ import org.junit.jupiter.api.io.TempDir;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.io.File;
 import java.util.List;
@@ -93,9 +94,23 @@ class InFileUserRepositoryIntTest {
 		tut.createUser(new User("Anna", new UserId(1)));
 
 		// when
-		Throwable thrown = catchThrowable(() -> tut.createUser(new User("Anna", new UserId(1))));
+		Throwable thrown = catchThrowable(() -> tut.createUser(new User("Michal", new UserId(1))));
 
 		// then
 		assertThat(thrown).isInstanceOf(UserAlreadyExistsException.class);
+	}
+
+	@Test
+	void shouldnt_be_able_to_create_user_with_same_username() {
+		// given
+		final User patryk = new User("Patryk", tut.nextUserId());
+		final User dominik = new User("Dominik", tut.nextUserId());
+		tut.createUser(dominik);
+
+		// when
+		final Throwable thrown = catchThrowable(() -> tut.createUser(new User("Dominik", tut.nextUserId())));
+
+		// then
+		assertThat(thrown).isInstanceOf(UsernameIsTakenException.class);
 	}
 }
