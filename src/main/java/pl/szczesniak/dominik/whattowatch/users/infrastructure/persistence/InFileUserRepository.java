@@ -36,7 +36,7 @@ public class InFileUserRepository implements UserRepository {
 			throw new UserAlreadyExistsException("user already exists");
 		}
 		if (!userHasId(user.getUserName())) {
-			UserId userId = nextUserId();
+			UserId userId = user.getUserId();
 			try {
 				FileWriter fw = new FileWriter(fileName, true);
 				BufferedWriter bw = new BufferedWriter(fw);
