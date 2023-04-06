@@ -7,7 +7,8 @@ import java.util.List;
 public interface UserRepository {
 
     List<User> findAll();
-    UserId createUser(final User user);
+    void saveUser(User user);
     UserId nextUserId();
-    boolean exists(final UserId userId);
+    boolean exists(UserId userId);
+
 }

@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -21,10 +22,10 @@ public class MoviesToWatchService {
         repository.save(movie);
     }
 
-    public void removeMovieFromList(final String title, final UserId id) {
-        final List<Movie> result = getList(id).stream()
-                .filter(movie -> movie.getTitle().equals(title)).toList();
-        repository.removeMovie(result.get(0).getMovieId());
+    public void removeMovieFromList(final MovieId movieId, final UserId userId) {
+//        final List<Movie> result = getList(id).stream()
+//                .filter(movie -> movie.getTitle().equals(title)).toList();
+        repository.removeMovie(movieId, userId);
     }
 
     public List<Movie> getList(final UserId userId) {

@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.util.List;
 
@@ -11,20 +12,28 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public UserId createUser(final User user) {
-        return repository.createUser(user);
+    public void saveUser(final User user) {
+        repository.saveUser(user);
     }
 
-    public UserId nextUserId() {
+    public User createUser(final String username) {
+        if (usernameIsTaken(username)) {
+            throw new UsernameIsTakenException("Please choose different name, " + username + " is already taken");
+        }
+        return new User(username, nextUserId());
+    }
+
+    private UserId nextUserId() {
         return repository.nextUserId();
     }
 
-    public List<User> findAllUsers() {
-        return repository.findAll();
-    }
 
     public boolean exists(final UserId userId) {
         return repository.exists(userId);
+    }
+
+    private boolean usernameIsTaken(final String username) {
+        return repository.findAll().stream().anyMatch(user -> username.equalsIgnoreCase(user.getUserName()));
     }
 
 }

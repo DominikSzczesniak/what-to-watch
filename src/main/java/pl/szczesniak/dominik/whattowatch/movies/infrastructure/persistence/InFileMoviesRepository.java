@@ -78,7 +78,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 	}
 
 	@Override
-	public void removeMovie(final MovieId movieId) {
+	public void removeMovie(final MovieId movieId, final UserId userId) {
 		String tempFile = "temp.csv";
 		File oldFile = new File(fileName);
 		File newFile = new File(tempFile);
