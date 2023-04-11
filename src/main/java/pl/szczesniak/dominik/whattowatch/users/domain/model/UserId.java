@@ -3,19 +3,19 @@ package pl.szczesniak.dominik.whattowatch.users.domain.model;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidUserIdValueException;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 @EqualsAndHashCode
 @ToString
 public class UserId {
 
-    @Getter
-    private final int value;
+	@Getter
+	private final int value;
 
-    public UserId(final int value) {
-        if (value < 1) {
-            throw new InvalidUserIdValueException("UserId value must be higher than 0");
-        }
-        this.value = value;
-    }
+	public UserId(final int value) {
+		checkArgument(value > 0, "UserId value must be higher than 0");
+		this.value = value;
+	}
+
 }

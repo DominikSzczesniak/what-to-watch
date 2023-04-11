@@ -3,37 +3,41 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
-
-import java.util.List;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserNotFoundException;
 
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository repository;
+	private final UserRepository repository;
 
-    public void saveUser(final User user) {
-        repository.saveUser(user);
-    }
+	public UserId createUser(final String username) {
+		User user = new User(username, repository.nextUserId());
+		repository.create(user);
+		return user.getUserId();
+	}
 
-    public User createUser(final String username) {
-        if (usernameIsTaken(username)) {
-            throw new UsernameIsTakenException("Please choose different name, " + username + " is already taken");
-        }
-        return new User(username, nextUserId());
-    }
+	public boolean exists(final UserId userId) {
+		return repository.exists(userId);
+	}
 
-    private UserId nextUserId() {
-        return repository.nextUserId();
-    }
+	public User findBy(final UserId userId) {
+		if (repository.findBy(userId).isPresent()) {
+			return repository.findBy(userId).get();
+		} else {
+			throw new UserNotFoundException("User with userId: " + userId + " was not found.");
+		}
+	}
 
+	public User findBy(final String username) {
+		if (repository.findBy(username).isPresent()) {
+			return repository.findBy(username).get();
+		} else {
+			throw new UserNotFoundException("User with username: " + username + " was not found.");
+		}
+	}
 
-    public boolean exists(final UserId userId) {
-        return repository.exists(userId);
-    }
-
-    private boolean usernameIsTaken(final String username) {
-        return repository.findAll().stream().anyMatch(user -> username.equalsIgnoreCase(user.getUserName()));
-    }
+	public UserId login(String username) {
+		return findBy(username).getUserId();
+	}
 
 }

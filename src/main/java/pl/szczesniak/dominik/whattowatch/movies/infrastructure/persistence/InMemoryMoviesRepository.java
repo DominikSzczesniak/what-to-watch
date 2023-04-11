@@ -15,29 +15,37 @@ import java.util.stream.Collectors;
 @ToString
 public class InMemoryMoviesRepository implements MoviesRepository {
 
-    private final AtomicInteger nextId = new AtomicInteger();
-    private final Map<MovieId, Movie> movies = new HashMap<>();
+	private final AtomicInteger nextId = new AtomicInteger(0);
+	private final Map<MovieId, Movie> movies = new HashMap<>();
 
-    @Override
-    public MovieId nextMovieId() {
-        return new MovieId(nextId.incrementAndGet());
-    }
+	@Override
+	public MovieId nextMovieId() {
+		return new MovieId(nextId.incrementAndGet());
+	}
 
-    @Override
-    public void save(final Movie movie) {
-        movies.put(movie.getMovieId(), movie);
-    }
+	@Override
+	public void save(final Movie movie) {
+		movies.put(movie.getMovieId(), movie);
+	}
 
-    @Override
-    public List<Movie> findAll(final UserId userId) {
-        return movies.values().stream()
-                .filter(movie -> movie.getUserId().equals(userId))
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<Movie> findAll(final UserId userId) {
+		return movies.values().stream()
+				.filter(movie -> movie.getUserId().equals(userId))
+				.collect(Collectors.toList());
+	}
 
-    @Override
-    public void removeMovie(final MovieId movieId, final UserId userId) {
-        movies.remove(movieId);
-    }
+	@Override
+	public void removeMovie(final MovieId movieId, final UserId userId) {
+		if (movieIdDoesntMatchUserId(movieId, userId)) {
+			System.out.println("Didn't remove movie.");
+		} else {
+			movies.remove(movieId);
+		}
+	}
+
+	private boolean movieIdDoesntMatchUserId(final MovieId movieId, final UserId userId) {
+		return movies.values().stream().noneMatch(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId));
+	}
 
 }

@@ -61,8 +61,8 @@ class MoviesToWatchServiceTest {
         tut.addMovieToList("Viking", userId);
 
         // then
-        assertThat(tut.getList(userId)).hasSize(4);
-        assertThat(tut.getList(userId)).extracting(Movie::getTitle).containsExactlyInAnyOrder("Parasite", "Star Wars", "Viking", "Viking");
+        assertThat(tut.getList(userId)).hasSize(4)
+                .extracting(Movie::getTitle).containsExactlyInAnyOrder("Parasite", "Star Wars", "Viking", "Viking");
     }
 
     @Test
@@ -91,10 +91,10 @@ class MoviesToWatchServiceTest {
         // when
         tut.addMovieToList("Parasite", userId);
         tut.addMovieToList("Star Wars", userId);
-        tut.addMovieToList("Viking", userId);
+        MovieId movieId = tut.addMovieToList("Viking", userId); // czy tak jest ok?
         tut.addMovieToList("Viking", userId);
 
-        tut.removeMovieFromList(new MovieId(3), userId);
+        tut.removeMovieFromList(movieId, userId);
 
         // then
         assertThat(tut.getList(userId)).hasSize(3)
@@ -118,6 +118,26 @@ class MoviesToWatchServiceTest {
         // then
         assertThat(tut.getList(userIdOne)).extracting(Movie::getTitle).containsExactlyInAnyOrder("Parasite", "Viking");
         assertThat(tut.getList(userIdTwo)).extracting(Movie::getTitle).containsExactlyInAnyOrder("Parasite");
+    }
+
+    @Test
+    void shouldnt_delete_movie_if_not_users_movie() {
+        // given
+        final UserId userIdOne = new UserId(1);
+        final UserId userIdTwo = new UserId(2);
+        userProvider.addUser(userIdOne);
+        userProvider.addUser(userIdTwo);
+
+        // when
+        tut.addMovieToList("Parasite",userIdOne);
+        tut.addMovieToList("Parasite", userIdTwo);
+        tut.addMovieToList("Viking", userIdOne);
+
+        tut.removeMovieFromList(new MovieId(2), userIdOne);
+
+        // then
+        assertThat(tut.getList(userIdOne)).hasSize(2);
+        assertThat(tut.getList(userIdTwo)).hasSize(1);
     }
 
     @Test

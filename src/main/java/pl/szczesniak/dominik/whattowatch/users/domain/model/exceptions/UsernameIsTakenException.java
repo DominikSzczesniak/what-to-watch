@@ -4,4 +4,5 @@ public class UsernameIsTakenException extends RuntimeException {
 	public UsernameIsTakenException(final String message) {
 		super(message);
 	}
+
 }
