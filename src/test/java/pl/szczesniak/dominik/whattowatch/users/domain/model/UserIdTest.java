@@ -1,15 +1,15 @@
 package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
 import org.junit.jupiter.api.Test;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidUserIdValueException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 class UserIdTest {
 
 	@Test
-	void should_create_userid_() {
+	void should_create_userid() {
 		// when
 		final Throwable thrown = catchThrowable(() -> new UserId(1));
 
@@ -18,14 +18,11 @@ class UserIdTest {
 	}
 
 	@Test
-	void should_throw_exception_when_null_username() {
-		// when
-		final Throwable thrownOne = catchThrowable(() -> new UserId(0));
-		final Throwable thrownTwo = catchThrowable(() -> new UserId(-2));
+	void should_throw_exception_when_illegal_userid() {
 
-		// then
-		assertThat(thrownOne).isInstanceOf(InvalidUserIdValueException.class);
-		assertThat(thrownTwo).isInstanceOf(InvalidUserIdValueException.class);
+		assertThatThrownBy(() -> new UserId(0)).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> new UserId(-1)).isInstanceOf(IllegalArgumentException.class);
+
 	}
 
 }
