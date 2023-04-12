@@ -36,7 +36,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 		createFile();
 		try (final FileWriter fw = new FileWriter(fileNameOfUsers, true)) {
 			final BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(movie.getUserId().value() + "," + movie.getMovieId().getValue() + "," + movie.getTitle());
+			bw.write(movie.getUserId().getValue() + "," + movie.getMovieId().getValue() + "," + movie.getTitle());
 			bw.newLine();
 			bw.close();
 		} catch (IOException e) {
@@ -51,7 +51,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 			String line;
 			while ((line = br.readLine()) != null) {
 				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
-				if (Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.value())
+				if (Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue())
 					movieList.add(recreate(
 							new MovieId(Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV))),
 							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_NUMBER_IN_CSV)),
@@ -105,11 +105,11 @@ public class InFileMoviesRepository implements MoviesRepository {
 
 	private static boolean MovieIdOrUserIdDontMatch(final MovieId movieId, final UserId userId, final List<String> listLine) {
 		return Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) != movieId.getValue()
-				|| Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.value();
+				|| Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.getValue();
 	}
 
 	private static boolean movieIdHasThisUserId(final MovieId movieId, final UserId userId, final List<String> listLine) {
-		return Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.value()
+		return Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.getValue()
 				&& Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == movieId.getValue();
 	}
 
