@@ -166,10 +166,6 @@ public class InFileUserRepository implements UserRepository {
 
 	@Override
 	public boolean exists(final UserId userId) {
-		return checkUserIdExist(userId);
-	}
-
-	private boolean checkUserIdExist(final UserId userId) {
 		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
 			String line;
 			while ((line = br.readLine()) != null) {
