@@ -68,7 +68,7 @@ class InFileUserRepositoryIntTest {
 		List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
 
 		// then
-		assertThat(users)
+		assertThat(users).hasSize(3)
 				.extracting(User::getUserId, User::getUserName)
 				.contains(
 						tuple(new UserId(1), new Username("Dominik")),
@@ -89,7 +89,7 @@ class InFileUserRepositoryIntTest {
 		List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
 
 		// then
-		assertThat(users)
+		assertThat(users).hasSize(3)
 				.extracting(User::getUserId, User::getUserName)
 				.contains(
 						tuple(new UserId(1), new Username("Dominik")),
