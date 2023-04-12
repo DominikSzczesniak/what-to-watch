@@ -4,8 +4,8 @@ import pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence.InMem
 
 public class TestMoviesToWatchServiceConfiguration {
 
-    static MoviesToWatchService moviesToWatchService(final UserProvider userProvider) {
-        return new MoviesToWatchServiceConfiguration().moviesToWatchService(new InMemoryMoviesRepository(), userProvider);
-    }
+	static MoviesToWatchService moviesToWatchService(final UserProvider userProvider) {
+		return new MoviesToWatchServiceConfiguration().moviesToWatchService(new InMemoryMoviesRepository(), userProvider);
+	}
 
 }

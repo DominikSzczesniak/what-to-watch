@@ -1,8 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
-
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserNotFoundException;
 
 @RequiredArgsConstructor
@@ -11,7 +11,7 @@ public class UserService {
 	private final UserRepository repository;
 
 	public UserId createUser(final String username) {
-		User user = new User(username, repository.nextUserId());
+		User user = new User(new Username(username), repository.nextUserId());
 		repository.create(user);
 		return user.getUserId();
 	}

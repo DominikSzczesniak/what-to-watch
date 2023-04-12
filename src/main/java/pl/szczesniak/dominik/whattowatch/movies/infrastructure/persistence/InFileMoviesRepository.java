@@ -2,8 +2,9 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence;
 
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.BufferedReader;
@@ -23,15 +24,17 @@ import static pl.szczesniak.dominik.whattowatch.movies.domain.Movie.recreate;
 @RequiredArgsConstructor
 public class InFileMoviesRepository implements MoviesRepository {
 
-	private final String fileName;
+	private final String fileNameOfUsers;
+	private final String moviesIdFileName;
 	private static final int INDEX_WITH_USER_ID_NUMBER_IN_CSV = 0;
 	private static final int INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV = 1;
 	private static final int INDEX_WITH_MOVIE_TITLE_NUMBER_IN_CSV = 2;
+	private static final int ID_OF_FIRST_CREATED_MOVIE_EVER = 1;
 
 	@Override
 	public void save(final Movie movie) {
 		createFile();
-		try (final FileWriter fw = new FileWriter(fileName, true)) {
+		try (final FileWriter fw = new FileWriter(fileNameOfUsers, true)) {
 			final BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(movie.getUserId().getValue() + "," + movie.getMovieId().getValue() + "," + movie.getTitle());
 			bw.newLine();
@@ -44,14 +47,17 @@ public class InFileMoviesRepository implements MoviesRepository {
 	@Override
 	public MovieId nextMovieId() {
 		createFile();
-		String lastLine = "";
-		int id = 1;
-		try (final BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+		MovieId movieId = findNextMovieId();
+		overwriteMovieIdFile(movieId);
+		return movieId;
+	}
+
+	MovieId findNextMovieId() {
+		int id = ID_OF_FIRST_CREATED_MOVIE_EVER;
+		try (final BufferedReader br = new BufferedReader(new FileReader(moviesIdFileName))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-				lastLine = line;
-				final List<String> listLine = Arrays.stream(lastLine.split("[,]")).toList();
-				id = Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) + 1;
+				id = Integer.parseInt(line) + 1;
 			}
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
@@ -59,16 +65,46 @@ public class InFileMoviesRepository implements MoviesRepository {
 		return new MovieId(id);
 	}
 
+	private void overwriteMovieIdFile(final MovieId movieId) {
+		final String tempFile = "temp.csv";
+		final File oldFile = new File(moviesIdFileName);
+		final File newFile = new File(tempFile);
+
+		try {
+			final FileWriter fw = new FileWriter(tempFile, true);
+			final BufferedWriter bw = new BufferedWriter(fw);
+			final PrintWriter pw = new PrintWriter(bw);
+
+			final FileReader fr = new FileReader(moviesIdFileName);
+			final BufferedReader br = new BufferedReader(fr);
+			pw.println(movieId.getValue());
+
+			pw.flush();
+			pw.close();
+			fr.close();
+			br.close();
+			bw.close();
+			fw.close();
+
+			oldFile.delete();
+			final File dump = new File(moviesIdFileName);
+			newFile.renameTo(dump);
+
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
 	@Override
 	public List<Movie> findAll(final UserId userId) {
 		final List<Movie> movieList = new ArrayList<>();
-		try (final BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
 				if (Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue())
 					movieList.add(recreate(new MovieId(Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV))),
-							listLine.get(INDEX_WITH_MOVIE_TITLE_NUMBER_IN_CSV),
+							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_NUMBER_IN_CSV)),
 							userId));
 			}
 		} catch (IOException e) {
@@ -80,7 +116,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 	@Override
 	public void removeMovie(final MovieId movieId, final UserId userId) {
 		final String tempFile = "temp.csv";
-		final File oldFile = new File(fileName);
+		final File oldFile = new File(fileNameOfUsers);
 		final File newFile = new File(tempFile);
 
 		String currentLine;
@@ -89,7 +125,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 			final BufferedWriter bw = new BufferedWriter(fw);
 			final PrintWriter pw = new PrintWriter(bw);
 
-			final FileReader fr = new FileReader(fileName);
+			final FileReader fr = new FileReader(fileNameOfUsers);
 			final BufferedReader br = new BufferedReader(fr);
 
 			while ((currentLine = br.readLine()) != null) {
@@ -97,6 +133,10 @@ public class InFileMoviesRepository implements MoviesRepository {
 				if (Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) != movieId.getValue()
 						|| Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.getValue()) {
 					pw.println(currentLine);
+				}
+				if (Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.getValue()
+						&& Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == movieId.getValue()) {
+					System.out.println("Didnt remove movie");
 				}
 			}
 
@@ -108,7 +148,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 			fw.close();
 
 			oldFile.delete();
-			final File dump = new File(fileName);
+			final File dump = new File(fileNameOfUsers);
 			newFile.renameTo(dump);
 
 		} catch (IOException e) {
@@ -118,9 +158,13 @@ public class InFileMoviesRepository implements MoviesRepository {
 
 	private void createFile() {
 		try {
-			File myObj = new File(fileName);
+			final File myObj = new File(fileNameOfUsers);
+			final File myObjTwo = new File(moviesIdFileName);
 			if (myObj.createNewFile()) {
-				System.out.println("File created: " + myObj.getName());
+				System.out.println("Movies file created: " + myObj.getName());
+			}
+			if (myObjTwo.createNewFile()) {
+				System.out.println("Movies id file created: " + myObjTwo.getName());
 			}
 		} catch (IOException e) {
 			System.out.println("An error occurred, file not created");
