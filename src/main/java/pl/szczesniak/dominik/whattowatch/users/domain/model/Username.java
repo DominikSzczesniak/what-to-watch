@@ -1,13 +1,13 @@
 package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
 
-import lombok.Getter;
+import lombok.Value;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidUsernameException;
 
+@Value
 public class Username {
 
-	@Getter
-	private final String value;
+	String value;
 
 	public Username(final String value) {
 		this.value = value;
