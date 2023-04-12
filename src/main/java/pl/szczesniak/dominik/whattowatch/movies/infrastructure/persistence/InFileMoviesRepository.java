@@ -83,7 +83,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 				if (MovieIdOrUserIdDontMatch(movieId, userId, listLine)) {
 					pw.println(currentLine);
 				}
-				if (!movieIdHasThisUserId(movieId, userId, listLine)) {
+				if (movieIdDoesntHaveThisUserId(movieId, userId, listLine)) {
 					System.out.println("Didnt remove movie");
 				}
 			}
@@ -108,7 +108,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 				|| Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.getValue();
 	}
 
-	private static boolean movieIdHasThisUserId(final MovieId movieId, final UserId userId, final List<String> listLine) {
+	private static boolean movieIdDoesntHaveThisUserId(final MovieId movieId, final UserId userId, final List<String> listLine) {
 		return Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.getValue()
 				&& Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == movieId.getValue();
 	}
