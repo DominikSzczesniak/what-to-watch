@@ -7,6 +7,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.io.File;
 import java.util.Optional;
@@ -34,7 +35,7 @@ class InFileUserRepositoryIntTest {
 	}
 
 	@Test
-	void should_find_by_name_all_previously_written_to_file() {
+	void should_find_by_name_all_previously_written_to_file() { //TODO: bez exista
 		// given
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
 
@@ -50,7 +51,7 @@ class InFileUserRepositoryIntTest {
 	}
 
 	@Test
-	void should_find_by_id_all_previously_written_to_file() {
+	void should_find_by_id_all_previously_written_to_file() { // sprawdzac username i id
 		// given
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
 
@@ -89,6 +90,17 @@ class InFileUserRepositoryIntTest {
 	}
 
 	@Test
+	void should_save_correctly() {
+		// given
+		tut.create(new User(new Username("asd"), tut.nextUserId()));
+
+		// when
+
+
+		// then
+	}
+
+	@Test
 	void next_id_should_be_one_higher_than_number_of_already_created_userIds() {
 		// when
 		tut.nextUserId();
@@ -109,6 +121,18 @@ class InFileUserRepositoryIntTest {
 
 		// then
 		assertThat(thrown).isInstanceOf(UserAlreadyExistsException.class);
+	}
+
+	@Test
+	void should_throw_exception_when_creating_user_with_already_existing_username() {
+		// given
+		tut.create(new User(new Username("Anna"), tut.nextUserId()));
+
+		// when
+		Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Anna"), tut.nextUserId())));
+
+		// then
+		assertThat(thrown).isInstanceOf(UsernameIsTakenException.class);
 	}
 
 }
