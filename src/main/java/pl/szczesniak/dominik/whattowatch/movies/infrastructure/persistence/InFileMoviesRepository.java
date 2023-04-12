@@ -24,7 +24,7 @@ import static pl.szczesniak.dominik.whattowatch.movies.domain.Movie.recreate;
 @RequiredArgsConstructor
 public class InFileMoviesRepository implements MoviesRepository {
 
-	private final String fileNameOfUsers;
+	private final String fileNameOfMovies;
 	private final String moviesIdFileName;
 	private static final int INDEX_WITH_USER_ID_NUMBER_IN_CSV = 0;
 	private static final int INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV = 1;
@@ -34,7 +34,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 	@Override
 	public void save(final Movie movie) {
 		createFile();
-		try (final FileWriter fw = new FileWriter(fileNameOfUsers, true)) {
+		try (final FileWriter fw = new FileWriter(fileNameOfMovies, true)) {
 			final BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(movie.getUserId().getValue() + "," + movie.getMovieId().getValue() + "," + movie.getTitle());
 			bw.newLine();
@@ -47,7 +47,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 	@Override
 	public List<Movie> findAll(final UserId userId) {
 		final List<Movie> movieList = new ArrayList<>();
-		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
+		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfMovies))) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
@@ -67,7 +67,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 	@Override
 	public void removeMovie(final MovieId movieId, final UserId userId) {
 		final String tempFile = "temp.csv";
-		final File oldFile = new File(fileNameOfUsers);
+		final File oldFile = new File(fileNameOfMovies);
 		final File newFile = new File(tempFile);
 
 		String currentLine;
@@ -75,7 +75,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 			final FileWriter fw = new FileWriter(tempFile, true);
 			final BufferedWriter bw = new BufferedWriter(fw);
 			final PrintWriter pw = new PrintWriter(bw);
-			final FileReader fr = new FileReader(fileNameOfUsers);
+			final FileReader fr = new FileReader(fileNameOfMovies);
 			final BufferedReader br = new BufferedReader(fr);
 
 			while ((currentLine = br.readLine()) != null) {
@@ -90,7 +90,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 
 			closeAll(fw, bw, pw, fr, br);
 
-			renameFile(oldFile, fileNameOfUsers, newFile);
+			renameFile(oldFile, fileNameOfMovies, newFile);
 
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
@@ -168,7 +168,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 
 	private void createFile() {
 		try {
-			final File myObj = new File(fileNameOfUsers);
+			final File myObj = new File(fileNameOfMovies);
 			final File myObjTwo = new File(moviesIdFileName);
 			if (myObj.createNewFile()) {
 				System.out.println("Movies file created: " + myObj.getName());
