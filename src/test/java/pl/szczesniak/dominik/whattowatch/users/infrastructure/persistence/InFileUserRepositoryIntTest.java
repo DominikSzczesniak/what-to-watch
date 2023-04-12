@@ -78,7 +78,7 @@ class InFileUserRepositoryIntTest {
 	}
 
 	@Test
-	void should_find_by_id_all_previously_written_to_file() { // sprawdzac username i id
+	void should_find_by_id_all_previously_written_to_file() {
 		// given
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
 
