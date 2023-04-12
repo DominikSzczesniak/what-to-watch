@@ -75,11 +75,11 @@ class UserServiceTest {
 		final UserId patrykId = tut.createUser("Patryk");
 
 		// then
-		assertThat(kamilId.value()).isEqualTo(1);
-		assertThat(dominikId.value()).isEqualTo(2);
-		assertThat(grzegorzId.value()).isEqualTo(3);
-		assertThat(michalId.value()).isEqualTo(4);
-		assertThat(patrykId.value()).isEqualTo(5);
+		assertThat(kamilId.getValue()).isEqualTo(1);
+		assertThat(dominikId.getValue()).isEqualTo(2);
+		assertThat(grzegorzId.getValue()).isEqualTo(3);
+		assertThat(michalId.getValue()).isEqualTo(4);
+		assertThat(patrykId.getValue()).isEqualTo(5);
 	}
 
 	@Test

@@ -96,7 +96,7 @@ class InFileUserRepositoryIntTest {
 		UserId idThree = tut.nextUserId();
 
 		// then
-		assertThat(tut.nextUserId().value()).isEqualTo(4);
+		assertThat(tut.nextUserId().getValue()).isEqualTo(4);
 	}
 
 	@Test
