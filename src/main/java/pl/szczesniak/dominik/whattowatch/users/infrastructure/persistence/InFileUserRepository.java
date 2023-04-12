@@ -73,6 +73,7 @@ public class InFileUserRepository implements UserRepository {
 
 	@Override
 	public Optional<User> findBy(final UserId userId) {
+		createFile();
 		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -89,6 +90,7 @@ public class InFileUserRepository implements UserRepository {
 
 	@Override
 	public Optional<User> findBy(final String username) {
+		createFile();
 		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
 			String line;
 			while ((line = br.readLine()) != null) {
