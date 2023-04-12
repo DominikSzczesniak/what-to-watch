@@ -10,13 +10,23 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlrea
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 
 class InFileUserRepositoryIntTest {
 
+	@TempDir
+	private File anotherTempDirUser;
+	@TempDir
+	private File anotherTempDirId;
 	@TempDir
 	private File testFileUsers = new File("intTemporaryFileUsers.txt");
 	@TempDir
@@ -35,39 +45,7 @@ class InFileUserRepositoryIntTest {
 	}
 
 	@Test
-	void should_find_by_name_all_previously_written_to_file() { //TODO: bez exista
-		// given
-		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
-
-		// when
-		User dominik = tut.findBy("Dominik").get();
-		User patryk = tut.findBy("Patryk").get();
-		User michal = tut.findBy("Michal").get();
-
-		// then
-		assertThat(tut.exists(dominik.getUserId())).isTrue();
-		assertThat(tut.exists(patryk.getUserId())).isTrue();
-		assertThat(tut.exists(michal.getUserId())).isTrue();
-	}
-
-	@Test
-	void should_find_by_id_all_previously_written_to_file() { // sprawdzac username i id
-		// given
-		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
-
-		// when
-		Optional<User> dominik = tut.findBy(new UserId(1));
-		Optional<User> patryk = tut.findBy(new UserId(2));
-		Optional<User> michal = tut.findBy(new UserId(3));
-
-		// then
-		assertThat(tut.exists(dominik.get().getUserId())).isTrue();
-		assertThat(tut.exists(patryk.get().getUserId())).isTrue();
-		assertThat(tut.exists(michal.get().getUserId())).isTrue();
-	}
-
-	@Test
-	void should_return_empty_when_no_user_found() {
+	void should_return_empty_when_no_user_found_in_previously_written_file() {
 		// given
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
 
@@ -81,6 +59,48 @@ class InFileUserRepositoryIntTest {
 	}
 
 	@Test
+	void should_find_by_name_all_previously_written_to_file() {
+		// given
+		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
+
+		// when
+		Optional<User> dominik = tut.findBy("Dominik");
+		Optional<User> patryk = tut.findBy("Patryk");
+		Optional<User> michal = tut.findBy("Michal");
+		List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
+
+		// then
+		assertThat(users)
+				.extracting(User::getUserId, User::getUserName)
+				.contains(
+						tuple(new UserId(1), new Username("Dominik")),
+						tuple(new UserId(2), new Username("Patryk")),
+						tuple(new UserId(3), new Username("Michal"))
+				);
+	}
+
+	@Test
+	void should_find_by_id_all_previously_written_to_file() { // sprawdzac username i id
+		// given
+		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
+
+		// when
+		Optional<User> dominik = tut.findBy(new UserId(1));
+		Optional<User> patryk = tut.findBy(new UserId(2));
+		Optional<User> michal = tut.findBy(new UserId(3));
+		List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
+
+		// then
+		assertThat(users)
+				.extracting(User::getUserId, User::getUserName)
+				.contains(
+						tuple(new UserId(1), new Username("Dominik")),
+						tuple(new UserId(2), new Username("Patryk")),
+						tuple(new UserId(3), new Username("Michal"))
+				);
+	}
+
+	@Test
 	void should_return_4_when_asked_for_next_user_id_from_given_file() {
 		// when
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
@@ -90,14 +110,17 @@ class InFileUserRepositoryIntTest {
 	}
 
 	@Test
-	void should_save_correctly() {
+	void should_save_correctly_in_file() throws IOException {
 		// given
-		tut.create(new User(new Username("asd"), tut.nextUserId()));
+		File letters = new File(anotherTempDirUser, "testUser.csv");
+		tut = new InFileUserRepository(letters.getAbsolutePath(), anotherTempDirId.getAbsolutePath() + anotherTempDirId.getName());
 
 		// when
-
+		tut.create(new User(new Username("Dominik"), tut.nextUserId()));
+		String line = "Dominik,1";
 
 		// then
+		assertThat(line).contains(Files.readAllLines(letters.toPath()));
 	}
 
 	@Test
