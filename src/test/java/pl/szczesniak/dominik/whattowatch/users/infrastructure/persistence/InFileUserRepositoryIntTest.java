@@ -91,9 +91,9 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void next_id_should_be_one_higher_than_number_of_already_created_userIds() {
 		// when
-		UserId idOne = tut.nextUserId();
-		UserId idTwo = tut.nextUserId();
-		UserId idThree = tut.nextUserId();
+		tut.nextUserId();
+		tut.nextUserId();
+		tut.nextUserId();
 
 		// then
 		assertThat(tut.nextUserId().getValue()).isEqualTo(4);
