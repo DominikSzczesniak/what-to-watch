@@ -12,14 +12,12 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameI
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 
 class InFileUserRepositoryIntTest {
 

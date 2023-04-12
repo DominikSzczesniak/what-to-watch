@@ -11,7 +11,6 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameI
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -55,7 +54,7 @@ public class InFileUserRepository implements UserRepository {
 			String line;
 			while ((line = br.readLine()) != null) {
 				final List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
-				if (stringLine.get(INDEX_WITH_USERNAME_IN_CSV).equalsIgnoreCase(username)){
+				if (stringLine.get(INDEX_WITH_USERNAME_IN_CSV).equalsIgnoreCase(username)) {
 					return true;
 				}
 			}
