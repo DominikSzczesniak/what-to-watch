@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class InMemoryUserRepository implements UserRepository {
 
 	private final Map<UserId, User> users = new HashMap<>();
-	public final AtomicInteger nextId = new AtomicInteger();
+	public final AtomicInteger nextId = new AtomicInteger(0);
 
 	@Override
 	public void create(final User user) {
