@@ -46,7 +46,7 @@ public class InFileUserRepository implements UserRepository {
 	}
 
 	private static void writeLine(final User user, final BufferedWriter bw) throws IOException {
-		bw.write(user.getUserName() + "," + (user.getUserId().getValue()));
+		bw.write(user.getUserName() + "," + (user.getUserId().value()));
 		bw.newLine();
 		bw.close();
 	}
@@ -57,7 +57,7 @@ public class InFileUserRepository implements UserRepository {
 			String line;
 			while ((line = br.readLine()) != null) {
 				final List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
-				if (Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == (userId.getValue())) {
+				if (Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == (userId.value())) {
 					return Optional.of(new User(new Username(stringLine.get(INDEX_WITH_USERNAME_IN_CSV)), new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))));
 				}
 			}
@@ -116,7 +116,7 @@ public class InFileUserRepository implements UserRepository {
 			final FileReader fr = new FileReader(usersIdFileName);
 			final BufferedReader br = new BufferedReader(fr);
 
-			pw.println(userId.getValue());
+			pw.println(userId.value());
 
 			closeAll(fw, bw, pw, fr, br);
 
@@ -152,7 +152,7 @@ public class InFileUserRepository implements UserRepository {
 			String line;
 			while ((line = br.readLine()) != null) {
 				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
-				if (Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue()) {
+				if (Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.value()) {
 					return true;
 				}
 			}
