@@ -45,7 +45,7 @@ class InFileUserRepositoryIntTest {
 	}
 
 	@Test
-	void should_return_empty_when_no_user_found_in_previously_written_file() {
+	void should_return_empty_when_no_user_found_in_previously_written_to_file() {
 		// given
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
 
@@ -54,8 +54,8 @@ class InFileUserRepositoryIntTest {
 		Optional<User> nonExistingName = tut.findBy("Kamil");
 
 		// then
-		assertThat(nonExistingId.isPresent()).isFalse();
-		assertThat(nonExistingName.isPresent()).isFalse();
+		assertThat(nonExistingId.isEmpty()).isTrue();
+		assertThat(nonExistingName.isEmpty()).isTrue();
 	}
 
 	@Test
@@ -121,6 +121,63 @@ class InFileUserRepositoryIntTest {
 
 		// then
 		assertThat(line).contains(Files.readAllLines(letters.toPath()));
+	}
+
+	@Test
+	void should_return_empty_when_no_user_created() {
+		// when
+		Optional<User> nonExistingId = tut.findBy(new UserId(5));
+		Optional<User> nonExistingName = tut.findBy("Kamil");
+
+		// then
+		assertThat(nonExistingId.isEmpty()).isTrue();
+		assertThat(nonExistingName.isEmpty()).isTrue();
+	}
+
+	@Test
+	void should_find_by_username_added_users() {
+		// given
+		tut.create(new User(new Username("Dominik"), tut.nextUserId()));
+		tut.create(new User(new Username("Patryk"), tut.nextUserId()));
+		tut.create(new User(new Username("Michal"), tut.nextUserId()));
+
+		// when
+		Optional<User> dominik = tut.findBy("Dominik");
+		Optional<User> patryk = tut.findBy("Patryk");
+		Optional<User> michal = tut.findBy("Michal");
+		List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
+
+		// then
+		assertThat(users)
+				.extracting(User::getUserId, User::getUserName)
+				.contains(
+						tuple(new UserId(1), new Username("Dominik")),
+						tuple(new UserId(2), new Username("Patryk")),
+						tuple(new UserId(3), new Username("Michal"))
+				);
+	}
+
+	@Test
+	void should_find_by_userid_added_users() {
+		// given
+		tut.create(new User(new Username("Dominik"), tut.nextUserId()));
+		tut.create(new User(new Username("Patryk"), tut.nextUserId()));
+		tut.create(new User(new Username("Michal"), tut.nextUserId()));
+
+		// when
+		Optional<User> dominik = tut.findBy(new UserId(1));
+		Optional<User> patryk = tut.findBy(new UserId(2));
+		Optional<User> michal = tut.findBy(new UserId(3));
+		List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
+
+		// then
+		assertThat(users)
+				.extracting(User::getUserId, User::getUserName)
+				.contains(
+						tuple(new UserId(1), new Username("Dominik")),
+						tuple(new UserId(2), new Username("Patryk")),
+						tuple(new UserId(3), new Username("Michal"))
+				);
 	}
 
 	@Test
