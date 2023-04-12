@@ -6,6 +6,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,6 +33,9 @@ public class InFileUserRepository implements UserRepository {
 	@Override
 	public void create(final User user) {
 		createFile();
+		if (usernameIsTaken(user.getUserName().getValue())) {
+			throw new UsernameIsTakenException("Please choose different name, " + user.getUserName() + " is already taken");
+		}
 		if (exists(user.getUserId())) {
 			throw new UserAlreadyExistsException("user already exists");
 		}
@@ -45,8 +49,23 @@ public class InFileUserRepository implements UserRepository {
 
 	}
 
+	private boolean usernameIsTaken(final String username) {
+		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				final List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
+				if (stringLine.get(INDEX_WITH_USERNAME_IN_CSV).equalsIgnoreCase(username)){
+					return true;
+				}
+			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		return false;
+	}
+
 	private static void writeLine(final User user, final BufferedWriter bw) throws IOException {
-		bw.write(user.getUserName() + "," + (user.getUserId().getValue()));
+		bw.write(user.getUserName().getValue() + "," + (user.getUserId().getValue()));
 		bw.newLine();
 		bw.close();
 	}
@@ -133,7 +152,8 @@ public class InFileUserRepository implements UserRepository {
 		newFile.renameTo(dump);
 	}
 
-	private static void closeAll(final FileWriter fw, final BufferedWriter bw, final PrintWriter pw, final FileReader fr, final BufferedReader br) throws IOException {
+	private static void closeAll(final FileWriter fw, final BufferedWriter bw, final PrintWriter pw,
+								 final FileReader fr, final BufferedReader br) throws IOException {
 		pw.flush();
 		pw.close();
 		fr.close();

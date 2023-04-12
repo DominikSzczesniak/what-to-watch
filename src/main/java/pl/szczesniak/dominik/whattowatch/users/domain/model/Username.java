@@ -12,7 +12,7 @@ public class Username {
 	public Username(final String value) {
 		this.value = value;
 		if (!validateName(value)) {
-			throw new InvalidUsernameException("Invalid username: " + value);
+			throw new InvalidUsernameException("Invalid username: " + value + ". Username can have up to 25 characters and contain only letters.");
 		}
 	}
 
