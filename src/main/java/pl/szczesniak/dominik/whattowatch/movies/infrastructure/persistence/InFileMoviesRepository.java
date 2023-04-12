@@ -45,9 +45,78 @@ public class InFileMoviesRepository implements MoviesRepository {
 	}
 
 	@Override
+	public List<Movie> findAll(final UserId userId) {
+		final List<Movie> movieList = new ArrayList<>();
+		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
+				if (Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue())
+					movieList.add(recreate(
+							new MovieId(Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV))),
+							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_NUMBER_IN_CSV)),
+							userId)
+					);
+			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		return movieList;
+	}
+
+	@Override
+	public void removeMovie(final MovieId movieId, final UserId userId) {
+		final String tempFile = "temp.csv";
+		final File oldFile = new File(fileNameOfUsers);
+		final File newFile = new File(tempFile);
+
+		String currentLine;
+		try {
+			final FileWriter fw = new FileWriter(tempFile, true);
+			final BufferedWriter bw = new BufferedWriter(fw);
+			final PrintWriter pw = new PrintWriter(bw);
+			final FileReader fr = new FileReader(fileNameOfUsers);
+			final BufferedReader br = new BufferedReader(fr);
+
+			while ((currentLine = br.readLine()) != null) {
+				final List<String> listLine = Arrays.stream(currentLine.split("[,]")).toList();
+				if (MovieIdOrUserIdDontMatch(movieId, userId, listLine)) {
+					pw.println(currentLine);
+				}
+				if (!movieIdHasThisUserId(movieId, userId, listLine)) {
+					System.out.println("Didnt remove movie");
+				}
+			}
+
+			closeAll(fw, bw, pw, fr, br);
+
+			renameFile(oldFile, fileNameOfUsers, newFile);
+
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
+	private void renameFile(final File oldFile, final String fileNameOfUsers, final File newFile) {
+		oldFile.delete();
+		final File dump = new File(fileNameOfUsers);
+		newFile.renameTo(dump);
+	}
+
+	private static boolean MovieIdOrUserIdDontMatch(final MovieId movieId, final UserId userId, final List<String> listLine) {
+		return Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) != movieId.getValue()
+				|| Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.getValue();
+	}
+
+	private static boolean movieIdHasThisUserId(final MovieId movieId, final UserId userId, final List<String> listLine) {
+		return Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.getValue()
+				&& Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == movieId.getValue();
+	}
+
+	@Override
 	public MovieId nextMovieId() {
 		createFile();
-		MovieId movieId = findNextMovieId();
+		final MovieId movieId = findNextMovieId();
 		overwriteMovieIdFile(movieId);
 		return movieId;
 	}
@@ -74,86 +143,27 @@ public class InFileMoviesRepository implements MoviesRepository {
 			final FileWriter fw = new FileWriter(tempFile, true);
 			final BufferedWriter bw = new BufferedWriter(fw);
 			final PrintWriter pw = new PrintWriter(bw);
-
 			final FileReader fr = new FileReader(moviesIdFileName);
 			final BufferedReader br = new BufferedReader(fr);
+
 			pw.println(movieId.getValue());
 
-			pw.flush();
-			pw.close();
-			fr.close();
-			br.close();
-			bw.close();
-			fw.close();
+			closeAll(fw, bw, pw, fr, br);
 
-			oldFile.delete();
-			final File dump = new File(moviesIdFileName);
-			newFile.renameTo(dump);
+			renameFile(oldFile, moviesIdFileName, newFile);
 
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
 	}
 
-	@Override
-	public List<Movie> findAll(final UserId userId) {
-		final List<Movie> movieList = new ArrayList<>();
-		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
-				if (Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue())
-					movieList.add(recreate(new MovieId(Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV))),
-							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_NUMBER_IN_CSV)),
-							userId));
-			}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-		return movieList;
-	}
-
-	@Override
-	public void removeMovie(final MovieId movieId, final UserId userId) {
-		final String tempFile = "temp.csv";
-		final File oldFile = new File(fileNameOfUsers);
-		final File newFile = new File(tempFile);
-
-		String currentLine;
-		try {
-			final FileWriter fw = new FileWriter(tempFile, true);
-			final BufferedWriter bw = new BufferedWriter(fw);
-			final PrintWriter pw = new PrintWriter(bw);
-
-			final FileReader fr = new FileReader(fileNameOfUsers);
-			final BufferedReader br = new BufferedReader(fr);
-
-			while ((currentLine = br.readLine()) != null) {
-				List<String> listLine = Arrays.stream(currentLine.split("[,]")).toList();
-				if (Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) != movieId.getValue()
-						|| Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.getValue()) {
-					pw.println(currentLine);
-				}
-				if (Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) != userId.getValue()
-						&& Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == movieId.getValue()) {
-					System.out.println("Didnt remove movie");
-				}
-			}
-
-			pw.flush();
-			pw.close();
-			fr.close();
-			br.close();
-			bw.close();
-			fw.close();
-
-			oldFile.delete();
-			final File dump = new File(fileNameOfUsers);
-			newFile.renameTo(dump);
-
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
+	private static void closeAll(final FileWriter fw, final BufferedWriter bw, final PrintWriter pw, final FileReader fr, final BufferedReader br) throws IOException {
+		pw.flush();
+		pw.close();
+		fr.close();
+		br.close();
+		bw.close();
+		fw.close();
 	}
 
 	private void createFile() {

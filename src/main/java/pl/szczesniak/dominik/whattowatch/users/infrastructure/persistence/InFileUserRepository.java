@@ -38,13 +38,49 @@ public class InFileUserRepository implements UserRepository {
 		try {
 			final FileWriter fw = new FileWriter(fileNameOfUsers, true);
 			final BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(user.getUserName() + "," + (user.getUserId().getValue()));
-			bw.newLine();
-			bw.close();
+			writeLine(user, bw);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
 
+	}
+
+	private static void writeLine(final User user, final BufferedWriter bw) throws IOException {
+		bw.write(user.getUserName() + "," + (user.getUserId().getValue()));
+		bw.newLine();
+		bw.close();
+	}
+
+	@Override
+	public Optional<User> findBy(final UserId userId) {
+		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				final List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
+				if (Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == (userId.getValue())) {
+					return Optional.of(new User(new Username(stringLine.get(INDEX_WITH_USERNAME_IN_CSV)), new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))));
+				}
+			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<User> findBy(final String username) {
+		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				final List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
+				if (username.equals(stringLine.get(INDEX_WITH_USERNAME_IN_CSV))) {
+					return Optional.of(new User(new Username(stringLine.get(INDEX_WITH_USERNAME_IN_CSV)), new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))));
+				}
+			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		return Optional.empty();
 	}
 
 	@Override
@@ -77,59 +113,33 @@ public class InFileUserRepository implements UserRepository {
 			final FileWriter fw = new FileWriter(tempFile, true);
 			final BufferedWriter bw = new BufferedWriter(fw);
 			final PrintWriter pw = new PrintWriter(bw);
-
 			final FileReader fr = new FileReader(usersIdFileName);
 			final BufferedReader br = new BufferedReader(fr);
+
 			pw.println(userId.getValue());
 
-			pw.flush();
-			pw.close();
-			fr.close();
-			br.close();
-			bw.close();
-			fw.close();
+			closeAll(fw, bw, pw, fr, br);
 
-			oldFile.delete();
-			final File dump = new File(usersIdFileName);
-			newFile.renameTo(dump);
+			renameFile(oldFile, newFile);
 
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
 	}
 
-	@Override
-	public Optional<User> findBy(final UserId userId) {
-		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				final List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
-				if (Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == (userId.getValue())) {
-					return Optional.of(new User(new Username(stringLine.get(INDEX_WITH_USERNAME_IN_CSV))
-							, new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))));
-				}
-			}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-		return Optional.empty();
+	private void renameFile(final File oldFile, final File newFile) {
+		oldFile.delete();
+		final File dump = new File(usersIdFileName);
+		newFile.renameTo(dump);
 	}
 
-	@Override
-	public Optional<User> findBy(final String username) {
-		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfUsers))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				final List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
-				if (username.equals(stringLine.get(INDEX_WITH_USERNAME_IN_CSV))) {
-					return Optional.of(new User(new Username(stringLine.get(INDEX_WITH_USERNAME_IN_CSV))
-							, new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))));
-				}
-			}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-		return Optional.empty();
+	private static void closeAll(final FileWriter fw, final BufferedWriter bw, final PrintWriter pw, final FileReader fr, final BufferedReader br) throws IOException {
+		pw.flush();
+		pw.close();
+		fr.close();
+		br.close();
+		bw.close();
+		fw.close();
 	}
 
 	@Override
