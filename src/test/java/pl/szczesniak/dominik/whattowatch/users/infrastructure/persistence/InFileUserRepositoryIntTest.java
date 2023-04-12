@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
 
 class InFileUserRepositoryIntTest {
-	
+
 	@TempDir
 	private File testFileUsers = new File("intTemporaryFileUsers.txt");
 	@TempDir
@@ -106,15 +106,15 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_save_correctly_in_file() throws IOException {
 		// given
-		File letters = new File(testFileUsers, "testUser.csv");
-		tut = new InFileUserRepository(letters.getAbsolutePath(), testFileId.getAbsolutePath() + testFileId.getName());
+		File user = new File(testFileUsers, "testUser.csv");
+		tut = new InFileUserRepository(user.getAbsolutePath(), testFileId.getAbsolutePath() + testFileId.getName());
 
 		// when
 		tut.create(new User(new Username("Dominik"), tut.nextUserId()));
 		String line = "Dominik,1";
 
 		// then
-		assertThat(line).contains(Files.readAllLines(letters.toPath()));
+		assertThat(line).contains(Files.readAllLines(user.toPath()));
 	}
 
 	@Test
