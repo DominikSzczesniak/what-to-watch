@@ -5,12 +5,15 @@ import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.tuple;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesToWatchServiceConfiguration.moviesToWatchService;
 
 class MoviesToWatchServiceTest {
@@ -173,5 +176,34 @@ class MoviesToWatchServiceTest {
 		// then
 		assertThat(movies.isEmpty()).isTrue();
 	}
+
+	@Test
+	void should_add_movie_to_watched_list_and_remove_from_movies_to_watch_list() {
+		// given
+		final UserId userId = new UserId(1);
+		userProvider.addUser(userId);
+
+		// when
+		final MovieId parasite = tut.addMovieToList("Parasite", userId);
+		final MovieId starWars = tut.addMovieToList("Star Wars", userId);
+		final MovieId viking = tut.addMovieToList("Viking", userId);
+
+		tut.moveMovieToWatchedList(starWars, userId);
+
+		// then
+		assertThat(tut.getWatchedList(userId)).hasSize(1)
+				.extracting(WatchedMovie::getMovieId, WatchedMovie::getTitle)
+				.containsOnly(
+						tuple(new MovieId(2), new MovieTitle("Star Wars"))
+				);
+		assertThat(tut.getList(userId)).hasSize(2)
+				.extracting(Movie::getMovieId, Movie::getTitle)
+				.contains(
+						tuple(new MovieId(1), new MovieTitle("Parasite")),
+						tuple(new MovieId(3), new MovieTitle("Viking"))
+				);
+	}
+
+
 
 }

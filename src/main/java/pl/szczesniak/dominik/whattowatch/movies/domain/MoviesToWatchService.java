@@ -14,11 +14,10 @@ public class MoviesToWatchService {
 
 	private final MoviesRepository repository;
 	private final UserProvider userProvider;
+	private final WatchedMoviesRepository watchedRepository;
 
 	public MovieId addMovieToList(final String movieTitle, final UserId userId) {
-		if (!userProvider.exists(userId)) {
-			throw new UserDoesNotExistException("User doesn't exist. Didn't add movie to any list");
-		}
+		userCheck(userId);
 		final Movie movie = new Movie(repository.nextMovieId(), new MovieTitle(movieTitle), userId);
 		repository.save(movie);
 		return movie.getMovieId();
@@ -30,6 +29,23 @@ public class MoviesToWatchService {
 
 	public List<Movie> getList(final UserId userId) {
 		return repository.findAll(userId);
+	}
+
+	public void moveMovieToWatchedList(MovieId movieId, UserId userId) {
+		userCheck(userId);
+		final WatchedMovie watchedMovie = new WatchedMovie(movieId, repository.getMovieTitle(movieId), userId);
+		watchedRepository.addMovieToWatchedList(watchedMovie);
+		repository.removeMovie(movieId, userId);
+	}
+
+	private void userCheck(final UserId userId) {
+		if (!userProvider.exists(userId)) {
+			throw new UserDoesNotExistException("User doesn't exist. Action aborted");
+		}
+	}
+
+	public List<WatchedMovie> getWatchedList(UserId userId) {
+		return watchedRepository.getWatchedList(userId);
 	}
 
 }

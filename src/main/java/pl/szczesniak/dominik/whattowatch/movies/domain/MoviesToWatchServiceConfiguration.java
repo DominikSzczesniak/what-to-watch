@@ -1,11 +1,12 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence.InMemoryWatchedMoviesRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
 
 public class MoviesToWatchServiceConfiguration {
 
-	public MoviesToWatchService moviesToWatchService(final MoviesRepository moviesRepository, final UserProvider userProvider) {
-		return new MoviesToWatchService(moviesRepository, userProvider);
+	public MoviesToWatchService moviesToWatchService(final MoviesRepository moviesRepository, final UserProvider userProvider, final WatchedMoviesRepository watchedMoviesRepository) {
+		return new MoviesToWatchService(moviesRepository, userProvider, watchedMoviesRepository);
 	}
 
 	public UserProvider userProvider(final UserService userService) {

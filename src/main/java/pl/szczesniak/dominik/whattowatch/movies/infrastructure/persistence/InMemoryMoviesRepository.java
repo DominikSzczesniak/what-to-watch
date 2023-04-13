@@ -4,6 +4,7 @@ import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashMap;
@@ -42,6 +43,11 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 		} else {
 			movies.remove(movieId);
 		}
+	}
+
+	@Override
+	public MovieTitle getMovieTitle(final MovieId movieId) {
+		return movies.get(movieId).getTitle();
 	}
 
 	private boolean movieIdDoesntMatchUserId(final MovieId movieId, final UserId userId) {

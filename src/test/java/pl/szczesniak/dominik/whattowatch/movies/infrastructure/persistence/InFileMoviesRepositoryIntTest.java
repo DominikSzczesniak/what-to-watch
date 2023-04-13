@@ -101,4 +101,17 @@ class InFileMoviesRepositoryIntTest {
 		assertThat(tut.nextMovieId().getValue()).isEqualTo(4);
 	}
 
+	@Test
+	void asd() {
+		// given
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), new UserId(1)));
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Star Wars"), new UserId(1)));
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), new UserId(1)));
+
+		// when
+		MovieTitle movieTitle = tut.getMovieTitle(new MovieId(2));
+
+		// then
+		assertThat(movieTitle).isEqualTo(new MovieTitle("Star Wars"));
+	}
 }
