@@ -35,7 +35,7 @@ public class MoviesToWatchService {
 	public void moveMovieToWatchedList(MovieId movieId, UserId userId) {
 		userCheck(userId);
 		if (repository.findBy(movieId, userId).isEmpty()) {
-			throw new MovieDoesNotExistException("No movie matched movieId: " + movieId + " and userId: " + userId + ". Action aborted.");
+			throw new MovieDoesNotExistException("Movie doesn't match userId: " + userId);
 		}
 		final WatchedMovie watchedMovie = new WatchedMovie(movieId, repository.getMovie(movieId, userId).getTitle(), userId);
 		watchedRepository.addMovieToWatchedList(watchedMovie);
