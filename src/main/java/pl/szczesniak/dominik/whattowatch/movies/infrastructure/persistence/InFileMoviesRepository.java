@@ -99,27 +99,6 @@ public class InFileMoviesRepository implements MoviesRepository {
 	}
 
 	@Override
-	public Movie getMovie(final MovieId movieId, final UserId userId) {
-		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfMovies))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
-				if (Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == (movieId.getValue())
-						&& Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue()) {
-					return new Movie(
-							movieId,
-							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_IN_CSV)),
-							new UserId(Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))
-					);
-				}
-			}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-		return null;
-	}
-
-	@Override
 	public Optional<Movie> findBy(final MovieId movieId, final UserId userId) {
 		createFile();
 		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfMovies))) {

@@ -46,13 +46,6 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 	}
 
 	@Override
-	public Movie getMovie(final MovieId movieId, final UserId userId) {
-		return movies.values().stream()
-				.filter(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId))
-				.findFirst().get();
-	}
-
-	@Override
 	public Optional<Movie> findBy(final MovieId movieId, final UserId userId) {
 		return movies.values().stream()
 				.filter(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId))

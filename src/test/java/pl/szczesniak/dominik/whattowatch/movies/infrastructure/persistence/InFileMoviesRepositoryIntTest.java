@@ -120,7 +120,7 @@ class InFileMoviesRepositoryIntTest {
 		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), new UserId(1)));
 
 		// when
-		Movie movie = tut.getMovie(new MovieId(2), new UserId(1));
+		Movie movie = tut.findBy(new MovieId(2), new UserId(1)).get();
 
 		// then
 		assertThat(movie.getTitle()).isEqualTo(new MovieTitle("Star Wars"));
