@@ -102,6 +102,17 @@ class InFileMoviesRepositoryIntTest {
 	}
 
 	@Test
+	void should_return_empty_when_no_matching_movieid_or_userid() {
+		// when
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), new UserId(1)));
+
+		// then
+		assertThat(tut.findBy(new MovieId(2), new UserId(1))).isEmpty();
+		assertThat(tut.findBy(new MovieId(1), new UserId(2))).isEmpty();
+
+	}
+
+	@Test
 	void should_return_matching_movie_title() {
 		// given
 		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), new UserId(1)));
@@ -109,10 +120,9 @@ class InFileMoviesRepositoryIntTest {
 		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), new UserId(1)));
 
 		// when
-		MovieTitle movieTitle = tut.getMovieTitle(new MovieId(2));
+		Movie movie = tut.getMovie(new MovieId(2), new UserId(1));
 
 		// then
-		assertThat(movieTitle).isEqualTo(new MovieTitle("Star Wars"));
+		assertThat(movie.getTitle()).isEqualTo(new MovieTitle("Star Wars"));
 	}
-
 }

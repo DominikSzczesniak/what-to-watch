@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieIdDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -213,7 +213,7 @@ class MoviesToWatchServiceTest {
 		Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(new MovieId(1), userId));
 
 		// then
-		assertThat(thrown).isInstanceOf(MovieIdDoesNotExistException.class);
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
 	}
 
 	@Test
@@ -231,7 +231,7 @@ class MoviesToWatchServiceTest {
 		Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(starWars, userId));
 
 		// then
-		assertThat(thrown).isInstanceOf(MovieIdDoesNotExistException.class);
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
 	}
 
 }

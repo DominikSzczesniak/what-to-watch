@@ -5,7 +5,6 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieIdDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.BufferedReader;
@@ -19,6 +18,7 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static pl.szczesniak.dominik.whattowatch.movies.domain.Movie.recreate;
 
@@ -99,19 +99,46 @@ public class InFileMoviesRepository implements MoviesRepository {
 	}
 
 	@Override
-	public MovieTitle getMovieTitle(final MovieId movieId) {
+	public Movie getMovie(final MovieId movieId, final UserId userId) {
 		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfMovies))) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
-				if (Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == (movieId.getValue())) {
-					return new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_IN_CSV));
+				if (Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == (movieId.getValue())
+						&& Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue()) {
+					return new Movie(
+							movieId,
+							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_IN_CSV)),
+							new UserId(Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))
+					);
 				}
 			}
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
-		throw new MovieIdDoesNotExistException("Movie with movieId: " + movieId + " does not exist"); // czy tak mozna
+		return null;
+	}
+
+	@Override
+	public Optional<Movie> findBy(final MovieId movieId, final UserId userId) {
+		createFile();
+		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfMovies))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
+				if (Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == (movieId.getValue())
+				&& Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue()) {
+					return Optional.of(new Movie(
+							movieId,
+							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_IN_CSV)),
+							new UserId(Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))
+					));
+				}
+			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		return Optional.empty();
 	}
 
 	private void renameFile(final File oldFile, final String fileNameOfUsers, final File newFile) {

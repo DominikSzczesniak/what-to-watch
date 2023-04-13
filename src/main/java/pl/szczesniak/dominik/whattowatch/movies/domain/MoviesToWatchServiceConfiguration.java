@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence.InMemoryWatchedMoviesRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
 
 public class MoviesToWatchServiceConfiguration {

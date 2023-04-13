@@ -4,13 +4,12 @@ import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieIdDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -47,15 +46,17 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 	}
 
 	@Override
-	public MovieTitle getMovieTitle(final MovieId movieId) {
-		if (!MovieIdExists(movieId)) {
-			throw new MovieIdDoesNotExistException("Movie with movieId: " + movieId + " does not exist. Action aborted.");
-		}
-		return movies.get(movieId).getTitle();
+	public Movie getMovie(final MovieId movieId, final UserId userId) {
+		return movies.values().stream()
+				.filter(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId))
+				.findFirst().get();
 	}
 
-	private boolean MovieIdExists(final MovieId movieId) {
-		return movies.containsKey(movieId);
+	@Override
+	public Optional<Movie> findBy(final MovieId movieId, final UserId userId) {
+		return movies.values().stream()
+				.filter(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId))
+				.findFirst();
 	}
 
 	private boolean movieIdDoesntMatchUserId(final MovieId movieId, final UserId userId) {
