@@ -102,7 +102,7 @@ class InFileMoviesRepositoryIntTest {
 	}
 
 	@Test
-	void asd() {
+	void should_return_matching_movie_title() {
 		// given
 		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), new UserId(1)));
 		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Star Wars"), new UserId(1)));
@@ -114,4 +114,5 @@ class InFileMoviesRepositoryIntTest {
 		// then
 		assertThat(movieTitle).isEqualTo(new MovieTitle("Star Wars"));
 	}
+
 }

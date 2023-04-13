@@ -5,6 +5,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieIdDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashMap;
@@ -47,7 +48,14 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 
 	@Override
 	public MovieTitle getMovieTitle(final MovieId movieId) {
+		if (!MovieIdExists(movieId)) {
+			throw new MovieIdDoesNotExistException("Movie with movieId: " + movieId + " does not exist. Action aborted.");
+		}
 		return movies.get(movieId).getTitle();
+	}
+
+	private boolean MovieIdExists(final MovieId movieId) {
+		return movies.containsKey(movieId);
 	}
 
 	private boolean movieIdDoesntMatchUserId(final MovieId movieId, final UserId userId) {

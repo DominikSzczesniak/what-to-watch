@@ -4,10 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieIdDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
-import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
 import java.util.List;
 
@@ -204,6 +203,35 @@ class MoviesToWatchServiceTest {
 				);
 	}
 
+	@Test
+	void should_throw_exception_when_movie_id_doesnt_exist() {
+		// given
+		final UserId userId = new UserId(1);
+		userProvider.addUser(userId);
 
+		// when
+		Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(new MovieId(1), userId));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieIdDoesNotExistException.class);
+	}
+
+	@Test
+	void shouldnt_add_previously_removed_movie_to_watched_movies_list() {
+		// given
+		final UserId userId = new UserId(1);
+		userProvider.addUser(userId);
+
+		final MovieId parasite = tut.addMovieToList("Parasite", userId);
+		final MovieId starWars = tut.addMovieToList("Star Wars", userId);
+		final MovieId viking = tut.addMovieToList("Viking", userId);
+
+		// when
+		tut.removeMovieFromList(starWars, userId);
+		Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(starWars, userId));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieIdDoesNotExistException.class);
+	}
 
 }
