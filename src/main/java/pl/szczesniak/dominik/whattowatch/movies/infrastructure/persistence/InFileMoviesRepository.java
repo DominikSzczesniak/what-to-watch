@@ -18,6 +18,7 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static pl.szczesniak.dominik.whattowatch.movies.domain.Movie.recreate;
 
@@ -28,7 +29,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 	private final String moviesIdFileName;
 	private static final int INDEX_WITH_USER_ID_NUMBER_IN_CSV = 0;
 	private static final int INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV = 1;
-	private static final int INDEX_WITH_MOVIE_TITLE_NUMBER_IN_CSV = 2;
+	private static final int INDEX_WITH_MOVIE_TITLE_IN_CSV = 2;
 	private static final int ID_OF_FIRST_CREATED_MOVIE_EVER = 1;
 
 	@Override
@@ -54,7 +55,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 				if (Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue())
 					movieList.add(recreate(
 							new MovieId(Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV))),
-							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_NUMBER_IN_CSV)),
+							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_IN_CSV)),
 							userId)
 					);
 			}
@@ -95,6 +96,28 @@ public class InFileMoviesRepository implements MoviesRepository {
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
+	}
+
+	@Override
+	public Optional<Movie> findBy(final MovieId movieId, final UserId userId) {
+		createFile();
+		try (final BufferedReader br = new BufferedReader(new FileReader(fileNameOfMovies))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
+				if (Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == (movieId.getValue())
+						&& Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue()) {
+					return Optional.of(recreate(
+							movieId,
+							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_IN_CSV)),
+							new UserId(Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))
+					));
+				}
+			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		return Optional.empty();
 	}
 
 	private void renameFile(final File oldFile, final String fileNameOfUsers, final File newFile) {

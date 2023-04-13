@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.tuple;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesToWatchServiceConfiguration.moviesToWatchService;
 
 class MoviesToWatchServiceTest {
@@ -29,13 +31,13 @@ class MoviesToWatchServiceTest {
 		// given
 		final UserId userId = new UserId(3);
 		userProvider.addUser(userId);
-		assertThat(tut.getList(userId)).hasSize(0);
+		assertThat(tut.getMoviesToWatch(userId)).hasSize(0);
 
 		// when
 		tut.addMovieToList(new MovieTitle("Parasite"), userId);
 
 		// then
-		assertThat(tut.getList(userId)).hasSize(1);
+		assertThat(tut.getMoviesToWatch(userId)).hasSize(1);
 	}
 
 	@Test
@@ -63,7 +65,7 @@ class MoviesToWatchServiceTest {
 		tut.addMovieToList(new MovieTitle("Viking"), userId);
 
 		// then
-		assertThat(tut.getList(userId)).hasSize(4)
+		assertThat(tut.getMoviesToWatch(userId)).hasSize(4)
 				.extracting(movie -> movie.getTitle().getValue())
 				.containsExactlyInAnyOrder("Parasite", "Star Wars", "Viking", "Viking");
 	}
@@ -82,7 +84,7 @@ class MoviesToWatchServiceTest {
 		tut.removeMovieFromList(movieToRemove, userId);
 
 		// then
-		assertThat(tut.getList(userId)).hasSize(2)
+		assertThat(tut.getMoviesToWatch(userId)).hasSize(2)
 				.extracting(movie -> movie.getTitle().getValue())
 				.containsExactlyInAnyOrder("Star Wars", "Viking");
 	}
@@ -103,7 +105,7 @@ class MoviesToWatchServiceTest {
 		tut.removeMovieFromList(movieIdToRemove, userId);
 
 		// then
-		assertThat(tut.getList(userId)).hasSize(3)
+		assertThat(tut.getMoviesToWatch(userId)).hasSize(3)
 				.extracting(Movie::getMovieId)
 				.containsExactlyInAnyOrder(parasiteId, starWarsId, vikingId);
 	}
@@ -123,11 +125,11 @@ class MoviesToWatchServiceTest {
 		final MovieId firstUserMovieTwo = tut.addMovieToList(new MovieTitle("Viking"), userIdOne);
 
 		// then
-		assertThat(tut.getList(userIdOne))
+		assertThat(tut.getMoviesToWatch(userIdOne))
 				.extracting(Movie::getMovieId)
 				.containsExactlyInAnyOrder(firstUserMovieOne, firstUserMovieTwo);
 
-		assertThat(tut.getList(userIdTwo))
+		assertThat(tut.getMoviesToWatch(userIdTwo))
 				.extracting(Movie::getMovieId)
 				.containsExactlyInAnyOrder(secondUserMovie);
 	}
@@ -149,8 +151,8 @@ class MoviesToWatchServiceTest {
 		tut.removeMovieFromList(movieToDelete, userIdOne);
 
 		// then
-		assertThat(tut.getList(userIdOne)).hasSize(2);
-		assertThat(tut.getList(userIdTwo)).hasSize(1);
+		assertThat(tut.getMoviesToWatch(userIdOne)).hasSize(2);
+		assertThat(tut.getMoviesToWatch(userIdTwo)).hasSize(1);
 	}
 
 	@Test
@@ -169,11 +171,11 @@ class MoviesToWatchServiceTest {
 		tut.removeMovieFromList(movieToDelete, userIdOne);
 
 		// then
-		assertThat(tut.getList(userIdOne))
+		assertThat(tut.getMoviesToWatch(userIdOne))
 				.extracting(Movie::getMovieId)
 				.containsExactlyInAnyOrder(firstUserMovie);
 
-		assertThat(tut.getList(userIdTwo))
+		assertThat(tut.getMoviesToWatch(userIdTwo))
 				.extracting(Movie::getMovieId)
 				.containsExactlyInAnyOrder(secondUserMovie);
 	}
@@ -185,10 +187,64 @@ class MoviesToWatchServiceTest {
 		userProvider.addUser(userId);
 
 		// when
-		final List<Movie> movies = tut.getList(userId);
+		final List<Movie> movies = tut.getMoviesToWatch(userId);
 
 		// then
 		assertThat(movies.isEmpty()).isTrue();
+	}
+
+	@Test
+	void should_add_movie_to_watched_list_and_remove_from_movies_to_watch_list() {
+		// given
+		final UserId userId = new UserId(1);
+		userProvider.addUser(userId);
+		final MovieId parasite = tut.addMovieToList(new MovieTitle("Parasite"), userId);
+		final MovieId starWars = tut.addMovieToList(new MovieTitle("Star Wars"), userId);
+		final MovieId viking = tut.addMovieToList(new MovieTitle("Viking"), userId);
+
+		// when
+		tut.moveMovieToWatchedList(starWars, userId);
+
+		// then
+		assertThat(tut.getMoviesToWatch(userId)).hasSize(2)
+				.extracting(Movie::getMovieId, Movie::getTitle)
+				.containsOnly(
+						tuple(parasite, new MovieTitle("Parasite")),
+						tuple(viking, new MovieTitle("Viking"))
+				);
+
+		assertThat(tut.getWatchedMovies(userId)).hasSize(1)
+				.extracting(WatchedMovie::getMovieId, WatchedMovie::getTitle)
+				.containsOnly(tuple(starWars, new MovieTitle("Star Wars")));
+	}
+
+	@Test
+	void should_throw_exception_when_trying_to_move_the_movie_when_movie_id_doesnt_exist() {
+		// given
+		final UserId userId = new UserId(1);
+		userProvider.addUser(userId);
+
+		// when
+		Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(new MovieId(1), userId));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
+	}
+
+	@Test
+	void should_not_be_able_to_add_previously_removed_movie_to_watched_movies_list() {
+		// given
+		final UserId userId = new UserId(1);
+		userProvider.addUser(userId);
+
+		final MovieId starWars = tut.addMovieToList(new MovieTitle("Star Wars"), userId);
+
+		// when
+		tut.removeMovieFromList(starWars, userId);
+		Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(starWars, userId));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
 	}
 
 }
