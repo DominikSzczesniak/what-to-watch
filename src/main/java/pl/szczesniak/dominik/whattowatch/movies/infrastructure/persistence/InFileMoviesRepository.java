@@ -36,7 +36,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 		createFile();
 		try (final FileWriter fw = new FileWriter(fileNameOfMovies, true)) {
 			final BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(movie.getUserId().getValue() + "," + movie.getMovieId().getValue() + "," + movie.getTitle());
+			bw.write(movie.getUserId().getValue() + "," + movie.getMovieId().getValue() + "," + movie.getTitle().getValue());
 			bw.newLine();
 			bw.close();
 		} catch (IOException e) {
