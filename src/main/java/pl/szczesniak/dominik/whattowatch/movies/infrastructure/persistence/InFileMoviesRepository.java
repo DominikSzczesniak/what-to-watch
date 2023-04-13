@@ -127,7 +127,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 			while ((line = br.readLine()) != null) {
 				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
 				if (Integer.parseInt(listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV)) == (movieId.getValue())
-				&& Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue()) {
+						&& Integer.parseInt(listLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == userId.getValue()) {
 					return Optional.of(new Movie(
 							movieId,
 							new MovieTitle(listLine.get(INDEX_WITH_MOVIE_TITLE_IN_CSV)),
