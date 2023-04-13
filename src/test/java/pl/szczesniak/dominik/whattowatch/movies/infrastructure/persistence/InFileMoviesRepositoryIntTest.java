@@ -9,6 +9,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,6 +53,20 @@ class InFileMoviesRepositoryIntTest {
 
 		// then
 		assertThat(tut.findNextMovieId()).isEqualTo(new MovieId(8));
+	}
+
+	@Test
+	void should_save_movie_correctly_in_file() throws IOException {
+		// given
+		File movie = new File(testFileMovies, "testMovie.csv");
+		tut = new InFileMoviesRepository(movie.getAbsolutePath(), testFileId.getAbsolutePath() + testFileId.getName());
+
+		// when
+		tut.save(new Movie(new MovieId(5), new MovieTitle("Parasite"), new UserId(1)));
+		String line = "1,5,Parasite";
+
+		// then
+		assertThat(line).contains(Files.readAllLines(movie.toPath()));
 	}
 
 	@Test
