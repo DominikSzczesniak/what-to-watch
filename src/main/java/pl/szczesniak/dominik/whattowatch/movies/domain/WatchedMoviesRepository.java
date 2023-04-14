@@ -7,6 +7,7 @@ import java.util.List;
 public interface WatchedMoviesRepository {
 
 	void addMovieToWatchedList(WatchedMovie watchedMovie);
+
 	List<WatchedMovie> getWatchedList(UserId userId);
 
 }

@@ -197,7 +197,7 @@ class MoviesToWatchServiceTest {
 				);
 		assertThat(tut.getList(userId)).hasSize(2)
 				.extracting(Movie::getMovieId, Movie::getTitle)
-				.contains(
+				.containsOnly(
 						tuple(new MovieId(1), new MovieTitle("Parasite")),
 						tuple(new MovieId(3), new MovieTitle("Viking"))
 				);
@@ -217,7 +217,7 @@ class MoviesToWatchServiceTest {
 	}
 
 	@Test
-	void shouldnt_add_previously_removed_movie_to_watched_movies_list() {
+	void shouldnt_be_able_to_add_previously_removed_movie_to_watched_movies_list() {
 		// given
 		final UserId userId = new UserId(1);
 		userProvider.addUser(userId);
