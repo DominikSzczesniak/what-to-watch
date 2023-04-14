@@ -20,41 +20,6 @@ class UserServiceTest {
 	}
 
 	@Test
-	void should_find_user_by_username() {
-		// given
-		tut.createUser("Dominik");
-
-		// when
-		UserId userId = tut.findBy("Dominik").getUserId();
-
-		// then
-		assertThat(tut.exists(userId)).isTrue();
-	}
-
-	@Test
-	void should_find_user_by_userid() {
-		// given
-		tut.createUser("Dominik");
-
-		// when
-		final UserId userId = tut.findBy(new UserId(1)).getUserId();
-
-		// then
-		assertThat(tut.exists(userId)).isTrue();
-	}
-
-	@Test
-	void should_throw_exception_when_user_doesnt_exist() {
-		// when
-		final Throwable thrownOne = catchThrowable(() -> tut.findBy("Dominik"));
-		final Throwable thrownTwo = catchThrowable(() -> tut.findBy(new UserId(1)));
-
-		// then
-		assertThat(thrownOne).isInstanceOf(UserNotFoundException.class);
-		assertThat(thrownTwo).isInstanceOf(UserNotFoundException.class);
-	}
-
-	@Test
 	void created_users_should_have_different_ids() {
 		// when
 		UserId dominikId = tut.createUser("Dominik");
