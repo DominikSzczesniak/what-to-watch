@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UserAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
@@ -78,7 +79,7 @@ public class InFileUserRepository implements UserRepository {
 			while ((line = br.readLine()) != null) {
 				final List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
 				if (Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)) == (userId.getValue())) {
-					return Optional.of(new User(new Username(stringLine.get(INDEX_WITH_USERNAME_IN_CSV)), new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))));
+					return Optional.of(new User(new Username(stringLine.get(INDEX_WITH_USERNAME_IN_CSV)), new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV))), new UserPassword("asd")));
 				}
 			}
 		} catch (IOException e) {
@@ -95,7 +96,7 @@ public class InFileUserRepository implements UserRepository {
 			while ((line = br.readLine()) != null) {
 				final List<String> stringLine = Arrays.stream(line.split("[,]")).toList();
 				if (username.equals(stringLine.get(INDEX_WITH_USERNAME_IN_CSV))) {
-					return Optional.of(new User(new Username(stringLine.get(INDEX_WITH_USERNAME_IN_CSV)), new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV)))));
+					return Optional.of(new User(new Username(stringLine.get(INDEX_WITH_USERNAME_IN_CSV)), new UserId(Integer.parseInt(stringLine.get(INDEX_WITH_USER_ID_NUMBER_IN_CSV))), new UserPassword("asd")));
 				}
 			}
 		} catch (IOException e) {

@@ -3,7 +3,9 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.WrongUsernameOrPasswordException;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +36,7 @@ class UserServiceTest {
 	@Test
 	void user_should_exist_when_previously_created() {
 		// given
-		final UserId createdUserId = tut.createUser(anyUsername());
+		final UserId createdUserId = tut.createUser(anyUsername(), anyUserPassword());
 
 		// when
 		final boolean checkExist = tut.exists(createdUserId);
@@ -46,8 +48,8 @@ class UserServiceTest {
 	@Test
 	void created_users_should_have_different_ids() {
 		// when
-		final UserId dominikId = tut.createUser(new Username("Dominik"));
-		final UserId patrykId = tut.createUser(new Username("Patryk"));
+		final UserId dominikId = tut.createUser(new Username("Dominik"), anyUserPassword());
+		final UserId patrykId = tut.createUser(new Username("Patryk"), anyUserPassword());
 
 		// then
 		assertThat(dominikId).isNotEqualTo(patrykId);
@@ -56,13 +58,13 @@ class UserServiceTest {
 	@Test
 	void every_next_user_has_id_higher_by_one() {
 		// given
-		final UserId kamilId = tut.createUser(new Username("Kamil"));
+		final UserId kamilId = tut.createUser(new Username("Kamil"), anyUserPassword());
 
 		// when
-		final UserId dominikId = tut.createUser(new Username("Dominik"));
-		final UserId grzegorzId = tut.createUser(new Username("Grzegorz"));
-		final UserId michalId = tut.createUser(new Username("Michal"));
-		final UserId patrykId = tut.createUser(new Username("Patryk"));
+		final UserId dominikId = tut.createUser(new Username("Dominik"), anyUserPassword());
+		final UserId grzegorzId = tut.createUser(new Username("Grzegorz"), anyUserPassword());
+		final UserId michalId = tut.createUser(new Username("Michal"), anyUserPassword());
+		final UserId patrykId = tut.createUser(new Username("Patryk"), anyUserPassword());
 
 		// then
 		assertThat(dominikId.getValue()).isEqualTo(kamilId.getValue() + 1);
@@ -75,30 +77,47 @@ class UserServiceTest {
 	void should_not_be_able_to_create_user_with_same_username() {
 		// given
 		final Username username = anyUsername();
-		tut.createUser(username);
+		tut.createUser(username, anyUserPassword());
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.createUser(username));
+		final Throwable thrown = catchThrowable(() -> tut.createUser(username, anyUserPassword()));
 
 		// then
 		assertThat(thrown).isInstanceOf(UsernameIsTakenException.class);
 	}
 
 	@Test
-	void should_return_correct_userid() {
+	void should_login_user_when_credentials_are_correct() {
+		// given
+		final UserId createdUserId = tut.createUser(anyUsername(), new UserPassword("password"));
+
 		// when
-		final UserId dominik = tut.createUser(new Username("Dominik"));
-		final UserId patryk = tut.createUser(new Username("Patryk"));
-		final UserId michal = tut.createUser(new Username("Michal"));
+		final UserId loggedUserId = tut.login(anyUsername(), new UserPassword("password"));
 
 		// then
-		assertThat(tut.login("Dominik")).isEqualTo(dominik);
-		assertThat(tut.login("Patryk")).isEqualTo(patryk);
-		assertThat(tut.login("Michal")).isEqualTo(michal);
+		assertThat(loggedUserId).isEqualTo(createdUserId);
+	}
+
+	@Test
+	void should_throw_exception_when_given_wrong_username_or_password() {
+		// given
+		tut.createUser(new Username("Dominik"), new UserPassword("password"));
+
+		// when
+		final Throwable differentUsername = catchThrowable(() -> tut.login(new Username("Kamil"), new UserPassword("password")));
+		final Throwable differentPassword = catchThrowable(() -> tut.login(anyUsername(), new UserPassword("wrong")));
+
+		// then
+		assertThat(differentUsername).isInstanceOf(WrongUsernameOrPasswordException.class);
+		assertThat(differentPassword).isInstanceOf(WrongUsernameOrPasswordException.class);
 	}
 
 	private static Username anyUsername() {
 		return new Username("Dominik");
+	}
+
+	private static UserPassword anyUserPassword() {
+		return new UserPassword("asd");
 	}
 
 }
