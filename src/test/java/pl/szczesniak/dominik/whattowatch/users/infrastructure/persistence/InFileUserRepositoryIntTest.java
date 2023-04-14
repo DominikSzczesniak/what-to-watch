@@ -6,6 +6,7 @@ import org.junit.jupiter.api.io.TempDir;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserSample;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UserAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
@@ -200,7 +201,7 @@ class InFileUserRepositoryIntTest {
 	void should_throw_exception_when_creating_user_with_already_existing_userid() {
 		// given
 		final UserId userId = new UserId(1);
-		tut.create(new User(new Username("Anna"), userId));
+		tut.create(new User(new Username("Anna"), userId, new UserPassword("asd")));
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.create(UserSample.builder().userId(userId).build()));
@@ -213,7 +214,7 @@ class InFileUserRepositoryIntTest {
 	void should_throw_exception_when_creating_user_with_already_existing_username() {
 		// given
 		final Username createdUsername = new Username("Anna");
-		tut.create(new User(createdUsername, tut.nextUserId()));
+		tut.create(new User(createdUsername, tut.nextUserId(), new UserPassword("asd")));
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.create(UserSample.builder().username(createdUsername).build()));
