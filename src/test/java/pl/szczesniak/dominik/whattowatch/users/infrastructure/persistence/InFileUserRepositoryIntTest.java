@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UserAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
@@ -29,6 +30,7 @@ class InFileUserRepositoryIntTest {
 	private String existingUsersDbFilepath;
 	private String existingUsersIdDbFilepath;
 	private InFileUserRepository tut;
+	private final UserPassword password = new UserPassword("asd");
 
 	@BeforeEach
 	void setUp() {
@@ -113,7 +115,7 @@ class InFileUserRepositoryIntTest {
 		tut = new InFileUserRepository(user.getAbsolutePath(), testFileId.getAbsolutePath() + testFileId.getName());
 
 		// when
-		tut.create(new User(new Username("Dominik"), tut.nextUserId()));
+		tut.create(new User(new Username("Dominik"), tut.nextUserId(), password));
 
 		// then
 		String line = "Dominik,1";
@@ -134,9 +136,9 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_find_by_username_added_users() {
 		// given
-		tut.create(new User(new Username("Dominik"), tut.nextUserId()));
-		tut.create(new User(new Username("Patryk"), tut.nextUserId()));
-		tut.create(new User(new Username("Michal"), tut.nextUserId()));
+		tut.create(new User(new Username("Dominik"), tut.nextUserId(), password));
+		tut.create(new User(new Username("Patryk"), tut.nextUserId(), password));
+		tut.create(new User(new Username("Michal"), tut.nextUserId(), password));
 
 		// when
 		Optional<User> dominik = tut.findBy("Dominik");
@@ -157,9 +159,9 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_find_by_userid_added_users() {
 		// given
-		tut.create(new User(new Username("Dominik"), tut.nextUserId()));
-		tut.create(new User(new Username("Patryk"), tut.nextUserId()));
-		tut.create(new User(new Username("Michal"), tut.nextUserId()));
+		tut.create(new User(new Username("Dominik"), tut.nextUserId(), password));
+		tut.create(new User(new Username("Patryk"), tut.nextUserId(), password));
+		tut.create(new User(new Username("Michal"), tut.nextUserId(), password));
 
 		// when
 		Optional<User> dominik = tut.findBy(new UserId(1));
@@ -191,10 +193,10 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_throw_exception_when_creating_user_with_already_existing_userid() {
 		// given
-		tut.create(new User(new Username("Anna"), new UserId(1)));
+		tut.create(new User(new Username("Anna"), new UserId(1), password));
 
 		// when
-		Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Michal"), new UserId(1))));
+		Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Michal"), new UserId(1), password)));
 
 		// then
 		assertThat(thrown).isInstanceOf(UserAlreadyExistsException.class);
@@ -203,10 +205,10 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_throw_exception_when_creating_user_with_already_existing_username() {
 		// given
-		tut.create(new User(new Username("Anna"), tut.nextUserId()));
+		tut.create(new User(new Username("Anna"), tut.nextUserId(), password));
 
 		// when
-		Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Anna"), tut.nextUserId())));
+		Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Anna"), tut.nextUserId(), password)));
 
 		// then
 		assertThat(thrown).isInstanceOf(UsernameIsTakenException.class);

@@ -10,7 +10,7 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.Username.user
 class UsernameTest {
 
 	@Test
-	void should_return_tre_when_valid_string() {
+	void should_return_true_when_valid_string() {
 		// when
 		final boolean check = usernameContainsOnlyLetters("Dominik");
 
@@ -25,7 +25,6 @@ class UsernameTest {
 
 		// then
 		assertThat(check).isFalse();
-
 	}
 
 	@Test
@@ -41,7 +40,6 @@ class UsernameTest {
 		assertThat(check2).isFalse();
 		assertThat(check3).isFalse();
 		assertThat(check4).isFalse();
-
 	}
 
 	@Test

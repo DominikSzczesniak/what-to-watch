@@ -18,7 +18,7 @@ class MovieTitleTest {
 		// then
 		assertThat(movieTitle1.getValue()).isNotInstanceOf(IllegalArgumentException.class);
 		assertThat(movieTitle2.getValue()).isNotInstanceOf(IllegalArgumentException.class);
-		assertThat(movieTitle2.getValue()).isNotInstanceOf(IllegalArgumentException.class);
+		assertThat(movieTitle3.getValue()).isNotInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test

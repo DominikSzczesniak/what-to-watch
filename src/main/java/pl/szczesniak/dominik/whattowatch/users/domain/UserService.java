@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
 @RequiredArgsConstructor
@@ -9,8 +10,8 @@ public class UserService {
 
 	private final UserRepository repository;
 
-	public UserId createUser(final String username) {
-		User user = new User(new Username(username), repository.nextUserId());
+	public UserId createUser(final Username username, final UserPassword userPassword) {
+		User user = new User(username, repository.nextUserId(), userPassword);
 		repository.create(user);
 		return user.getUserId();
 	}
@@ -20,8 +21,8 @@ public class UserService {
 	}
 
 
-	public UserId login(String username) {
-		return repository.findBy(username).get().getUserId();
+	public UserId login(final Username username, final UserPassword userPassword) {
+		return repository.findBy(username.getValue()).get().getUserId();
 	}
 
 }
