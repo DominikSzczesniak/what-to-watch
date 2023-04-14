@@ -5,7 +5,7 @@ import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 @ToString
 public class User {
@@ -16,10 +16,8 @@ public class User {
 	private final UserId userId;
 
 	public User(final Username userName, final UserId userId) {
-		Objects.requireNonNull(userId, "UserId must not be null.");
-		Objects.requireNonNull(userName, "Username must not be null.");
-		this.userName = userName;
-		this.userId = userId;
+		this.userName = requireNonNull(userName, "Username must not be null.");
+		this.userId = requireNonNull(userId, "UserId must not be null.");
 	}
 
 }

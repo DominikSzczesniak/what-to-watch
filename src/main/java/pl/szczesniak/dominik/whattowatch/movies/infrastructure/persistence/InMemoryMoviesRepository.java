@@ -37,15 +37,15 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 
 	@Override
 	public void removeMovie(final MovieId movieId, final UserId userId) {
-		if (movieIdDoesntMatchUserId(movieId, userId)) {
+		if (!movieBelongsToUser(movieId, userId)) {
 			System.out.println("Didn't remove movie.");
 		} else {
 			movies.remove(movieId);
 		}
 	}
 
-	private boolean movieIdDoesntMatchUserId(final MovieId movieId, final UserId userId) {
-		return movies.values().stream().noneMatch(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId));
+	private boolean movieBelongsToUser(final MovieId movieId, final UserId userId) {
+		return movies.values().stream().anyMatch(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId));
 	}
 
 }

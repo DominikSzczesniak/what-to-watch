@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions;
+package pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions;
 
 public class UsernameIsTakenException extends RuntimeException {
 
