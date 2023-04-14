@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserNotFoundException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence.InMemoryUserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -17,7 +16,7 @@ class UserServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		tut = userService(new InMemoryUserRepository());
+		tut = userService();
 	}
 
 	@Test
