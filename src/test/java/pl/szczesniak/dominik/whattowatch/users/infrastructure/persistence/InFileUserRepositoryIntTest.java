@@ -6,8 +6,8 @@ import org.junit.jupiter.api.io.TempDir;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
+import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UserAlreadyExistsException;
+import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,12 +95,15 @@ class InFileUserRepositoryIntTest {
 	}
 
 	@Test
-	void should_return_4_when_asked_for_next_user_id_from_given_file() {
-		// when
+	void should_return_correct_next_user_id_from_given_file() {
+		// given
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
 
+		// when
+		UserId userId = tut.findNextUserId();
+
 		// then
-		assertThat(tut.findNextUserId()).isEqualTo(new UserId(4));
+		assertThat(userId).isEqualTo(new UserId(4));
 	}
 
 	@Test
@@ -111,10 +114,10 @@ class InFileUserRepositoryIntTest {
 
 		// when
 		tut.create(new User(new Username("Dominik"), tut.nextUserId()));
-		String line = "Dominik,1";
 
 		// then
-		assertThat(line).contains(Files.readAllLines(user.toPath()));
+		String line = "Dominik,1";
+		assertThat(Files.readAllLines(user.toPath())).contains(line);
 	}
 
 	@Test

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserNotFoundException;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
+import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;

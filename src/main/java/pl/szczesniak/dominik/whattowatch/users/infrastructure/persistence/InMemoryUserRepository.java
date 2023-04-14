@@ -3,8 +3,8 @@ package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
+import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UserAlreadyExistsException;
+import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
 
 import java.util.HashMap;
 import java.util.Map;
