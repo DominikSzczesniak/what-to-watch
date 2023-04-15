@@ -15,7 +15,7 @@ public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository 
 	private final Map<MovieId, WatchedMovie> watchedMovies = new HashMap<>();
 
 	@Override
-	public void addMovieToWatchedList(WatchedMovie watchedMovie) {
+	public void addMovieToWatchedList(final WatchedMovie watchedMovie) {
 		watchedMovies.put(watchedMovie.getMovieId(), watchedMovie);
 	}
 

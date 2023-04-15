@@ -32,7 +32,7 @@ public class MoviesToWatchService {
 		return repository.findAll(userId);
 	}
 
-	public void moveMovieToWatchedList(MovieId movieId, UserId userId) {
+	public void moveMovieToWatchedList(final MovieId movieId, final UserId userId) {
 		userCheck(userId);
 		final WatchedMovie watchedMovie = new WatchedMovie(
 				movieId,
@@ -49,7 +49,7 @@ public class MoviesToWatchService {
 		}
 	}
 
-	public List<WatchedMovie> getWatchedList(UserId userId) {
+	public List<WatchedMovie> getWatchedList(final UserId userId) {
 		return watchedRepository.getWatchedList(userId);
 	}
 
