@@ -20,10 +20,31 @@ class UserServiceTest {
 	}
 
 	@Test
+	void user_should_not_exist_when_previously_not_created() {
+		// when
+		final boolean checkExist = tut.exists(new UserId(1));
+
+		// then
+		assertThat(checkExist).isFalse();
+	}
+
+	@Test
+	void user_should_exist_when_previously_created() {
+		// given
+		UserId dominik = tut.createUser("Dominik");
+
+		// when
+		final boolean checkExist = tut.exists(dominik);
+
+		// then
+		assertThat(checkExist).isTrue();
+	}
+
+	@Test
 	void created_users_should_have_different_ids() {
 		// when
-		UserId dominikId = tut.createUser("Dominik");
-		UserId patrykId = tut.createUser("Patryk");
+		final UserId dominikId = tut.createUser("Dominik");
+		final UserId patrykId = tut.createUser("Patryk");
 
 		// then
 		assertThat(dominikId).isNotEqualTo(patrykId);
