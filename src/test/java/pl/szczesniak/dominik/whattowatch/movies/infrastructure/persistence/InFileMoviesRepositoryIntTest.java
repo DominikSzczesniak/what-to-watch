@@ -103,13 +103,15 @@ class InFileMoviesRepositoryIntTest {
 
 	@Test
 	void should_return_empty_when_no_matching_movieid_or_userid() {
+		// given
+		final Movie movie = new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), new UserId(1));
+
 		// when
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), new UserId(1)));
+		tut.save(movie);
 
 		// then
 		assertThat(tut.findBy(new MovieId(2), new UserId(1))).isEmpty();
 		assertThat(tut.findBy(new MovieId(1), new UserId(2))).isEmpty();
-
 	}
 
 	@Test

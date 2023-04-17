@@ -15,12 +15,12 @@ public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository 
 	private final Map<MovieId, WatchedMovie> watchedMovies = new HashMap<>();
 
 	@Override
-	public void addMovieToWatchedList(final WatchedMovie watchedMovie) {
+	public void add(final WatchedMovie watchedMovie) {
 		watchedMovies.put(watchedMovie.getMovieId(), watchedMovie);
 	}
 
 	@Override
-	public List<WatchedMovie> getWatchedList(final UserId userId) {
+	public List<WatchedMovie> findAllBy(final UserId userId) {
 		return watchedMovies.values().stream()
 				.filter(movie -> movie.getUserId().equals(userId))
 				.collect(Collectors.toList());
