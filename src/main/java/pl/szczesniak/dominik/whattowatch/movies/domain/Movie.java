@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @ToString
 @RequiredArgsConstructor
+@EqualsAndHashCode(of = {"movieId"})
 public class Movie {
 
 	@Getter

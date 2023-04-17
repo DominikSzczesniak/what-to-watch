@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -8,6 +9,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import static java.util.Objects.requireNonNull;
 
 @ToString
+@EqualsAndHashCode(of = {"userId"})
 public class User {
 
 	@Getter
