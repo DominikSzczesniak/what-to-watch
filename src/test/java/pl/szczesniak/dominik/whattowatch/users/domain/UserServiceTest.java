@@ -31,7 +31,7 @@ class UserServiceTest {
 	@Test
 	void user_should_exist_when_previously_created() {
 		// given
-		UserId dominik = tut.createUser("Dominik");
+		final UserId dominik = tut.createUser("Dominik");
 
 		// when
 		final boolean checkExist = tut.exists(dominik);
