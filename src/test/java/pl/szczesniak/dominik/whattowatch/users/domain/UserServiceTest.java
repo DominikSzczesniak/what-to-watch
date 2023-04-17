@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.WrongUsernameOrPasswordException;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,8 +80,24 @@ class UserServiceTest {
 		final UserId createdUserId = tut.createUser(new Username("Dominik"), new UserPassword("password"));
 
 		// when
-		UserId userId = tut.login(new Username("Dominik"), new UserPassword("password"));
+		final UserId loggedUserId = tut.login(new Username("Dominik"), new UserPassword("password"));
 
 		// then
+		assertThat(loggedUserId).isEqualTo(createdUserId);
 	}
+
+	@Test
+	void should_throw_exception_when_given_wrong_username_or_password() {
+		// given
+		tut.createUser(new Username("Dominik"), new UserPassword("password"));
+
+		// when
+		final Throwable differentUsername = catchThrowable(() -> tut.login(new Username("Kamil"), new UserPassword("password")));
+		final Throwable differentPassword = catchThrowable(() -> tut.login(new Username("Dominik"), new UserPassword("wrong")));
+
+		// then
+		assertThat(differentUsername).isInstanceOf(WrongUsernameOrPasswordException.class);
+		assertThat(differentPassword).isInstanceOf(WrongUsernameOrPasswordException.class);
+	}
+
 }
