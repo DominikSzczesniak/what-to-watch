@@ -103,8 +103,8 @@ class InFileMoviesRepositoryIntTest {
 	void should_not_remove_movie_when_movieid_doesnt_belong_to_userid() {
 		//given
 		final UserId userIdOne = new UserId(1);
-		final MovieId movieId = tut.nextMovieId();
 		final UserId UserIdTwo = new UserId(2);
+		final MovieId movieId = tut.nextMovieId();
 
 		tut.save(new Movie(movieId, new MovieTitle("Parasite"), userIdOne));
 		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), UserIdTwo));
