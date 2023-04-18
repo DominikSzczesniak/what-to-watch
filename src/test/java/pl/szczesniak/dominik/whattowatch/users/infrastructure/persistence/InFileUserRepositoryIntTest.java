@@ -178,14 +178,17 @@ class InFileUserRepositoryIntTest {
 	}
 
 	@Test
-	void next_id_should_be_one_higher_than_number_of_already_created_userIds() {
+	void next_userid_should_be_one_higher_than_previously_created_userid() {
+		// given
+		tut.nextUserId();
+		tut.nextUserId();
+		final UserId lastUserId = tut.nextUserId();
+
 		// when
-		tut.nextUserId();
-		tut.nextUserId();
-		tut.nextUserId();
+		final UserId nextUserId = tut.nextUserId();
 
 		// then
-		assertThat(tut.nextUserId().getValue()).isEqualTo(4);
+		assertThat(nextUserId.getValue()).isEqualTo(lastUserId.getValue() + 1);
 	}
 
 	@Test
