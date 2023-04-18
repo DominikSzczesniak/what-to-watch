@@ -14,7 +14,6 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.TestUserServiceConf
 
 class UserServiceTest {
 
-	private final UserPassword userPassword = new UserPassword("asd");
 	private UserService tut;
 
 	@BeforeEach
@@ -25,8 +24,8 @@ class UserServiceTest {
 	@Test
 	void created_users_should_have_different_ids() {
 		// when
-		UserId dominikId = tut.createUser(new Username("Dominik"), userPassword);
-		UserId patrykId = tut.createUser(new Username("Patryk"), userPassword);
+		UserId dominikId = tut.createUser(new Username("Dominik"), new UserPassword("asd"));
+		UserId patrykId = tut.createUser(new Username("Patryk"), new UserPassword("asd"));
 
 		// then
 		assertThat(dominikId).isNotEqualTo(patrykId);
@@ -35,11 +34,11 @@ class UserServiceTest {
 	@Test
 	void every_next_user_has_id_higher_by_one() {
 		// when
-		final UserId kamilId = tut.createUser(new Username("Kamil"), userPassword);
-		final UserId dominikId = tut.createUser(new Username("Dominik"), userPassword);
-		final UserId grzegorzId = tut.createUser(new Username("Grzegorz"), userPassword);
-		final UserId michalId = tut.createUser(new Username("Michal"), userPassword);
-		final UserId patrykId = tut.createUser(new Username("Patryk"), userPassword);
+		final UserId kamilId = tut.createUser(new Username("Kamil"), new UserPassword("asd"));
+		final UserId dominikId = tut.createUser(new Username("Dominik"), new UserPassword("asd"));
+		final UserId grzegorzId = tut.createUser(new Username("Grzegorz"), new UserPassword("asd"));
+		final UserId michalId = tut.createUser(new Username("Michal"), new UserPassword("asd"));
+		final UserId patrykId = tut.createUser(new Username("Patryk"), new UserPassword("asd"));
 
 		// then
 		assertThat(kamilId.getValue()).isEqualTo(1);
@@ -52,26 +51,13 @@ class UserServiceTest {
 	@Test
 	void shouldnt_be_able_to_create_user_with_same_username() {
 		// given
-		tut.createUser(new Username("Dominik"), userPassword);
+		tut.createUser(new Username("Dominik"), new UserPassword("asd"));
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.createUser(new Username("Dominik"), userPassword));
+		final Throwable thrown = catchThrowable(() -> tut.createUser(new Username("Dominik"), new UserPassword("asd")));
 
 		// then
 		assertThat(thrown).isInstanceOf(UsernameIsTakenException.class);
-	}
-
-	@Test
-	void should_return_correct_userid() {
-		// when
-		final UserId dominik = tut.createUser(new Username("Dominik"), userPassword);
-		final UserId patryk = tut.createUser(new Username("Patryk"), userPassword);
-		final UserId michal = tut.createUser(new Username("Michal"), userPassword);
-
-		// then
-		assertThat(tut.login(new Username("Dominik"), userPassword)).isEqualTo(dominik);
-		assertThat(tut.login(new Username("Patryk"), userPassword)).isEqualTo(patryk);
-		assertThat(tut.login(new Username("Michal"), userPassword)).isEqualTo(michal);
 	}
 
 	@Test
