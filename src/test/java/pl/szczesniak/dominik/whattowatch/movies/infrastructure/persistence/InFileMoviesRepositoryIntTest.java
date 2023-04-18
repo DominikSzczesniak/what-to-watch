@@ -20,16 +20,12 @@ class InFileMoviesRepositoryIntTest {
 	@TempDir
 	private File testFileId = new File("intTemporaryFileId.txt");
 
-	private UserId firstUserId;
-	private UserId secondUserId;
 	private String existingMoviesDbFilepath;
 	private String existingMoviesIdDbFilepath;
 	private InFileMoviesRepository tut;
 
 	@BeforeEach
 	void setUp() {
-		firstUserId = new UserId(1);
-		secondUserId = new UserId(2);
 		existingMoviesDbFilepath = "src/test/resources/movies.csv";
 		existingMoviesIdDbFilepath = "src/test/resources/moviesId.csv";
 		tut = new InFileMoviesRepository(testFileMovies.getAbsolutePath() + testFileMovies.getName(),
@@ -42,7 +38,7 @@ class InFileMoviesRepositoryIntTest {
 		tut = new InFileMoviesRepository(existingMoviesDbFilepath, existingMoviesIdDbFilepath);
 
 		// when
-		List<Movie> movies = tut.findAll(firstUserId);
+		List<Movie> movies = tut.findAll(new UserId(1));
 
 		// then
 		assertThat(movies.size()).isEqualTo(3);
@@ -59,39 +55,46 @@ class InFileMoviesRepositoryIntTest {
 
 	@Test
 	void user_should_save_movie() {
-		//when
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), firstUserId));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), firstUserId));
+		// given
+		final UserId userId = new UserId(1);
+
+		// when
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), userId));
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), userId));
 
 		// then
-		assertThat(tut.findAll(firstUserId)).hasSize(2);
+		assertThat(tut.findAll(userId)).hasSize(2);
 	}
 
 	@Test
 	void user_should_delete_movie() {
-		//given
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), firstUserId));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), firstUserId));
+		// given
+		final UserId userId = new UserId(1);
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), userId));
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), userId));
 
 		// when
-		tut.removeMovie(new MovieId(1), firstUserId);
+		tut.removeMovie(new MovieId(1), userId);
 
 		// then
-		assertThat(tut.findAll(firstUserId)).hasSize(1);
+		assertThat(tut.findAll(userId)).hasSize(1);
 	}
 
 	@Test
 	void should_not_remove_movie_when_movieid_doesnt_belong_to_userid() {
-		//given
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), firstUserId));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), secondUserId));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), firstUserId));
+		// given
+		final UserId userIdOne = new UserId(1);
+		final UserId userIdTwo = new UserId(2);
+
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), userIdOne));
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), userIdTwo));
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), userIdOne));
 
 		// when
-		tut.removeMovie(new MovieId(1), secondUserId);
+		tut.removeMovie(new MovieId(1), userIdTwo);
 
 		// then
-		assertThat(tut.findAll(firstUserId)).hasSize(2);
+		assertThat(tut.findAll(userIdOne)).hasSize(2);
 	}
 
 	@Test
@@ -108,29 +111,33 @@ class InFileMoviesRepositoryIntTest {
 	@Test
 	void should_return_empty_when_no_matching_movieid_or_userid() {
 		// given
+		final UserId userIdOne = new UserId(1);
+		final UserId userIdTwo = new UserId(2);
 		final MovieId movieId = tut.nextMovieId();
-		final Movie movie = new Movie(movieId, new MovieTitle("Parasite"), firstUserId);
+		final Movie movie = new Movie(movieId, new MovieTitle("Parasite"), userIdOne);
 
 		// when
 		tut.save(movie);
 
 		// then
-		assertThat(tut.findBy(movieId, secondUserId)).isEmpty();
-		assertThat(tut.findBy(tut.nextMovieId(), firstUserId)).isEmpty();
+		assertThat(tut.findBy(movieId, userIdTwo)).isEmpty();
+		assertThat(tut.findBy(tut.nextMovieId(), userIdOne)).isEmpty();
 	}
 
 	@Test
 	void should_return_matching_movie_title() {
 		// given
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), firstUserId));
+		final UserId userIdOne = new UserId(1);
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), userIdOne));
 		final MovieId movieId = tut.nextMovieId();
-		tut.save(new Movie(movieId, new MovieTitle("Star Wars"), firstUserId));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), firstUserId));
+		tut.save(new Movie(movieId, new MovieTitle("Star Wars"), userIdOne));
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), userIdOne));
 
 		// when
-		final Movie movie = tut.findBy(movieId, firstUserId).get();
+		final Movie movie = tut.findBy(movieId, userIdOne).get();
 
 		// then
 		assertThat(movie.getTitle()).isEqualTo(new MovieTitle("Star Wars"));
 	}
+	
 }
