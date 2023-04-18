@@ -19,10 +19,8 @@ class UserIdTest {
 
 	@Test
 	void should_throw_exception_when_illegal_userid() {
-
 		assertThatThrownBy(() -> new UserId(0)).isInstanceOf(IllegalArgumentException.class);
 		assertThatThrownBy(() -> new UserId(-1)).isInstanceOf(IllegalArgumentException.class);
-
 	}
 
 }

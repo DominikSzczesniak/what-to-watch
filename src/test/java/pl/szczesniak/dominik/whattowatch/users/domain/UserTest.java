@@ -26,4 +26,5 @@ class UserTest {
 		// then
 		assertThat(thrown).isInstanceOf(NullPointerException.class);
 	}
+
 }

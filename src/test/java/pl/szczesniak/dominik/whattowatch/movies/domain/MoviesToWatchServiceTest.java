@@ -27,7 +27,7 @@ class MoviesToWatchServiceTest {
 	@Test
 	void user_should_add_movie_to_his_list() {
 		// given
-		final UserId userId = new UserId(1);
+		final UserId userId = new UserId(3);
 		userProvider.addUser(userId);
 
 		// when
@@ -38,9 +38,9 @@ class MoviesToWatchServiceTest {
 	}
 
 	@Test
-	void shouldnt_add_movie_when_user_doesnt_exist() {
+	void should_not_add_movie_when_user_doesnt_exist() {
 		// given
-		final UserId userId = new UserId(1);
+		final UserId userId = new UserId(4);
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.addMovieToList("Parasite", userId));
@@ -52,7 +52,7 @@ class MoviesToWatchServiceTest {
 	@Test
 	void user_should_be_able_to_add_movies_with_same_title() {
 		// given
-		final UserId userId = new UserId(1);
+		final UserId userId = new UserId(51);
 		userProvider.addUser(userId);
 
 		// when
@@ -70,7 +70,7 @@ class MoviesToWatchServiceTest {
 	@Test
 	void user_should_delete_movie_from_his_list() {
 		// given
-		final UserId userId = new UserId(1);
+		final UserId userId = new UserId(3);
 		userProvider.addUser(userId);
 
 		tut.addMovieToList("Parasite", userId);
@@ -87,12 +87,12 @@ class MoviesToWatchServiceTest {
 	@Test
 	void only_one_duplicated_title_should_be_deleted() {
 		// given
-		final UserId userId = new UserId(1);
+		final UserId userId = new UserId(9);
 		userProvider.addUser(userId);
 
 		tut.addMovieToList("Parasite", userId);
 		tut.addMovieToList("Star Wars", userId);
-		MovieId movieId = tut.addMovieToList("Viking", userId);
+		final MovieId movieId = tut.addMovieToList("Viking", userId);
 		tut.addMovieToList("Viking", userId);
 
 		// when
@@ -129,10 +129,10 @@ class MoviesToWatchServiceTest {
 	}
 
 	@Test
-	void shouldnt_delete_movie_if_not_users_movie() {
+	void should_not_delete_movie_if_not_users_movie() {
 		// given
-		final UserId userIdOne = new UserId(1);
-		final UserId userIdTwo = new UserId(2);
+		final UserId userIdOne = new UserId(32);
+		final UserId userIdTwo = new UserId(21);
 		userProvider.addUser(userIdOne);
 		userProvider.addUser(userIdTwo);
 
@@ -151,8 +151,8 @@ class MoviesToWatchServiceTest {
 	@Test
 	void should_delete_movie_only_from_this_user_list_and_not_all_of_them() {
 		// given
-		final UserId userIdOne = new UserId(1);
-		final UserId userIdTwo = new UserId(2);
+		final UserId userIdOne = new UserId(413);
+		final UserId userIdTwo = new UserId(22);
 		userProvider.addUser(userIdOne);
 		userProvider.addUser(userIdTwo);
 
@@ -176,7 +176,7 @@ class MoviesToWatchServiceTest {
 	@Test
 	void list_should_be_empty_when_no_movie_added() {
 		// given
-		final UserId userId = new UserId(1);
+		final UserId userId = new UserId(68);
 		userProvider.addUser(userId);
 
 		// when
