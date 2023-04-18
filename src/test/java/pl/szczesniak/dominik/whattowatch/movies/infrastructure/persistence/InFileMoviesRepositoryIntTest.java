@@ -139,5 +139,5 @@ class InFileMoviesRepositoryIntTest {
 		// then
 		assertThat(movie.getTitle()).isEqualTo(new MovieTitle("Star Wars"));
 	}
-	
+
 }
