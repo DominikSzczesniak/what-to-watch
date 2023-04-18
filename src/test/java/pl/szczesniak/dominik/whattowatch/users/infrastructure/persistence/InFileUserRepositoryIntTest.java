@@ -44,8 +44,8 @@ class InFileUserRepositoryIntTest {
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
 
 		// when
-		Optional<User> nonExistingId = tut.findBy(new UserId(5));
-		Optional<User> nonExistingName = tut.findBy("Kamil");
+		final Optional<User> nonExistingId = tut.findBy(new UserId(5));
+		final Optional<User> nonExistingName = tut.findBy("Kamil");
 
 		// then
 		assertThat(nonExistingId.isEmpty()).isTrue();
@@ -58,12 +58,12 @@ class InFileUserRepositoryIntTest {
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
 
 		// when
-		Optional<User> dominik = tut.findBy("Dominik");
-		Optional<User> patryk = tut.findBy("Patryk");
-		Optional<User> michal = tut.findBy("Michal");
-		List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
+		final Optional<User> dominik = tut.findBy("Dominik");
+		final Optional<User> patryk = tut.findBy("Patryk");
+		final Optional<User> michal = tut.findBy("Michal");
 
 		// then
+		final List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
 		assertThat(users).hasSize(3)
 				.extracting(User::getUserId, User::getUserName)
 				.contains(
@@ -79,12 +79,12 @@ class InFileUserRepositoryIntTest {
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
 
 		// when
-		Optional<User> dominik = tut.findBy(new UserId(1));
-		Optional<User> patryk = tut.findBy(new UserId(2));
-		Optional<User> michal = tut.findBy(new UserId(3));
-		List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
+		final Optional<User> dominik = tut.findBy(new UserId(1));
+		final Optional<User> patryk = tut.findBy(new UserId(2));
+		final Optional<User> michal = tut.findBy(new UserId(3));
 
 		// then
+		final List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
 		assertThat(users).hasSize(3)
 				.extracting(User::getUserId, User::getUserName)
 				.contains(
@@ -100,7 +100,7 @@ class InFileUserRepositoryIntTest {
 		tut = new InFileUserRepository(existingUsersDbFilepath, existingUsersIdDbFilepath);
 
 		// when
-		UserId userId = tut.findNextUserId();
+		final UserId userId = tut.findNextUserId();
 
 		// then
 		assertThat(userId).isEqualTo(new UserId(4));
@@ -109,22 +109,22 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_save_correctly_in_file() throws IOException {
 		// given
-		File user = new File(testFileUsers, "testUser.csv");
+		final File user = new File(testFileUsers, "testUser.csv");
 		tut = new InFileUserRepository(user.getAbsolutePath(), testFileId.getAbsolutePath() + testFileId.getName());
 
 		// when
 		tut.create(new User(new Username("Dominik"), tut.nextUserId()));
 
 		// then
-		String line = "Dominik,1";
+		final String line = "Dominik,1";
 		assertThat(Files.readAllLines(user.toPath())).contains(line);
 	}
 
 	@Test
 	void should_return_empty_when_no_user_created() {
 		// when
-		Optional<User> nonExistingId = tut.findBy(new UserId(5));
-		Optional<User> nonExistingName = tut.findBy("Kamil");
+		final Optional<User> nonExistingId = tut.findBy(new UserId(5));
+		final Optional<User> nonExistingName = tut.findBy("Kamil");
 
 		// then
 		assertThat(nonExistingId.isEmpty()).isTrue();
@@ -139,12 +139,12 @@ class InFileUserRepositoryIntTest {
 		tut.create(new User(new Username("Michal"), tut.nextUserId()));
 
 		// when
-		Optional<User> dominik = tut.findBy("Dominik");
-		Optional<User> patryk = tut.findBy("Patryk");
-		Optional<User> michal = tut.findBy("Michal");
-		List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
+		final Optional<User> dominik = tut.findBy("Dominik");
+		final Optional<User> patryk = tut.findBy("Patryk");
+		final Optional<User> michal = tut.findBy("Michal");
 
 		// then
+		final List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
 		assertThat(users)
 				.extracting(User::getUserId, User::getUserName)
 				.contains(
@@ -162,12 +162,12 @@ class InFileUserRepositoryIntTest {
 		tut.create(new User(new Username("Michal"), tut.nextUserId()));
 
 		// when
-		Optional<User> dominik = tut.findBy(new UserId(1));
-		Optional<User> patryk = tut.findBy(new UserId(2));
-		Optional<User> michal = tut.findBy(new UserId(3));
-		List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
+		final Optional<User> dominik = tut.findBy(new UserId(1));
+		final Optional<User> patryk = tut.findBy(new UserId(2));
+		final Optional<User> michal = tut.findBy(new UserId(3));
 
 		// then
+		final List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
 		assertThat(users)
 				.extracting(User::getUserId, User::getUserName)
 				.contains(
@@ -194,7 +194,7 @@ class InFileUserRepositoryIntTest {
 		tut.create(new User(new Username("Anna"), new UserId(1)));
 
 		// when
-		Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Michal"), new UserId(1))));
+		final Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Michal"), new UserId(1))));
 
 		// then
 		assertThat(thrown).isInstanceOf(UserAlreadyExistsException.class);
@@ -206,7 +206,7 @@ class InFileUserRepositoryIntTest {
 		tut.create(new User(new Username("Anna"), tut.nextUserId()));
 
 		// when
-		Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Anna"), tut.nextUserId())));
+		final Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Anna"), tut.nextUserId())));
 
 		// then
 		assertThat(thrown).isInstanceOf(UsernameIsTakenException.class);

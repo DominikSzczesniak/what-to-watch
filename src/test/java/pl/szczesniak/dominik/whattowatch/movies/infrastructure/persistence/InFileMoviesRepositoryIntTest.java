@@ -26,11 +26,8 @@ class InFileMoviesRepositoryIntTest {
 	private String existingMoviesIdDbFilepath;
 	private InFileMoviesRepository tut;
 
-	private UserId userWithIdOne;
-
 	@BeforeEach
 	void setUp() {
-		userWithIdOne = new UserId(1);
 		existingMoviesDbFilepath = "src/test/resources/movies.csv";
 		existingMoviesIdDbFilepath = "src/test/resources/moviesId.csv";
 		tut = new InFileMoviesRepository(testFileMovies.getAbsolutePath() + testFileMovies.getName(),
@@ -43,7 +40,7 @@ class InFileMoviesRepositoryIntTest {
 		tut = new InFileMoviesRepository(existingMoviesDbFilepath, existingMoviesIdDbFilepath);
 
 		// when
-		List<Movie> movies = tut.findAll(userWithIdOne);
+		final List<Movie> movies = tut.findAll(new UserId(1));
 
 		// then
 		assertThat(movies.size()).isEqualTo(3);
@@ -61,53 +58,62 @@ class InFileMoviesRepositoryIntTest {
 	@Test
 	void should_save_movie_correctly_in_file() throws IOException {
 		// given
-		File movie = new File(testFileMovies, "testMovie.csv");
+		final File movie = new File(testFileMovies, "testMovie.csv");
 		tut = new InFileMoviesRepository(movie.getAbsolutePath(), testFileId.getAbsolutePath() + testFileId.getName());
 
 		// when
-		tut.save(new Movie(new MovieId(5), new MovieTitle("Parasite"), userWithIdOne));
+		tut.save(new Movie(new MovieId(5), new MovieTitle("Parasite"), new UserId(1)));
 
 		// then
-		String line = "1,5,Parasite";
+		final String line = "1,5,Parasite";
 		assertThat(Files.readAllLines(movie.toPath())).contains(line);
 	}
 
 	@Test
 	void user_should_save_movie() {
-		//when
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), userWithIdOne));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), userWithIdOne));
+		// given
+		final UserId userId = new UserId(1);
+
+		// when
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), userId));
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), userId));
 
 		// then
-		assertThat(tut.findAll(new UserId(1))).hasSize(2);
+		assertThat(tut.findAll(userId)).hasSize(2);
 	}
 
 	@Test
 	void user_should_delete_movie() {
 		//given
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), userWithIdOne));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), userWithIdOne));
-		assertThat(tut.findAll(userWithIdOne)).hasSize(2);
+		final MovieId movieId = tut.nextMovieId();
+		final UserId userId = new UserId(1);
+
+		tut.save(new Movie(movieId, new MovieTitle("Parasite"), userId));
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), userId));
+		assertThat(tut.findAll(userId)).hasSize(2);
 
 		// when
-		tut.removeMovie(new MovieId(1), userWithIdOne);
+		tut.removeMovie(movieId, userId);
 
 		// then
-		assertThat(tut.findAll(new UserId(1))).hasSize(1);
+		assertThat(tut.findAll(userId)).hasSize(1);
 	}
 
 	@Test
 	void should_not_remove_movie_when_movieid_doesnt_belong_to_userid() {
 		//given
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), new UserId(1)));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), new UserId(2)));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), new UserId(1)));
+		final UserId userIdOne = new UserId(1);
+		final MovieId movieId = tut.nextMovieId();
+		final UserId UserIdTwo = new UserId(2);
+
+		tut.save(new Movie(movieId, new MovieTitle("Parasite"), userIdOne));
+		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), UserIdTwo));
 
 		// when
-		tut.removeMovie(new MovieId(1), new UserId(2));
+		tut.removeMovie(movieId, UserIdTwo);
 
 		// then
-		assertThat(tut.findAll(new UserId(1))).hasSize(2);
+		assertThat(tut.findAll(userIdOne)).hasSize(1);
 	}
 
 	@Test
