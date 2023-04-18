@@ -118,13 +118,16 @@ class InFileMoviesRepositoryIntTest {
 
 	@Test
 	void next_movieid_should_be_one_higher_than_previously_created_movieid() {
+		// given
+		tut.nextMovieId();
+		tut.nextMovieId();
+		final MovieId lastMovieId = tut.nextMovieId();
+
 		// when
-		tut.nextMovieId();
-		tut.nextMovieId();
-		final MovieId movieId = tut.nextMovieId();
+		final MovieId nextMovieId = tut.nextMovieId();
 
 		// then
-		assertThat(tut.nextMovieId().getValue()).isEqualTo(movieId.getValue() + 1);
+		assertThat(nextMovieId.getValue()).isEqualTo(lastMovieId.getValue() + 1);
 	}
 
 }
