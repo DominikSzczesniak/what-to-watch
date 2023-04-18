@@ -194,10 +194,11 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_throw_exception_when_creating_user_with_already_existing_userid() {
 		// given
-		tut.create(new User(new Username("Anna"), new UserId(1)));
+		final UserId userId = new UserId(1);
+		tut.create(new User(new Username("Anna"), userId));
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Michal"), new UserId(1))));
+		final Throwable thrown = catchThrowable(() -> tut.create(new User(new Username("Michal"), userId)));
 
 		// then
 		assertThat(thrown).isInstanceOf(UserAlreadyExistsException.class);
