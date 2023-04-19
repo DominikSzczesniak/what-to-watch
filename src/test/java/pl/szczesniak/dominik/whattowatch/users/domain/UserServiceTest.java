@@ -52,19 +52,20 @@ class UserServiceTest {
 
 	@Test
 	void every_next_user_has_id_higher_by_one() {
-		// when
+		// given
 		final UserId kamilId = tut.createUser(new Username("Kamil"));
+
+		// when
 		final UserId dominikId = tut.createUser(new Username("Dominik"));
 		final UserId grzegorzId = tut.createUser(new Username("Grzegorz"));
 		final UserId michalId = tut.createUser(new Username("Michal"));
 		final UserId patrykId = tut.createUser(new Username("Patryk"));
 
 		// then
-		assertThat(kamilId.getValue()).isEqualTo(1);
-		assertThat(dominikId.getValue()).isEqualTo(2);
-		assertThat(grzegorzId.getValue()).isEqualTo(3);
-		assertThat(michalId.getValue()).isEqualTo(4);
-		assertThat(patrykId.getValue()).isEqualTo(5);
+		assertThat(dominikId.getValue()).isEqualTo(kamilId.getValue() + 1);
+		assertThat(grzegorzId.getValue()).isEqualTo(kamilId.getValue() + 2);
+		assertThat(michalId.getValue()).isEqualTo(kamilId.getValue() + 3);
+		assertThat(patrykId.getValue()).isEqualTo(kamilId.getValue() + 4);
 	}
 
 	@Test
