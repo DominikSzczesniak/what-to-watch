@@ -9,8 +9,8 @@ public class UserService {
 
 	private final UserRepository repository;
 
-	public UserId createUser(final String username) {
-		User user = new User(new Username(username), repository.nextUserId());
+	public UserId createUser(final Username username) {
+		User user = new User(username, repository.nextUserId());
 		repository.create(user);
 		return user.getUserId();
 	}
