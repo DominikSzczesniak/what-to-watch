@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-@ToString
 public class InMemoryMoviesRepository implements MoviesRepository {
 
 	private final AtomicInteger nextId = new AtomicInteger(0);
