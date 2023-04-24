@@ -19,7 +19,6 @@ public class UserService {
 		return repository.exists(userId);
 	}
 
-
 	public UserId login(String username) {
 		return repository.findBy(username).get().getUserId();
 	}
