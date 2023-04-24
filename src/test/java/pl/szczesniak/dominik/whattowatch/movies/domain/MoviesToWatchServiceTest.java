@@ -29,9 +29,10 @@ class MoviesToWatchServiceTest {
 		// given
 		final UserId userId = new UserId(3);
 		userProvider.addUser(userId);
+		assertThat(tut.getList(userId)).hasSize(0);
 
 		// when
-		tut.addMovieToList("Parasite", userId);
+		tut.addMovieToList(new MovieTitle("Parasite"), userId);
 
 		// then
 		assertThat(tut.getList(userId)).hasSize(1);
@@ -43,7 +44,7 @@ class MoviesToWatchServiceTest {
 		final UserId userId = new UserId(4);
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.addMovieToList("Parasite", userId));
+		final Throwable thrown = catchThrowable(() -> tut.addMovieToList(new MovieTitle("Parasite"), userId));
 
 		// then
 		assertThat(thrown).isInstanceOf(UserDoesNotExistException.class);
@@ -56,10 +57,10 @@ class MoviesToWatchServiceTest {
 		userProvider.addUser(userId);
 
 		// when
-		tut.addMovieToList("Parasite", userId);
-		tut.addMovieToList("Star Wars", userId);
-		tut.addMovieToList("Viking", userId);
-		tut.addMovieToList("Viking", userId);
+		tut.addMovieToList(new MovieTitle("Parasite"), userId);
+		tut.addMovieToList(new MovieTitle("Star Wars"), userId);
+		tut.addMovieToList(new MovieTitle("Viking"), userId);
+		tut.addMovieToList(new MovieTitle("Viking"), userId);
 
 		// then
 		assertThat(tut.getList(userId)).hasSize(4)
@@ -73,15 +74,17 @@ class MoviesToWatchServiceTest {
 		final UserId userId = new UserId(3);
 		userProvider.addUser(userId);
 
-		tut.addMovieToList("Parasite", userId);
-		tut.addMovieToList("Star Wars", userId);
-		tut.addMovieToList("Viking", userId);
+		final MovieId movieToRemove = tut.addMovieToList(new MovieTitle("Parasite"), userId);
+		tut.addMovieToList(new MovieTitle("Star Wars"), userId);
+		tut.addMovieToList(new MovieTitle("Viking"), userId);
 
 		// when
-		tut.removeMovieFromList(new MovieId(1), userId);
+		tut.removeMovieFromList(movieToRemove, userId);
 
 		// then
-		assertThat(tut.getList(userId)).hasSize(2);
+		assertThat(tut.getList(userId)).hasSize(2)
+				.extracting(movie -> movie.getTitle().getValue())
+				.containsExactlyInAnyOrder("Star Wars", "Viking");
 	}
 
 	@Test
@@ -90,18 +93,19 @@ class MoviesToWatchServiceTest {
 		final UserId userId = new UserId(9);
 		userProvider.addUser(userId);
 
-		tut.addMovieToList("Parasite", userId);
-		tut.addMovieToList("Star Wars", userId);
-		final MovieId movieId = tut.addMovieToList("Viking", userId);
-		tut.addMovieToList("Viking", userId);
+		final MovieId parasiteId = tut.addMovieToList(new MovieTitle("Parasite"), userId);
+		final MovieId starWarsId = tut.addMovieToList(new MovieTitle("Star Wars"), userId);
+		final MovieId vikingId = tut.addMovieToList(new MovieTitle("Viking"), userId);
+
+		final MovieId movieIdToRemove = tut.addMovieToList(new MovieTitle("Viking"), userId);
 
 		// when
-		tut.removeMovieFromList(movieId, userId);
+		tut.removeMovieFromList(movieIdToRemove, userId);
 
 		// then
 		assertThat(tut.getList(userId)).hasSize(3)
-				.extracting(Movie::getTitle)
-				.containsExactlyInAnyOrder(new MovieTitle("Parasite"), new MovieTitle("Star Wars"), new MovieTitle("Viking"));
+				.extracting(Movie::getMovieId)
+				.containsExactlyInAnyOrder(parasiteId, starWarsId, vikingId);
 	}
 
 	@Test
@@ -114,18 +118,18 @@ class MoviesToWatchServiceTest {
 
 
 		// when
-		tut.addMovieToList("Parasite", userIdOne);
-		tut.addMovieToList("Parasite", userIdTwo);
-		tut.addMovieToList("Viking", userIdOne);
+		final MovieId firstUserMovieOne = tut.addMovieToList(new MovieTitle("Parasite"), userIdOne);
+		final MovieId secondUserMovie = tut.addMovieToList(new MovieTitle("Parasite"), userIdTwo);
+		final MovieId firstUserMovieTwo = tut.addMovieToList(new MovieTitle("Viking"), userIdOne);
 
 		// then
 		assertThat(tut.getList(userIdOne))
-				.extracting(movie -> movie.getTitle().getValue())
-				.containsExactlyInAnyOrder("Parasite", "Viking");
+				.extracting(Movie::getMovieId)
+				.containsExactlyInAnyOrder(firstUserMovieOne, firstUserMovieTwo);
 
 		assertThat(tut.getList(userIdTwo))
-				.extracting(movie -> movie.getTitle().getValue())
-				.containsExactlyInAnyOrder("Parasite");
+				.extracting(Movie::getMovieId)
+				.containsExactlyInAnyOrder(secondUserMovie);
 	}
 
 	@Test
@@ -136,12 +140,13 @@ class MoviesToWatchServiceTest {
 		userProvider.addUser(userIdOne);
 		userProvider.addUser(userIdTwo);
 
+		tut.addMovieToList(new MovieTitle("Parasite"), userIdOne);
+		tut.addMovieToList(new MovieTitle("Viking"), userIdOne);
+		final MovieId movieToDelete = tut.addMovieToList(new MovieTitle("Parasite"), userIdTwo);
 		// when
-		tut.addMovieToList("Parasite", userIdOne);
-		tut.addMovieToList("Parasite", userIdTwo);
-		tut.addMovieToList("Viking", userIdOne);
 
-		tut.removeMovieFromList(new MovieId(2), userIdOne);
+
+		tut.removeMovieFromList(movieToDelete, userIdOne);
 
 		// then
 		assertThat(tut.getList(userIdOne)).hasSize(2);
@@ -156,21 +161,21 @@ class MoviesToWatchServiceTest {
 		userProvider.addUser(userIdOne);
 		userProvider.addUser(userIdTwo);
 
+		final MovieId movieToDelete = tut.addMovieToList(new MovieTitle("Parasite"), userIdOne);
+		final MovieId secondUserMovie = tut.addMovieToList(new MovieTitle("Parasite"), userIdTwo);
+		final MovieId firstUserMovie = tut.addMovieToList(new MovieTitle("Viking"), userIdOne);
 		// when
-		tut.addMovieToList("Parasite", userIdOne);
-		tut.addMovieToList("Parasite", userIdTwo);
-		tut.addMovieToList("Viking", userIdOne);
 
-		tut.removeMovieFromList(new MovieId(1), userIdOne);
+		tut.removeMovieFromList(movieToDelete, userIdOne);
 
 		// then
 		assertThat(tut.getList(userIdOne))
-				.extracting(movie -> movie.getTitle().getValue())
-				.containsExactlyInAnyOrder("Viking");
+				.extracting(Movie::getMovieId)
+				.containsExactlyInAnyOrder(firstUserMovie);
 
 		assertThat(tut.getList(userIdTwo))
-				.extracting(movie -> movie.getTitle().getValue())
-				.containsExactlyInAnyOrder("Parasite");
+				.extracting(Movie::getMovieId)
+				.containsExactlyInAnyOrder(secondUserMovie);
 	}
 
 	@Test

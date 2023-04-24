@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence;
 
-import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -36,10 +35,10 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 
 	@Override
 	public void removeMovie(final MovieId movieId, final UserId userId) {
-		if (!movieBelongsToUser(movieId, userId)) {
-			System.out.println("Didn't remove movie.");
-		} else {
+		if (movieBelongsToUser(movieId, userId)) {
 			movies.remove(movieId);
+		} else {
+			System.out.println("Didn't remove movie.");
 		}
 	}
 

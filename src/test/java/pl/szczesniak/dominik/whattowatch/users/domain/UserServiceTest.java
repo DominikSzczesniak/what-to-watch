@@ -21,8 +21,11 @@ class UserServiceTest {
 
 	@Test
 	void user_should_not_exist_when_previously_not_created() {
+		// given
+		final UserId nonExistingUserId = new UserId(1);
+
 		// when
-		final boolean checkExist = tut.exists(new UserId(1));
+		final boolean checkExist = tut.exists(nonExistingUserId);
 
 		// then
 		assertThat(checkExist).isFalse();
@@ -31,10 +34,10 @@ class UserServiceTest {
 	@Test
 	void user_should_exist_when_previously_created() {
 		// given
-		final UserId dominik = tut.createUser(new Username("Dominik"));
+		final UserId createdUserId = tut.createUser(new Username("Dominik"));
 
 		// when
-		final boolean checkExist = tut.exists(dominik);
+		final boolean checkExist = tut.exists(createdUserId);
 
 		// then
 		assertThat(checkExist).isTrue();
@@ -69,12 +72,13 @@ class UserServiceTest {
 	}
 
 	@Test
-	void shouldnt_be_able_to_create_user_with_same_username() {
+	void should_not_be_able_to_create_user_with_same_username() {
 		// given
-		tut.createUser(new Username("Dominik"));
+		final Username username = new Username("Dominik");
+		tut.createUser(username);
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.createUser(new Username("Dominik")));
+		final Throwable thrown = catchThrowable(() -> tut.createUser(username));
 
 		// then
 		assertThat(thrown).isInstanceOf(UsernameIsTakenException.class);

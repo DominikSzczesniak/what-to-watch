@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.Movie.recreate;
 
 class InFileMoviesRepositoryIntTest {
 
@@ -58,15 +59,15 @@ class InFileMoviesRepositoryIntTest {
 	@Test
 	void should_save_movie_correctly_in_file() throws IOException {
 		// given
-		final File movie = new File(testFileMovies, "testMovie.csv");
-		tut = new InFileMoviesRepository(movie.getAbsolutePath(), testFileId.getAbsolutePath() + testFileId.getName());
+		final File testMoviesFile = new File(testFileMovies, "testMovie.csv");
+		tut = new InFileMoviesRepository(testMoviesFile.getAbsolutePath(), testFileId.getAbsolutePath() + testFileId.getName());
 
 		// when
-		tut.save(new Movie(new MovieId(5), new MovieTitle("Parasite"), new UserId(1)));
+		tut.save(recreate(new MovieId(5), new MovieTitle("Parasite"), new UserId(1)));
 
 		// then
 		final String line = "1,5,Parasite";
-		assertThat(Files.readAllLines(movie.toPath())).contains(line);
+		assertThat(Files.readAllLines(testMoviesFile.toPath())).contains(line);
 	}
 
 	@Test
@@ -75,8 +76,8 @@ class InFileMoviesRepositoryIntTest {
 		final UserId userId = new UserId(1);
 
 		// when
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), userId));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), userId));
+		tut.save(recreate(tut.nextMovieId(), new MovieTitle("Parasite"), userId));
+		tut.save(recreate(tut.nextMovieId(), new MovieTitle("Hulk"), userId));
 
 		// then
 		assertThat(tut.findAll(userId)).hasSize(2);
@@ -88,8 +89,8 @@ class InFileMoviesRepositoryIntTest {
 		final MovieId movieId = tut.nextMovieId();
 		final UserId userId = new UserId(1);
 
-		tut.save(new Movie(movieId, new MovieTitle("Parasite"), userId));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Hulk"), userId));
+		tut.save(recreate(movieId, new MovieTitle("Parasite"), userId));
+		tut.save(recreate(tut.nextMovieId(), new MovieTitle("Hulk"), userId));
 		assertThat(tut.findAll(userId)).hasSize(2);
 
 		// when
@@ -106,8 +107,8 @@ class InFileMoviesRepositoryIntTest {
 		final UserId UserIdTwo = new UserId(2);
 		final MovieId movieId = tut.nextMovieId();
 
-		tut.save(new Movie(movieId, new MovieTitle("Parasite"), userIdOne));
-		tut.save(new Movie(tut.nextMovieId(), new MovieTitle("Parasite"), UserIdTwo));
+		tut.save(recreate(movieId, new MovieTitle("Parasite"), userIdOne));
+		tut.save(recreate(tut.nextMovieId(), new MovieTitle("Parasite"), UserIdTwo));
 
 		// when
 		tut.removeMovie(movieId, UserIdTwo);

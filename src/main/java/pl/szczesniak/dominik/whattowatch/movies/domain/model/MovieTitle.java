@@ -10,15 +10,13 @@ public class MovieTitle {
 	String value;
 
 	public MovieTitle(final String value) {
-		checkArgument(
-				value != null
-				&& value.length() > 0
-				&& movieTitleIsValid(value),
-				"Incorrect movie title. Title must be at least 1 character long and may only contain spaces, letters, numbers and characters such as: -,':");
+		checkArgument(value != null, "Must contain title");
+		checkArgument(value.trim().length() > 0, "Title must have at least 1 character");
+		checkArgument(movieTitleIsValid(value), "Title may only contain spaces, letters, numbers and characters such as: -,':");
 		this.value = value;
 	}
 
-	static boolean movieTitleIsValid(final String value) {
+	private boolean movieTitleIsValid(final String value) {
 		return value.matches("(?i)[a-z0-9][a-zA-Z0-9 \\-\\.\\'\\:]*$");
 	}
 

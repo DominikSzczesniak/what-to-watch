@@ -12,8 +12,8 @@ public class UserId {
 	int value;
 
 	public UserId(final int value) {
-		checkArgument(value > 0, "UserId value must be higher than 0");
 		this.value = value;
+		checkArgument(value > 0, "UserId value must be higher than 0");
 	}
 
 }

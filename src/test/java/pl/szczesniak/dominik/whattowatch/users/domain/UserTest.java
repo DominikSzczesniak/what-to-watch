@@ -10,6 +10,15 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 class UserTest {
 
 	@Test
+	void should_create_user() {
+		// when
+		final Throwable thrown = catchThrowable(() -> new User(new Username("Patryk"), new UserId(5)));
+
+		// then
+		assertThat(thrown).doesNotThrowAnyException();
+	}
+
+	@Test
 	void should_throw_exception_when_null_username() {
 		// when
 		final Throwable thrown = catchThrowable(() -> new User(null, new UserId(1)));
