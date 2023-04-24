@@ -94,7 +94,7 @@ class MoviesToWatchServiceTest {
 		// when
 		tut.addMovieToList("Parasite", userId);
 		tut.addMovieToList("Star Wars", userId);
-		MovieId movieId = tut.addMovieToList("Viking", userId); // czy tak jest ok?
+		MovieId movieId = tut.addMovieToList("Viking", userId);
 		tut.addMovieToList("Viking", userId);
 
 		tut.removeMovieFromList(movieId, userId);
@@ -114,13 +114,13 @@ class MoviesToWatchServiceTest {
 
 
 		// when
-		tut.addMovieToList("Parasite", userIdOne);
-		tut.addMovieToList("Parasite", userIdTwo);
-		tut.addMovieToList("Viking", userIdOne);
+		MovieId userOneParasite = tut.addMovieToList("Parasite", userIdOne);
+		MovieId userTwoParasite = tut.addMovieToList("Parasite", userIdTwo);
+		MovieId userOneViking = tut.addMovieToList("Viking", userIdOne);
 
 		// then
-		assertThat(tut.getMoviesToWatch(userIdOne)).extracting(Movie::getTitle).extracting(MovieTitle::getValue).containsExactlyInAnyOrder("Parasite", "Viking");
-		assertThat(tut.getMoviesToWatch(userIdTwo)).extracting(Movie::getTitle).extracting(MovieTitle::getValue).containsExactlyInAnyOrder("Parasite");
+		assertThat(tut.getMoviesToWatch(userIdOne)).extracting(Movie::getMovieId).containsExactlyInAnyOrder(userOneParasite, userOneViking);
+		assertThat(tut.getMoviesToWatch(userIdTwo)).extracting(Movie::getMovieId).containsExactlyInAnyOrder(userTwoParasite);
 	}
 
 	@Test
@@ -189,15 +189,16 @@ class MoviesToWatchServiceTest {
 		tut.moveMovieToWatchedList(starWars, userId);
 
 		// then
-		assertThat(tut.getWatchedMovies(userId)).hasSize(1)
-				.extracting(WatchedMovie::getMovieId, WatchedMovie::getTitle)
-				.containsOnly(tuple(new MovieId(2), new MovieTitle("Star Wars")));
 		assertThat(tut.getMoviesToWatch(userId)).hasSize(2)
 				.extracting(Movie::getMovieId, Movie::getTitle)
 				.containsOnly(
-						tuple(new MovieId(1), new MovieTitle("Parasite")),
-						tuple(new MovieId(3), new MovieTitle("Viking"))
+						tuple(parasite, new MovieTitle("Parasite")),
+						tuple(viking, new MovieTitle("Viking"))
 				);
+
+		assertThat(tut.getWatchedMovies(userId)).hasSize(1)
+				.extracting(WatchedMovie::getMovieId, WatchedMovie::getTitle)
+				.containsOnly(tuple(starWars, new MovieTitle("Star Wars")));
 	}
 
 	@Test
@@ -219,9 +220,7 @@ class MoviesToWatchServiceTest {
 		final UserId userId = new UserId(1);
 		userProvider.addUser(userId);
 
-		final MovieId parasite = tut.addMovieToList("Parasite", userId);
 		final MovieId starWars = tut.addMovieToList("Star Wars", userId);
-		final MovieId viking = tut.addMovieToList("Viking", userId);
 
 		// when
 		tut.removeMovieFromList(starWars, userId);
