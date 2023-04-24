@@ -34,7 +34,7 @@ class UserServiceTest {
 	@Test
 	void user_should_exist_when_previously_created() {
 		// given
-		final UserId createdUserId = tut.createUser(new Username("Dominik"));
+		final UserId createdUserId = tut.createUser(anyUsername());
 
 		// when
 		final boolean checkExist = tut.exists(createdUserId);
@@ -74,7 +74,7 @@ class UserServiceTest {
 	@Test
 	void should_not_be_able_to_create_user_with_same_username() {
 		// given
-		final Username username = new Username("Dominik");
+		final Username username = anyUsername();
 		tut.createUser(username);
 
 		// when
@@ -95,6 +95,10 @@ class UserServiceTest {
 		assertThat(tut.login("Dominik")).isEqualTo(dominik);
 		assertThat(tut.login("Patryk")).isEqualTo(patryk);
 		assertThat(tut.login("Michal")).isEqualTo(michal);
+	}
+
+	private static Username anyUsername() {
+		return new Username("Dominik");
 	}
 
 }
