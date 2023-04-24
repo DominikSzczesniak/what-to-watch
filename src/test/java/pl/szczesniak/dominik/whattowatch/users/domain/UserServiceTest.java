@@ -89,10 +89,11 @@ class UserServiceTest {
 	@Test
 	void should_login_user_when_credentials_are_correct() {
 		// given
-		final UserId createdUserId = tut.createUser(anyUsername(), new UserPassword("password"));
+		final Username createdUsername = new Username("Dominik");
+		final UserId createdUserId = tut.createUser(createdUsername, new UserPassword("password"));
 
 		// when
-		final UserId loggedUserId = tut.login(anyUsername(), new UserPassword("password"));
+		final UserId loggedUserId = tut.login(createdUsername, new UserPassword("password"));
 
 		// then
 		assertThat(loggedUserId).isEqualTo(createdUserId);
@@ -104,7 +105,7 @@ class UserServiceTest {
 		tut.createUser(new Username("Dominik"), new UserPassword("password"));
 
 		// when
-		final Throwable differentUsername = catchThrowable(() -> tut.login(new Username("Kamil"), new UserPassword("password")));
+		final Throwable differentUsername = catchThrowable(() -> tut.login(new Username("Kamil"), anyUserPassword()));
 		final Throwable differentPassword = catchThrowable(() -> tut.login(anyUsername(), new UserPassword("wrong")));
 
 		// then
@@ -113,7 +114,7 @@ class UserServiceTest {
 	}
 
 	private static Username anyUsername() {
-		return new Username("Dominik");
+		return new Username("Marian");
 	}
 
 	private static UserPassword anyUserPassword() {
