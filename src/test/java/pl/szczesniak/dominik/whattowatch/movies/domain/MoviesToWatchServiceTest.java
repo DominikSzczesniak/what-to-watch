@@ -118,7 +118,6 @@ class MoviesToWatchServiceTest {
 		userProvider.addUser(userIdOne);
 		userProvider.addUser(userIdTwo);
 
-
 		// when
 		final MovieId firstUserMovieOne = tut.addMovieToList(new MovieTitle("Parasite"), userIdOne);
 		final MovieId secondUserMovie = tut.addMovieToList(new MovieTitle("Parasite"), userIdTwo);
@@ -165,8 +164,8 @@ class MoviesToWatchServiceTest {
 		final MovieId movieToDelete = tut.addMovieToList(new MovieTitle("Parasite"), userIdOne);
 		final MovieId secondUserMovie = tut.addMovieToList(new MovieTitle("Parasite"), userIdTwo);
 		final MovieId firstUserMovie = tut.addMovieToList(new MovieTitle("Viking"), userIdOne);
-		// when
 
+		// when
 		tut.removeMovieFromList(movieToDelete, userIdOne);
 
 		// then
