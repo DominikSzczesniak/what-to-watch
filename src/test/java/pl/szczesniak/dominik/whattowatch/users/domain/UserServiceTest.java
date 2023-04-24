@@ -49,7 +49,7 @@ class UserServiceTest {
 	}
 
 	@Test
-	void shouldnt_be_able_to_create_user_with_same_username() {
+	void should_not_be_able_to_create_user_with_same_username() {
 		// given
 		tut.createUser(new Username("Dominik"), new UserPassword("asd"));
 
