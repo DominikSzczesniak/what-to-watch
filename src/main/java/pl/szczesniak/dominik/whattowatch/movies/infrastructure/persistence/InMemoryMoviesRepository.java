@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import java.util.Optional;
 public class InMemoryMoviesRepository implements MoviesRepository {
 
 	private final AtomicInteger nextId = new AtomicInteger(0);
@@ -54,10 +53,5 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 				.filter(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId))
 				.findFirst();
 	}
-
-	private boolean movieIdDoesntMatchUserId(final MovieId movieId, final UserId userId) {
-		return movies.values().stream().noneMatch(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId));
-	}
-
 
 }

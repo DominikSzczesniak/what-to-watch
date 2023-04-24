@@ -34,6 +34,10 @@ public class MoviesToWatchService {
 		return repository.findAll(userId);
 	}
 
+	public List<WatchedMovie> getWatchedMovies(final UserId userId) {
+		return watchedRepository.findAllBy(userId);
+	}
+
 	public void moveMovieToWatchedList(final MovieId movieId, final UserId userId) {
 		userCheck(userId);
 		final WatchedMovie watchedMovie = new WatchedMovie(
@@ -49,10 +53,6 @@ public class MoviesToWatchService {
 		if (!userProvider.exists(userId)) {
 			throw new UserDoesNotExistException("User with userId: " + userId + " doesn't exist. Action aborted");
 		}
-	}
-
-	public List<WatchedMovie> getWatchedMovies(final UserId userId) {
-		return watchedRepository.findAllBy(userId);
 	}
 
 }
