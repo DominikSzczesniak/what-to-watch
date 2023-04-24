@@ -197,6 +197,7 @@ class MoviesToWatchServiceTest {
 		// given
 		final UserId userId = new UserId(1);
 		userProvider.addUser(userId);
+
 		final MovieId parasite = tut.addMovieToList(new MovieTitle("Parasite"), userId);
 		final MovieId starWars = tut.addMovieToList(new MovieTitle("Star Wars"), userId);
 		final MovieId viking = tut.addMovieToList(new MovieTitle("Viking"), userId);
@@ -215,6 +216,32 @@ class MoviesToWatchServiceTest {
 		assertThat(tut.getWatchedMovies(userId)).hasSize(1)
 				.extracting(WatchedMovie::getMovieId, WatchedMovie::getTitle)
 				.containsOnly(tuple(starWars, new MovieTitle("Star Wars")));
+	}
+
+	@Test
+	void should_throw_exception_when_trying_to_move_the_movie_when_user_does_not_exist() {
+		// when
+		Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(new MovieId(1), new UserId(123)));
+
+		// then
+		assertThat(thrown).isInstanceOf(UserDoesNotExistException.class);
+	}
+
+	@Test
+	void should_throw_exception_when_trying_to_move_the_movie_when_userid_does_not_match_movie_id() {
+		// given
+		final UserId userId = new UserId(1);
+		final UserId notQualifiedUser = new UserId(123);
+		userProvider.addUser(userId);
+		userProvider.addUser(notQualifiedUser);
+
+		final MovieId movieToMove = tut.addMovieToList(new MovieTitle("Parasite"), userId);
+
+		// when
+		Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(movieToMove, notQualifiedUser));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
 	}
 
 	@Test
@@ -237,9 +264,9 @@ class MoviesToWatchServiceTest {
 		userProvider.addUser(userId);
 
 		final MovieId starWars = tut.addMovieToList(new MovieTitle("Star Wars"), userId);
+		tut.removeMovieFromList(starWars, userId);
 
 		// when
-		tut.removeMovieFromList(starWars, userId);
 		Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(starWars, userId));
 
 		// then
