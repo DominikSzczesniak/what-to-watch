@@ -116,7 +116,6 @@ class MoviesToWatchServiceTest {
 		userProvider.addUser(userIdOne);
 		userProvider.addUser(userIdTwo);
 
-
 		// when
 		final MovieId firstUserMovieOne = tut.addMovieToList(new MovieTitle("Parasite"), userIdOne);
 		final MovieId secondUserMovie = tut.addMovieToList(new MovieTitle("Parasite"), userIdTwo);
