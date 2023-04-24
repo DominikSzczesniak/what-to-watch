@@ -17,4 +17,5 @@ class InMemoryUserProvider implements UserProvider {
 	public boolean exists(final UserId userId) {
 		return existingUsers.contains(userId);
 	}
+
 }
