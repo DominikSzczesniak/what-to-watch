@@ -100,16 +100,26 @@ class UserServiceTest {
 	}
 
 	@Test
-	void should_throw_exception_when_given_wrong_username_or_password() {
+	void should_throw_exception_when_given_wrong_username() {
 		// given
-		tut.createUser(new Username("Dominik"), new UserPassword("password"));
+		tut.createUser(new Username("Dominik"), anyUserPassword());
 
 		// when
 		final Throwable differentUsername = catchThrowable(() -> tut.login(new Username("Kamil"), anyUserPassword()));
-		final Throwable differentPassword = catchThrowable(() -> tut.login(anyUsername(), new UserPassword("wrong")));
 
 		// then
 		assertThat(differentUsername).isInstanceOf(WrongUsernameOrPasswordException.class);
+	}
+
+	@Test
+	void should_throw_exception_when_given_wrong_password() {
+		// given
+		tut.createUser(anyUsername(), new UserPassword("password"));
+
+		// when
+		final Throwable differentPassword = catchThrowable(() -> tut.login(anyUsername(), new UserPassword("wrong")));
+
+		// then
 		assertThat(differentPassword).isInstanceOf(WrongUsernameOrPasswordException.class);
 	}
 
