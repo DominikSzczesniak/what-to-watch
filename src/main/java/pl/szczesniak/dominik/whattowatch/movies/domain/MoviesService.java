@@ -11,7 +11,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public class MoviesToWatchService {
+public class MoviesService {
 
 	private final MoviesRepository repository;
 	private final UserProvider userProvider;
@@ -39,17 +39,17 @@ public class MoviesToWatchService {
 	}
 
 	public void moveMovieToWatchedList(final MovieId movieId, final UserId userId) {
-		userCheck(userId);
-		final WatchedMovie watchedMovie = new WatchedMovie(
-				movieId,
-				repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId)).getTitle(),
-				userId
-		);
+		checkUserExists(userId);
+		final WatchedMovie watchedMovie = new WatchedMovie(movieId, getTitleById(movieId, userId), userId);
 		watchedRepository.add(watchedMovie);
 		repository.removeMovie(movieId, userId);
 	}
 
-	private void userCheck(final UserId userId) {
+	private MovieTitle getTitleById(final MovieId movieId, final UserId userId) {
+		return repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId)).getTitle();
+	}
+
+	private void checkUserExists(final UserId userId) {
 		if (!userProvider.exists(userId)) {
 			throw new UserDoesNotExistException("User with userId: " + userId + " doesn't exist. Action aborted");
 		}
