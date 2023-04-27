@@ -8,6 +8,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,13 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 
 	private boolean movieBelongsToUser(final MovieId movieId, final UserId userId) {
 		return movies.values().stream().anyMatch(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId));
+	}
+
+	@Override
+	public Optional<Movie> findBy(final MovieId movieId, final UserId userId) {
+		return movies.values().stream()
+				.filter(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId))
+				.findFirst();
 	}
 
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -14,7 +15,6 @@ import java.nio.file.Files;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static pl.szczesniak.dominik.whattowatch.movies.domain.Movie.recreate;
 
 class InFileMoviesRepositoryIntTest {
 
@@ -63,7 +63,7 @@ class InFileMoviesRepositoryIntTest {
 		tut = new InFileMoviesRepository(testMoviesFile.getAbsolutePath(), testFileId.getAbsolutePath() + testFileId.getName());
 
 		// when
-		tut.save(recreate(new MovieId(5), new MovieTitle("Parasite"), new UserId(1)));
+		tut.save(MovieSample.builder().movieId(new MovieId(5)).movieTitle(new MovieTitle("Parasite")).userId(new UserId(1)).build());
 
 		// then
 		final String line = "1,5,Parasite";
@@ -76,8 +76,8 @@ class InFileMoviesRepositoryIntTest {
 		final UserId userId = new UserId(1);
 
 		// when
-		tut.save(recreate(tut.nextMovieId(), new MovieTitle("Parasite"), userId));
-		tut.save(recreate(tut.nextMovieId(), new MovieTitle("Hulk"), userId));
+		tut.save(MovieSample.builder().userId(userId).build());
+		tut.save(MovieSample.builder().userId(userId).build());
 
 		// then
 		assertThat(tut.findAll(userId)).hasSize(2);
@@ -89,8 +89,8 @@ class InFileMoviesRepositoryIntTest {
 		final MovieId movieId = tut.nextMovieId();
 		final UserId userId = new UserId(1);
 
-		tut.save(recreate(movieId, new MovieTitle("Parasite"), userId));
-		tut.save(recreate(tut.nextMovieId(), new MovieTitle("Hulk"), userId));
+		tut.save(MovieSample.builder().movieId(movieId).userId(userId).build());
+		tut.save(MovieSample.builder().userId(userId).build());
 		assertThat(tut.findAll(userId)).hasSize(2);
 
 		// when
@@ -101,17 +101,17 @@ class InFileMoviesRepositoryIntTest {
 	}
 
 	@Test
-	void should_not_remove_movie_when_movieid_doesnt_belong_to_userid() {
+	void should_not_remove_movie_when_movieid_does_not_belong_to_userid() {
 		//given
 		final UserId userIdOne = new UserId(1);
-		final UserId UserIdTwo = new UserId(2);
+		final UserId userIdTwo = new UserId(2);
 		final MovieId movieId = tut.nextMovieId();
 
-		tut.save(recreate(movieId, new MovieTitle("Parasite"), userIdOne));
-		tut.save(recreate(tut.nextMovieId(), new MovieTitle("Parasite"), UserIdTwo));
+		tut.save(MovieSample.builder().userId(userIdOne).movieId(movieId).build());
+		tut.save(MovieSample.builder().userId(userIdTwo).build());
 
 		// when
-		tut.removeMovie(movieId, UserIdTwo);
+		tut.removeMovie(movieId, userIdTwo);
 
 		// then
 		assertThat(tut.findAll(userIdOne)).hasSize(1);
@@ -129,6 +129,41 @@ class InFileMoviesRepositoryIntTest {
 
 		// then
 		assertThat(nextMovieId.getValue()).isEqualTo(lastMovieId.getValue() + 1);
+	}
+
+	@Test
+	void should_find_saved_movie_when_movie_belongs_to_user_otherwise_should_return_empty() {
+		// given
+		final UserId userIdOne = new UserId(1);
+		final UserId userIdTwo = new UserId(2);
+		final MovieId movieId = tut.nextMovieId();
+		final Movie movie = MovieSample.builder().movieId(movieId).userId(userIdOne).build();
+
+		// when
+		tut.save(movie);
+
+		// then
+		assertThat(tut.findBy(movieId, userIdTwo)).isEmpty();
+		assertThat(tut.findBy(tut.nextMovieId(), userIdOne)).isEmpty();
+		assertThat(tut.findBy(tut.nextMovieId(), userIdTwo)).isEmpty();
+		assertThat(tut.findBy(movieId, userIdOne)).isPresent();
+	}
+
+	@Test
+	void should_return_matching_movie() {
+		// given
+		final UserId userIdOne = new UserId(1);
+		tut.save(MovieSample.builder().userId(userIdOne).build());
+		final MovieId movieId = tut.nextMovieId();
+		final Movie createdMovie = MovieSample.builder().movieId(movieId).movieTitle(new MovieTitle("Star Wars")).userId(userIdOne).build();
+		tut.save(createdMovie);
+		tut.save(MovieSample.builder().userId(userIdOne).build());
+
+		// when
+		final Movie foundMovie = tut.findBy(movieId, userIdOne).get();
+
+		// then
+		assertThat(foundMovie).isEqualTo(createdMovie);
 	}
 
 }
