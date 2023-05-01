@@ -2,6 +2,8 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoveMovieToWatchList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
@@ -17,11 +19,11 @@ public class MoviesService {
 	private final UserProvider userProvider;
 	private final WatchedMoviesRepository watchedRepository;
 
-	public MovieId addMovieToList(final MovieTitle movieTitle, final UserId userId) {
-		if (!userProvider.exists(userId)) {
+	public MovieId addMovieToList(AddMovieToList command) {
+		if (!userProvider.exists(command.getUserId())) {
 			throw new UserDoesNotExistException("User doesn't exist. Didn't add movie to any list");
 		}
-		final Movie movie = new Movie(repository.nextMovieId(), movieTitle, userId);
+		final Movie movie = new Movie(repository.nextMovieId(), command.getMovieTitle(), command.getUserId());
 		repository.save(movie);
 		return movie.getMovieId();
 	}
@@ -38,11 +40,11 @@ public class MoviesService {
 		return watchedRepository.findAllBy(userId);
 	}
 
-	public void moveMovieToWatchedList(final MovieId movieId, final UserId userId) {
-		checkUserExists(userId);
-		final WatchedMovie watchedMovie = new WatchedMovie(movieId, getTitleById(movieId, userId), userId);
+	public void moveMovieToWatchedList(final MoveMovieToWatchList command) {
+		checkUserExists(command.getUserId());
+		final WatchedMovie watchedMovie = new WatchedMovie(command.getMovieId(), getTitleById(command.getMovieId(), command.getUserId()), command.getUserId());
 		watchedRepository.add(watchedMovie);
-		repository.removeMovie(movieId, userId);
+		repository.removeMovie(command.getMovieId(), command.getUserId());
 	}
 
 	private MovieTitle getTitleById(final MovieId movieId, final UserId userId) {

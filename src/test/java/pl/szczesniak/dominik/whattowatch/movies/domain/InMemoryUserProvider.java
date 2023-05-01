@@ -9,8 +9,9 @@ class InMemoryUserProvider implements UserProvider {
 
 	private final Set<UserId> existingUsers = new HashSet<>();
 
-	public void addUser(final UserId userId) {
+	public UserId addUser(final UserId userId) {
 		existingUsers.add(userId);
+		return userId;
 	}
 
 	@Override

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.WrongUsernameOrPasswordException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -89,11 +89,12 @@ class UserServiceTest {
 	@Test
 	void should_login_user_when_credentials_are_correct() {
 		// given
-		final Username createdUsername = new Username("Dominik");
-		final UserId createdUserId = tut.createUser(createdUsername, new UserPassword("password"));
+		final Username createdUsername = anyUsername();
+		final UserPassword createdPassword = anyUserPassword();
+		final UserId createdUserId = tut.createUser(createdUsername, createdPassword);
 
 		// when
-		final UserId loggedUserId = tut.login(createdUsername, new UserPassword("password"));
+		final UserId loggedUserId = tut.login(createdUsername, createdPassword);
 
 		// then
 		assertThat(loggedUserId).isEqualTo(createdUserId);
@@ -108,7 +109,7 @@ class UserServiceTest {
 		final Throwable differentUsername = catchThrowable(() -> tut.login(new Username("Kamil"), anyUserPassword()));
 
 		// then
-		assertThat(differentUsername).isInstanceOf(WrongUsernameOrPasswordException.class);
+		assertThat(differentUsername).isInstanceOf(InvalidCredentialsException.class);
 	}
 
 	@Test
@@ -120,7 +121,7 @@ class UserServiceTest {
 		final Throwable differentPassword = catchThrowable(() -> tut.login(anyUsername(), new UserPassword("wrong")));
 
 		// then
-		assertThat(differentPassword).isInstanceOf(WrongUsernameOrPasswordException.class);
+		assertThat(differentPassword).isInstanceOf(InvalidCredentialsException.class);
 	}
 
 	private static Username anyUsername() {

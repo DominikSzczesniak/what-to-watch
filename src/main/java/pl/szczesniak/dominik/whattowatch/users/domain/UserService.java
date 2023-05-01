@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.WrongUsernameOrPasswordException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class UserService {
@@ -22,12 +24,10 @@ public class UserService {
 	}
 
 	public UserId login(final Username username, final UserPassword userPassword) {
-		final User user = repository.findBy(username.getValue()).orElseThrow(() -> new WrongUsernameOrPasswordException("User with username: " + username.getValue() + " not found"));
-		if (user.getUserPassword().equals(userPassword)) {
-			return user.getUserId();
-		} else {
-			throw new WrongUsernameOrPasswordException("Invalid username or password.");
-		}
+		return Optional.ofNullable(repository
+				.findBy(username.getValue())
+				.filter(user -> user.getUserPassword().equals(userPassword))
+				.orElseThrow(() -> new InvalidCredentialsException("User with username: " + username.getValue() + " not found"))).get().getUserId();
 	}
 
 }

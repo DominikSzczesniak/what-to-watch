@@ -2,6 +2,9 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToListSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoveMovieToWatchListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
@@ -14,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesToWatchServiceConfiguration.moviesToWatchService;
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 class MoviesServiceTest {
 
@@ -29,12 +33,11 @@ class MoviesServiceTest {
 	@Test
 	void user_should_add_movie_to_his_list() {
 		// given
-		final UserId userId = new UserId(3);
-		userProvider.addUser(userId);
+		final UserId userId = userProvider.addUser(createAnyUserId());
 		assertThat(tut.getMoviesToWatch(userId)).hasSize(0);
 
 		// when
-		tut.addMovieToList(new MovieTitle("Parasite"), userId);
+		tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
 
 		// then
 		assertThat(tut.getMoviesToWatch(userId)).hasSize(1);
@@ -43,85 +46,76 @@ class MoviesServiceTest {
 	@Test
 	void should_not_add_movie_when_user_doesnt_exist() {
 		// given
-		final UserId userId = new UserId(4);
+		final UserId userId = createAnyUserId();
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.addMovieToList(new MovieTitle("Parasite"), userId));
+		final Throwable thrown = catchThrowable(() -> tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(UserDoesNotExistException.class);
 	}
 
 	@Test
-	void user_should_be_able_to_add_movies_with_same_title() {
-		// given
-		final UserId userId = new UserId(51);
-		userProvider.addUser(userId);
-
-		// when
-		tut.addMovieToList(new MovieTitle("Parasite"), userId);
-		tut.addMovieToList(new MovieTitle("Star Wars"), userId);
-		tut.addMovieToList(new MovieTitle("Viking"), userId);
-		tut.addMovieToList(new MovieTitle("Viking"), userId);
-
-		// then
-		assertThat(tut.getMoviesToWatch(userId)).hasSize(4)
-				.extracting(movie -> movie.getTitle().getValue())
-				.containsExactlyInAnyOrder("Parasite", "Star Wars", "Viking", "Viking");
-	}
-
-	@Test
 	void user_should_delete_movie_from_his_list() {
 		// given
-		final UserId userId = new UserId(3);
-		userProvider.addUser(userId);
-
-		final MovieId movieToRemove = tut.addMovieToList(new MovieTitle("Parasite"), userId);
-		tut.addMovieToList(new MovieTitle("Star Wars"), userId);
-		tut.addMovieToList(new MovieTitle("Viking"), userId);
+		final UserId userId = userProvider.addUser(createAnyUserId());
+		final MovieId addedMovieId = tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
+		final MovieId movieToRemove = tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
 
 		// when
 		tut.removeMovieFromList(movieToRemove, userId);
 
 		// then
+		assertThat(tut.getMoviesToWatch(userId)).hasSize(1)
+				.extracting(Movie::getMovieId)
+				.containsExactly(addedMovieId);
+	}
+
+	@Test
+	void user_should_be_able_to_add_movies_with_same_title() {
+		// given
+		final UserId userId = userProvider.addUser(createAnyUserId());
+		final AddMovieToList createdMovie = AddMovieToListSample.builder().userId(userId).build();
+		final AddMovieToList movieWithSameTitle = AddMovieToListSample.builder().movieTitle(createdMovie.getMovieTitle()).userId(userId).build();
+
+		// when
+		tut.addMovieToList(movieWithSameTitle);
+		tut.addMovieToList(movieWithSameTitle);
+
+		// then
 		assertThat(tut.getMoviesToWatch(userId)).hasSize(2)
-				.extracting(movie -> movie.getTitle().getValue())
-				.containsExactlyInAnyOrder("Star Wars", "Viking");
+				.extracting(Movie::getTitle)
+				.containsExactlyInAnyOrder(createdMovie.getMovieTitle(), movieWithSameTitle.getMovieTitle());
 	}
 
 	@Test
 	void only_one_duplicated_title_should_be_deleted() {
 		// given
-		final UserId userId = new UserId(9);
-		userProvider.addUser(userId);
+		final UserId userId = userProvider.addUser(createAnyUserId());
+		final AddMovieToList parasite = AddMovieToListSample.builder().userId(userId).build();
 
-		final MovieId parasiteId = tut.addMovieToList(new MovieTitle("Parasite"), userId);
-		final MovieId starWarsId = tut.addMovieToList(new MovieTitle("Star Wars"), userId);
-		final MovieId vikingId = tut.addMovieToList(new MovieTitle("Viking"), userId);
-
-		final MovieId movieIdToRemove = tut.addMovieToList(new MovieTitle("Viking"), userId);
+		final MovieId parasiteId = tut.addMovieToList(parasite);
+		final MovieId duplicatedTitleMovieId = tut.addMovieToList(AddMovieToListSample.builder().movieTitle(parasite.getMovieTitle()).userId(userId).build());
 
 		// when
-		tut.removeMovieFromList(movieIdToRemove, userId);
+		tut.removeMovieFromList(duplicatedTitleMovieId, userId);
 
 		// then
-		assertThat(tut.getMoviesToWatch(userId)).hasSize(3)
+		assertThat(tut.getMoviesToWatch(userId)).hasSize(1)
 				.extracting(Movie::getMovieId)
-				.containsExactlyInAnyOrder(parasiteId, starWarsId, vikingId);
+				.containsExactlyInAnyOrder(parasiteId);
 	}
 
 	@Test
 	void two_different_users_should_have_different_lists() {
 		// given
-		final UserId userIdOne = new UserId(1);
-		final UserId userIdTwo = new UserId(2);
-		userProvider.addUser(userIdOne);
-		userProvider.addUser(userIdTwo);
+		final UserId userIdOne = userProvider.addUser(createAnyUserId());
+		final UserId userIdTwo = userProvider.addUser(createAnyUserId());
 
 		// when
-		final MovieId firstUserMovieOne = tut.addMovieToList(new MovieTitle("Parasite"), userIdOne);
-		final MovieId secondUserMovie = tut.addMovieToList(new MovieTitle("Parasite"), userIdTwo);
-		final MovieId firstUserMovieTwo = tut.addMovieToList(new MovieTitle("Viking"), userIdOne);
+		final MovieId firstUserMovieOne = tut.addMovieToList(AddMovieToListSample.builder().userId(userIdOne).build());
+		final MovieId secondUserMovie = tut.addMovieToList(AddMovieToListSample.builder().userId(userIdTwo).build());
+		final MovieId firstUserMovieTwo = tut.addMovieToList(AddMovieToListSample.builder().userId(userIdOne).build());
 
 		// then
 		assertThat(tut.getMoviesToWatch(userIdOne))
@@ -136,14 +130,12 @@ class MoviesServiceTest {
 	@Test
 	void should_not_delete_movie_if_not_users_movie() {
 		// given
-		final UserId userIdOne = new UserId(32);
-		final UserId userIdTwo = new UserId(21);
-		userProvider.addUser(userIdOne);
-		userProvider.addUser(userIdTwo);
+		final UserId userIdOne = userProvider.addUser(createAnyUserId());
+		final UserId userIdTwo = userProvider.addUser(createAnyUserId());
 
-		tut.addMovieToList(new MovieTitle("Parasite"), userIdOne);
-		tut.addMovieToList(new MovieTitle("Viking"), userIdOne);
-		final MovieId movieToDelete = tut.addMovieToList(new MovieTitle("Parasite"), userIdTwo);
+		tut.addMovieToList(AddMovieToListSample.builder().userId(userIdOne).build());
+		tut.addMovieToList(AddMovieToListSample.builder().userId(userIdOne).build());
+		final MovieId movieToDelete = tut.addMovieToList(AddMovieToListSample.builder().userId(userIdTwo).build());
 
 		// when
 		tut.removeMovieFromList(movieToDelete, userIdOne);
@@ -156,14 +148,12 @@ class MoviesServiceTest {
 	@Test
 	void should_delete_movie_only_from_this_user_list_and_not_all_of_them() {
 		// given
-		final UserId userIdOne = new UserId(413);
-		final UserId userIdTwo = new UserId(22);
-		userProvider.addUser(userIdOne);
-		userProvider.addUser(userIdTwo);
+		final UserId userIdOne = userProvider.addUser(createAnyUserId());
+		final UserId userIdTwo = userProvider.addUser(createAnyUserId());
 
-		final MovieId movieToDelete = tut.addMovieToList(new MovieTitle("Parasite"), userIdOne);
-		final MovieId secondUserMovie = tut.addMovieToList(new MovieTitle("Parasite"), userIdTwo);
-		final MovieId firstUserMovie = tut.addMovieToList(new MovieTitle("Viking"), userIdOne);
+		final MovieId movieToDelete = tut.addMovieToList(AddMovieToListSample.builder().userId(userIdOne).build());
+		final MovieId secondUserMovie = tut.addMovieToList(AddMovieToListSample.builder().userId(userIdTwo).build());
+		final MovieId firstUserMovie = tut.addMovieToList(AddMovieToListSample.builder().userId(userIdOne).build());
 
 		// when
 		tut.removeMovieFromList(movieToDelete, userIdOne);
@@ -181,8 +171,7 @@ class MoviesServiceTest {
 	@Test
 	void list_should_be_empty_when_no_movie_added() {
 		// given
-		final UserId userId = new UserId(68);
-		userProvider.addUser(userId);
+		final UserId userId = userProvider.addUser(createAnyUserId());
 
 		// when
 		final List<Movie> movies = tut.getMoviesToWatch(userId);
@@ -194,33 +183,37 @@ class MoviesServiceTest {
 	@Test
 	void should_add_movie_to_watched_list_and_remove_from_movies_to_watch_list() {
 		// given
-		final UserId userId = new UserId(1);
-		userProvider.addUser(userId);
+		final UserId userId = userProvider.addUser(createAnyUserId());
 
-		final MovieId parasite = tut.addMovieToList(new MovieTitle("Parasite"), userId);
-		final MovieId starWars = tut.addMovieToList(new MovieTitle("Star Wars"), userId);
-		final MovieId viking = tut.addMovieToList(new MovieTitle("Viking"), userId);
+		final AddMovieToList movieOne = AddMovieToListSample.builder().userId(userId).build();
+		final MovieId movieOneId = tut.addMovieToList(movieOne);
+
+		final AddMovieToList movieTwo = AddMovieToListSample.builder().userId(userId).build();
+		final MovieId movieTwoId = tut.addMovieToList(movieTwo);
+
+		final AddMovieToList movieThree = AddMovieToListSample.builder().userId(userId).build();
+		final MovieId movieThreeId = tut.addMovieToList(movieThree);
 
 		// when
-		tut.moveMovieToWatchedList(starWars, userId);
+		tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().movieId(movieTwoId).userId(userId).build());
 
 		// then
 		assertThat(tut.getMoviesToWatch(userId))
 				.extracting(Movie::getMovieId, Movie::getTitle)
 				.containsExactlyInAnyOrder(
-						tuple(parasite, new MovieTitle("Parasite")),
-						tuple(viking, new MovieTitle("Viking"))
+						tuple(movieOneId, movieOne.getMovieTitle()),
+						tuple(movieThreeId, movieThree.getMovieTitle())
 				);
 
 		assertThat(tut.getWatchedMovies(userId))
 				.extracting(WatchedMovie::getMovieId, WatchedMovie::getTitle)
-				.containsExactlyInAnyOrder(tuple(starWars, new MovieTitle("Star Wars")));
+				.containsExactlyInAnyOrder(tuple(movieTwoId, movieTwo.getMovieTitle()));
 	}
 
 	@Test
 	void should_throw_exception_when_trying_to_move_the_movie_when_user_does_not_exist() {
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(new MovieId(1), new UserId(123)));
+		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(UserDoesNotExistException.class);
@@ -229,15 +222,14 @@ class MoviesServiceTest {
 	@Test
 	void should_throw_exception_when_trying_to_move_the_movie_to_watched_list_when_movie_does_not_belong_to_user() {
 		// given
-		final UserId userId = new UserId(1);
-		final UserId notQualifiedUser = new UserId(123);
-		userProvider.addUser(userId);
-		userProvider.addUser(notQualifiedUser);
+		final UserId userId = userProvider.addUser(createAnyUserId());
+		final UserId notQualifiedUser = userProvider.addUser(createAnyUserId());
 
-		final MovieId movieToMove = tut.addMovieToList(new MovieTitle("Parasite"), userId);
+		final MovieId movieToMove = tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(movieToMove, notQualifiedUser));
+		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder()
+																					.movieId(movieToMove).userId(notQualifiedUser).build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
@@ -246,11 +238,10 @@ class MoviesServiceTest {
 	@Test
 	void should_throw_exception_when_trying_to_move_the_movie_when_movie_id_doesnt_exist() {
 		// given
-		final UserId userId = new UserId(1);
-		userProvider.addUser(userId);
+		final UserId userId = userProvider.addUser(createAnyUserId());
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(new MovieId(1), userId));
+		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().userId(userId).build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
@@ -259,14 +250,13 @@ class MoviesServiceTest {
 	@Test
 	void should_not_be_able_to_add_previously_removed_movie_to_watched_movies_list() {
 		// given
-		final UserId userId = new UserId(1);
-		userProvider.addUser(userId);
+		final UserId userId = userProvider.addUser(createAnyUserId());
 
-		final MovieId starWars = tut.addMovieToList(new MovieTitle("Star Wars"), userId);
+		final MovieId starWars = tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
 		tut.removeMovieFromList(starWars, userId);
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(starWars, userId));
+		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().movieId(starWars).userId(userId).build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
