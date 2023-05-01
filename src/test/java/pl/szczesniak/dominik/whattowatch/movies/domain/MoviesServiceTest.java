@@ -6,7 +6,6 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoveMovieToWatchListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -229,7 +228,7 @@ class MoviesServiceTest {
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder()
-																					.movieId(movieToMove).userId(notQualifiedUser).build()));
+				.movieId(movieToMove).userId(notQualifiedUser).build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
