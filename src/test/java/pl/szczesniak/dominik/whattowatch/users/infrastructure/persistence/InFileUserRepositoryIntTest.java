@@ -6,7 +6,6 @@ import org.junit.jupiter.api.io.TempDir;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserSample;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UserAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
@@ -20,6 +19,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserPasswordSample.createAnyUserPassword;
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSample.createAnyUsername;
 
 class InFileUserRepositoryIntTest {
 
@@ -125,8 +127,8 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_return_empty_when_no_user_created() {
 		// when
-		final Optional<User> nonExistingId = tut.findBy(new UserId(5));
-		final Optional<User> nonExistingName = tut.findBy("Kamil");
+		final Optional<User> nonExistingId = tut.findBy(createAnyUserId());
+		final Optional<User> nonExistingName = tut.findBy(createAnyUsername().getValue());
 
 		// then
 		assertThat(nonExistingId.isEmpty()).isTrue();
@@ -136,52 +138,60 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_find_by_username_added_users() {
 		// given
-		final UserId dominikId = new UserId(1);
-		final UserId patrykId = new UserId(2);
-		final UserId michalId = new UserId(3);
-		tut.create(UserSample.builder().username(new Username("Dominik")).userId(dominikId).build());
-		tut.create(UserSample.builder().username(new Username("Patryk")).userId(patrykId).build());
-		tut.create(UserSample.builder().username(new Username("Michal")).userId(michalId).build());
+		final UserId userOneId = createAnyUserId();
+		final UserId userTwoId = createAnyUserId();
+		final UserId userThreeId = createAnyUserId();
+		final User userOne = UserSample.builder().userId(userOneId).build();
+		final User userTwo = UserSample.builder().userId(userTwoId).build();
+		final User userThree = UserSample.builder().userId(userThreeId).build();
+
+		tut.create(userOne);
+		tut.create(userTwo);
+		tut.create(userThree);
 
 		// when
-		final Optional<User> dominik = tut.findBy("Dominik");
-		final Optional<User> patryk = tut.findBy("Patryk");
-		final Optional<User> michal = tut.findBy("Michal");
+		final Optional<User> optionalUserOne = tut.findBy(userOne.getUserName().getValue());
+		final Optional<User> optionalUserTwo = tut.findBy(userTwo.getUserName().getValue());
+		final Optional<User> optionalUserThree = tut.findBy(userThree.getUserName().getValue());
 
 		// then
-		final List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
+		final List<User> users = List.of(optionalUserOne.get(), optionalUserTwo.get(), optionalUserThree.get());
 		assertThat(users)
 				.extracting(User::getUserId, User::getUserName)
 				.contains(
-						tuple(dominikId, new Username("Dominik")),
-						tuple(patrykId, new Username("Patryk")),
-						tuple(michalId, new Username("Michal"))
+						tuple(userOneId, userOne.getUserName()),
+						tuple(userTwoId, userTwo.getUserName()),
+						tuple(userThreeId, userThree.getUserName())
 				);
 	}
 
 	@Test
 	void should_find_by_userid_added_users() {
 		// given
-		final UserId dominikId = new UserId(1);
-		final UserId patrykId = new UserId(2);
-		final UserId michalId = new UserId(3);
-		tut.create(UserSample.builder().username(new Username("Dominik")).userId(dominikId).build());
-		tut.create(UserSample.builder().username(new Username("Patryk")).userId(patrykId).build());
-		tut.create(UserSample.builder().username(new Username("Michal")).userId(michalId).build());
+		final UserId userOneId = createAnyUserId();
+		final UserId userTwoId = createAnyUserId();
+		final UserId userThreeId = createAnyUserId();
+		final User userOne = UserSample.builder().userId(userOneId).build();
+		final User userTwo = UserSample.builder().userId(userTwoId).build();
+		final User userThree = UserSample.builder().userId(userThreeId).build();
+
+		tut.create(userOne);
+		tut.create(userTwo);
+		tut.create(userThree);
 
 		// when
-		final Optional<User> dominik = tut.findBy(new UserId(1));
-		final Optional<User> patryk = tut.findBy(new UserId(2));
-		final Optional<User> michal = tut.findBy(new UserId(3));
+		final Optional<User> optionalUserOne = tut.findBy(userOneId);
+		final Optional<User> optionalUserTwo = tut.findBy(userTwoId);
+		final Optional<User> optionalUserThree = tut.findBy(userThreeId);
 
 		// then
-		final List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
+		final List<User> users = List.of(optionalUserOne.get(), optionalUserTwo.get(), optionalUserThree.get());
 		assertThat(users)
 				.extracting(User::getUserId, User::getUserName)
 				.contains(
-						tuple(new UserId(1), new Username("Dominik")),
-						tuple(new UserId(2), new Username("Patryk")),
-						tuple(new UserId(3), new Username("Michal"))
+						tuple(userOneId, userOne.getUserName()),
+						tuple(userTwoId, userTwo.getUserName()),
+						tuple(userThreeId, userThree.getUserName())
 				);
 	}
 
@@ -200,8 +210,8 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_throw_exception_when_creating_user_with_already_existing_userid() {
 		// given
-		final UserId userId = new UserId(1);
-		tut.create(new User(new Username("Anna"), userId, new UserPassword("asd")));
+		final UserId userId = createAnyUserId();
+		tut.create(new User(createAnyUsername(), userId, createAnyUserPassword()));
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.create(UserSample.builder().userId(userId).build()));
@@ -213,8 +223,8 @@ class InFileUserRepositoryIntTest {
 	@Test
 	void should_throw_exception_when_creating_user_with_already_existing_username() {
 		// given
-		final Username createdUsername = new Username("Anna");
-		tut.create(new User(createdUsername, tut.nextUserId(), new UserPassword("asd")));
+		final Username createdUsername = createAnyUsername();
+		tut.create(new User(createdUsername, createAnyUserId(), createAnyUserPassword()));
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.create(UserSample.builder().username(createdUsername).build()));

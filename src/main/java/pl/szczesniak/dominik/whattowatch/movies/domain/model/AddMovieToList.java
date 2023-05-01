@@ -37,4 +37,5 @@ public class AddMovieToList {
 			return new AddMovieToList(movieTitle, userId);
 		}
 	}
+
 }
