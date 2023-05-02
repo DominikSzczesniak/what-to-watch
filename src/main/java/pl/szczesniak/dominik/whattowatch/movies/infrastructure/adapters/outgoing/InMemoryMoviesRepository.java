@@ -1,5 +1,6 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing;
 
+import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@Repository
 public class InMemoryMoviesRepository implements MoviesRepository {
 
 	private final AtomicInteger nextId = new AtomicInteger(0);

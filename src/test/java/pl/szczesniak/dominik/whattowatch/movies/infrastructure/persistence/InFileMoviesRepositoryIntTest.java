@@ -7,6 +7,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.InFileMoviesRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.File;

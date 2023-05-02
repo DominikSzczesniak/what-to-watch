@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence;
 
+import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.WatchedMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.WatchedMoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Repository
 public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository {
 
 	private final Map<MovieId, WatchedMovie> watchedMovies = new HashMap<>();
