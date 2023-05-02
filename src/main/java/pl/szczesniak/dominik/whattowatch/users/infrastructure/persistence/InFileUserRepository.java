@@ -1,6 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -21,7 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
+@Repository
+@Primary
 public class InFileUserRepository implements UserRepository {
 
 	private final String fileNameOfUsers;
@@ -30,6 +33,10 @@ public class InFileUserRepository implements UserRepository {
 	private final static int INDEX_WITH_USERNAME_IN_CSV = 0;
 	private final static int ID_OF_FIRST_CREATED_USER_EVER = 1;
 
+	public InFileUserRepository(@Value("fileNameOfUsers.csv") final String fileNameOfUsers, @Value("usersIdFileName.csv") final String usersIdFileName) {
+		this.fileNameOfUsers = fileNameOfUsers;
+		this.usersIdFileName = usersIdFileName;
+	}
 
 	@Override
 	public void create(final User user) {

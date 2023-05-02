@@ -12,7 +12,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
 @RequiredArgsConstructor
-@Component
+//@Component
 public class MySpringConsoleRunner implements CommandLineRunner {
 
 	private final UserService userService;

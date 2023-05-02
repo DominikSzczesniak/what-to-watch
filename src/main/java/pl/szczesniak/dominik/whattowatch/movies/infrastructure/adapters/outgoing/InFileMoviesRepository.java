@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
