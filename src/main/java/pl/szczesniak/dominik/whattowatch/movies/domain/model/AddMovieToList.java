@@ -15,9 +15,9 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 public class AddMovieToList {
 
 	@NonNull
-	MovieTitle movieTitle;
+	private final MovieTitle movieTitle;
 	@NonNull
-	UserId userId;
+	private final UserId userId;
 
 	public static AddMovieToListBuilder builder(final MovieTitle movieTitle, final UserId userId) {
 		return new AddMovieToListBuilder(movieTitle, userId);

@@ -24,10 +24,9 @@ public class UserService {
 	}
 
 	public UserId login(final Username username, final UserPassword userPassword) {
-		return Optional.ofNullable(repository
-				.findBy(username.getValue())
+		return repository.findBy(username.getValue())
 				.filter(user -> user.getUserPassword().equals(userPassword))
-				.orElseThrow(() -> new InvalidCredentialsException("User with username: " + username.getValue() + " not found"))).get().getUserId();
+				.orElseThrow(() -> new InvalidCredentialsException("User with username: " + username.getValue() + " not found")).getUserId();
 	}
 
 }

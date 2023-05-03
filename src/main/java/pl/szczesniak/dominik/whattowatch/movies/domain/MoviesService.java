@@ -3,7 +3,7 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToList;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoveMovieToWatchList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
@@ -40,7 +40,7 @@ public class MoviesService {
 		return watchedRepository.findAllBy(userId);
 	}
 
-	public void moveMovieToWatchedList(final MoveMovieToWatchList command) {
+	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
 		checkUserExists(command.getUserId());
 		final WatchedMovie watchedMovie = new WatchedMovie(command.getMovieId(), getTitleById(command.getMovieId(), command.getUserId()), command.getUserId());
 		watchedRepository.add(watchedMovie);

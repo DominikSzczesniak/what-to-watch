@@ -10,8 +10,8 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.
 public class MoveMovieToWatchListSample {
 
 	@Builder
-	private static MoveMovieToWatchList build(final MovieId movieId, final UserId userId) {
-		return new MoveMovieToWatchList(
+	private static MoveMovieToWatchedMoviesList build(final MovieId movieId, final UserId userId) {
+		return new MoveMovieToWatchedMoviesList(
 				ofNullable(movieId).orElse(createAnyMovieId()),
 				ofNullable(userId).orElse(createAnyUserId())
 		);

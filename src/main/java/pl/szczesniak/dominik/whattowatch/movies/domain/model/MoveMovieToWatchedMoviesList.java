@@ -5,7 +5,7 @@ import lombok.Value;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @Value
-public class MoveMovieToWatchList {
+public class MoveMovieToWatchedMoviesList {
 
 	@NonNull MovieId movieId;
 	@NonNull UserId userId;

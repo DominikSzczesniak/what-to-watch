@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -48,11 +49,11 @@ class UserServiceTest {
 	@Test
 	void created_users_should_have_different_ids() {
 		// when
-		final UserId dominikId = tut.createUser(new Username("Dominik"), anyUserPassword());
-		final UserId patrykId = tut.createUser(new Username("Patryk"), anyUserPassword());
+		final UserId userOneId = tut.createUser(anyUsername(), anyUserPassword());
+		final UserId userTwoId = tut.createUser(anyUsername(), anyUserPassword());
 
 		// then
-		assertThat(dominikId).isNotEqualTo(patrykId);
+		assertThat(userOneId).isNotEqualTo(userTwoId);
 	}
 
 	@Test
@@ -125,7 +126,7 @@ class UserServiceTest {
 	}
 
 	private static Username anyUsername() {
-		return new Username("Marian");
+		return new Username(RandomStringUtils.randomAlphabetic(5));
 	}
 
 	private static UserPassword anyUserPassword() {
