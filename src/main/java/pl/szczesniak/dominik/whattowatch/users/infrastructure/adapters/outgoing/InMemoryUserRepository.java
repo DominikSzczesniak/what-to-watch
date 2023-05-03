@@ -1,5 +1,6 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
+package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
+@Primary
 public class InMemoryUserRepository implements UserRepository {
 
 	private final Map<UserId, User> users = new HashMap<>();

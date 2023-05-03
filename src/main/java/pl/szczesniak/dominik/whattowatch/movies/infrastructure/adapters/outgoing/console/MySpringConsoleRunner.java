@@ -20,10 +20,10 @@ public class MySpringConsoleRunner implements CommandLineRunner {
 
 	@Override
 	public void run(final String... args) throws Exception {
-		final UserId agnieszka = userService.createUser(new Username("Agnieszka"), new UserPassword("asd"));
-		moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle("Parasite"), agnieszka).build());
-
-		System.out.println(moviesService.getMoviesToWatch(agnieszka));
+//		final UserId agnieszka = userService.createUser(new Username("Agnieszka"), new UserPassword("asd"));
+//		moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle("Parasite"), agnieszka).build());
+//
+//		System.out.println(moviesService.getMoviesToWatch(agnieszka));
 	}
 
 }

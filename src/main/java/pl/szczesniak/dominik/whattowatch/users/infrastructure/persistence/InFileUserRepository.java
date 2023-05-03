@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Primary
 public class InFileUserRepository implements UserRepository {
 
 	private final String fileNameOfUsers;

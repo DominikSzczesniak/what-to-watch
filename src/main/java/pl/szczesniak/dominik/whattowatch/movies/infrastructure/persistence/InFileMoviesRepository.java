@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -25,7 +25,6 @@ import java.util.Optional;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.Movie.recreate;
 
 @Repository
-@Primary
 public class InFileMoviesRepository implements MoviesRepository {
 
 	private final String fileNameOfMovies;

@@ -1,23 +1,23 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @ToString
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @EqualsAndHashCode(of = {"movieId"})
 public class Movie {
 
 	@Getter
 	private final MovieId movieId;
 	@Getter
-	private final MovieTitle title;
+	private MovieTitle title;
 	@Getter
 	private final UserId userId;
 
@@ -25,4 +25,7 @@ public class Movie {
 		return new Movie(movieId, title, userId);
 	}
 
+	void update(final MovieTitle title) {
+		this.title = title;
+	}
 }
