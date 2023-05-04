@@ -127,6 +127,11 @@ public class InFileMoviesRepository implements MoviesRepository {
 		return Optional.empty();
 	}
 
+	@Override
+	public Movie updateMovie(final MovieId movieId, final UserId userId, final MovieTitle title) {
+		return null;
+	}
+
 	private void renameFile(final File oldFile, final String fileNameOfUsers, final File newFile) {
 		oldFile.delete();
 		final File dump = new File(fileNameOfUsers);

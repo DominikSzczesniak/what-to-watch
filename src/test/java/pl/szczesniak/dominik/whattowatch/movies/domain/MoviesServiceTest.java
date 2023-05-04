@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoveMovieToWatchListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
@@ -268,6 +269,24 @@ class MoviesServiceTest {
 
 		// then
 		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
+	}
+
+	@Test
+	void should_update_movie_title() {
+		// given
+		final UserId userId = userProvider.addUser(createAnyUserId());
+		final MovieTitle title = new MovieTitle("Parasite");
+		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().movieTitle(title).userId(userId).build());
+
+		final MovieTitle changedTitle = new MovieTitle("Star Wars");
+
+		// when
+		tut.updateMovie(movieId, userId, changedTitle);
+
+		// then
+		assertThat(tut.getMoviesToWatch(userId))
+				.extracting(Movie::getTitle)
+				.containsExactly(changedTitle);
 	}
 
 }

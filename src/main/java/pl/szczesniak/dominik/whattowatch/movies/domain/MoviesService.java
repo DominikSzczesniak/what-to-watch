@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
@@ -59,6 +60,11 @@ public class MoviesService {
 		}
 	}
 
+	public Movie updateMovie(final MovieId movieId, final UserId userId, final MovieTitle title) {
+		final Movie movie = repository.findBy(movieId, userId).get();
+		movie.update(title);
+		return movie;
+	}
 }
 
 

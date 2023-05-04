@@ -1,6 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -17,5 +18,7 @@ public interface MoviesRepository {
 	void removeMovie(MovieId movieId, UserId userId);
 
 	Optional<Movie> findBy(MovieId movieId, UserId userId);
+
+	Movie updateMovie(MovieId movieId, UserId userId, MovieTitle title);
 
 }

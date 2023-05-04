@@ -28,4 +28,9 @@ public class Movie {
 	WatchedMovie markAsWatched() {
 		return new WatchedMovie(movieId, title, userId);
 	}
+
+	public void update(final MovieTitle title) {
+		this.title = title;
+	}
+
 }
