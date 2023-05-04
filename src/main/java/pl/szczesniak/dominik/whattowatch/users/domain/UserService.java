@@ -1,7 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import lombok.RequiredArgsConstructor;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.CreateUser;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
