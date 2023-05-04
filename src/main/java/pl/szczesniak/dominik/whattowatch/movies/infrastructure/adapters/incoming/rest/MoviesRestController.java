@@ -3,7 +3,9 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -53,6 +57,16 @@ public class MoviesRestController {
 	@PostMapping("/api/movies/{movieId}/watchedmovies")
 	public void moveMovieToWatchedList(@PathVariable Integer movieId, @RequestBody final Integer userId) {
 		moviesService.moveMovieToWatchedList(new MoveMovieToWatchedMoviesList(new MovieId(movieId), new UserId(userId)));
+	}
+
+	@ExceptionHandler(MovieDoesNotExistException.class)
+	public ResponseEntity<?> handleMovieDoesNotExistException() {
+		return ResponseEntity.badRequest().build();
+	}
+
+	@ExceptionHandler(UserDoesNotExistException.class)
+	public ResponseEntity<?> handleUserDoesNotExistException() {
+		return ResponseEntity.badRequest().build();
 	}
 
 

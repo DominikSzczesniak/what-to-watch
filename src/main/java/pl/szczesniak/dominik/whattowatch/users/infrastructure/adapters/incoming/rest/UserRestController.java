@@ -17,7 +17,8 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 @RequiredArgsConstructor
 @RestController
@@ -44,6 +45,11 @@ public class UserRestController {
 
 	@ExceptionHandler(InvalidCredentialsException.class)
 	public ResponseEntity<?> handleInvalidCredentialsException() {
+		return ResponseEntity.badRequest().build();
+	}
+
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	public ResponseEntity<?> handleUserAlreadyExistsException() {
 		return ResponseEntity.badRequest().build();
 	}
 
