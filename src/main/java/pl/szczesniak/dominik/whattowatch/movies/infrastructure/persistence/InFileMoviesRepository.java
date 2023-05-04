@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;

@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;

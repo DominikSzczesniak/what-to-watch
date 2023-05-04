@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -22,37 +23,55 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping
-public class MovieRestController {
+public class MoviesRestController {
 
 	private final MoviesService moviesService;
 
-	@GetMapping("/api/movie/{userId}")
-	public List<MovieDto> findAllMovies(@PathVariable final Integer userId) {
+	@GetMapping("/api/movies")
+	public List<MovieDto> findAllMoviesToWatch(@RequestBody final Integer userId) {
 		return moviesService.getMoviesToWatch(new UserId(userId)).stream()
 				.map(movie -> new MovieDto(movie.getTitle(), movie.getMovieId(), movie.getUserId()))
 				.toList();
 	}
 
-	@PostMapping("/api/movie")
-	public MovieId addMovie(@RequestBody CreateMovieDto movieDto) {
-		return moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle(movieDto.getTitle()), new UserId(Integer.parseInt(movieDto.getUserId()))).build());
+	@PostMapping("/api/movies")
+	public MovieId addMovie(@RequestBody final CreateMovieDto movieDto) {
+		return moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle(movieDto.getTitle()), new UserId(movieDto.userId)).build());
 	}
 
-	@DeleteMapping("/api/movie/{movieId}/{userId}")
-	public void removeMovieFromList(@PathVariable final Integer movieId, @PathVariable final Integer userId) {
-		moviesService.removeMovieFromList(new MovieId(movieId), new UserId(userId));
+	@DeleteMapping("/api/movies")
+	public void removeMovieFromList(@RequestBody CreateMovieToRemoveDto movieToRemoveDto) {
+		moviesService.removeMovieFromList(new MovieId(movieToRemoveDto.getMovieId()), new UserId(movieToRemoveDto.getUserId()));
 	}
 
-	@PutMapping("/api/movie/{movieId}")
+	@GetMapping("/api/movies/watchedmovies")
+	public List<MovieDto> findWatchedMovies(@RequestBody final Integer userId) {
+		return moviesService.getWatchedMovies(new UserId(userId)).stream()
+				.map(movie -> new MovieDto(movie.getTitle(), movie.getMovieId(), movie.getUserId()))
+				.toList();
+	}
+
+	@PostMapping("/api/movies/{movieId}/watchedmovies")
+	public void moveMovieToWatchedList(@PathVariable Integer movieId, @RequestBody final Integer userId) {
+		moviesService.moveMovieToWatchedList(new MoveMovieToWatchedMoviesList(new MovieId(movieId), new UserId(userId)));
+	}
+
+	@PutMapping("/api/movies/{movieId}")
 	public void updateMovieTitle(@PathVariable final Integer movieId, @RequestBody final UpdateMovieDto updateMovieDto) {
 		moviesService.updateMovie(new MovieId(movieId), new UserId(updateMovieDto.getUserId()), new MovieTitle(updateMovieDto.getTitle()));
 	}
 
 
 	@Data
+	private static class CreateMovieToRemoveDto {
+		private Integer movieId;
+		private Integer userId;
+	}
+
+	@Data
 	private static class CreateMovieDto {
 		private String title;
-		private String userId;
+		private Integer userId;
 	}
 
 	@Value
