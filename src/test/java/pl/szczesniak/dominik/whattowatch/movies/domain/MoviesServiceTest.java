@@ -2,10 +2,10 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoveMovieToWatchListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -78,7 +78,7 @@ class MoviesServiceTest {
 		final AddMovieToList movieWithSameTitle = AddMovieToListSample.builder().movieTitle(createdMovie.getMovieTitle()).userId(userId).build();
 
 		// when
-		tut.addMovieToList(movieWithSameTitle);
+		tut.addMovieToList(createdMovie);
 		tut.addMovieToList(movieWithSameTitle);
 
 		// then
@@ -88,13 +88,13 @@ class MoviesServiceTest {
 	}
 
 	@Test
-	void only_one_duplicated_title_should_be_deleted() {
+	void only_one_movie_with_duplicated_titles_should_be_deleted() {
 		// given
 		final UserId userId = userProvider.addUser(createAnyUserId());
-		final AddMovieToList parasite = AddMovieToListSample.builder().userId(userId).build();
+		final AddMovieToList movie = AddMovieToListSample.builder().userId(userId).build();
 
-		final MovieId parasiteId = tut.addMovieToList(parasite);
-		final MovieId duplicatedTitleMovieId = tut.addMovieToList(AddMovieToListSample.builder().movieTitle(parasite.getMovieTitle()).userId(userId).build());
+		final MovieId movieId = tut.addMovieToList(movie);
+		final MovieId duplicatedTitleMovieId = tut.addMovieToList(AddMovieToListSample.builder().movieTitle(movie.getMovieTitle()).userId(userId).build());
 
 		// when
 		tut.removeMovieFromList(duplicatedTitleMovieId, userId);
@@ -102,7 +102,7 @@ class MoviesServiceTest {
 		// then
 		assertThat(tut.getMoviesToWatch(userId)).hasSize(1)
 				.extracting(Movie::getMovieId)
-				.containsExactlyInAnyOrder(parasiteId);
+				.containsExactlyInAnyOrder(movieId);
 	}
 
 	@Test

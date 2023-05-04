@@ -1,8 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.CreateUserSample;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
@@ -12,6 +12,9 @@ import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.Usernam
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static pl.szczesniak.dominik.whattowatch.users.domain.TestUserServiceConfiguration.userService;
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserPasswordSample.createAnyUserPassword;
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSample.createAnyUsername;
 
 class UserServiceTest {
 
@@ -25,7 +28,7 @@ class UserServiceTest {
 	@Test
 	void user_should_not_exist_when_previously_not_created() {
 		// given
-		final UserId nonExistingUserId = new UserId(1);
+		final UserId nonExistingUserId = createAnyUserId();
 
 		// when
 		final boolean checkExist = tut.exists(nonExistingUserId);
@@ -37,7 +40,7 @@ class UserServiceTest {
 	@Test
 	void user_should_exist_when_previously_created() {
 		// given
-		final UserId createdUserId = tut.createUser(anyUsername(), anyUserPassword());
+		final UserId createdUserId = tut.createUser(CreateUserSample.builder().build());
 
 		// when
 		final boolean checkExist = tut.exists(createdUserId);
@@ -49,39 +52,39 @@ class UserServiceTest {
 	@Test
 	void created_users_should_have_different_ids() {
 		// when
-		final UserId userOneId = tut.createUser(anyUsername(), anyUserPassword());
-		final UserId userTwoId = tut.createUser(anyUsername(), anyUserPassword());
+		final UserId userOne = tut.createUser(CreateUserSample.builder().build());
+		final UserId userTwo = tut.createUser(CreateUserSample.builder().build());
 
 		// then
-		assertThat(userOneId).isNotEqualTo(userTwoId);
+		assertThat(userOne).isNotEqualTo(userTwo);
 	}
 
 	@Test
 	void every_next_user_has_id_higher_by_one() {
 		// given
-		final UserId kamilId = tut.createUser(new Username("Kamil"), anyUserPassword());
+		final UserId userOne = tut.createUser(CreateUserSample.builder().build());
 
 		// when
-		final UserId dominikId = tut.createUser(new Username("Dominik"), anyUserPassword());
-		final UserId grzegorzId = tut.createUser(new Username("Grzegorz"), anyUserPassword());
-		final UserId michalId = tut.createUser(new Username("Michal"), anyUserPassword());
-		final UserId patrykId = tut.createUser(new Username("Patryk"), anyUserPassword());
+		final UserId userTwo = tut.createUser(CreateUserSample.builder().build());
+		final UserId userThree = tut.createUser(CreateUserSample.builder().build());
+		final UserId userFour = tut.createUser(CreateUserSample.builder().build());
+		final UserId userFive = tut.createUser(CreateUserSample.builder().build());
 
 		// then
-		assertThat(dominikId.getValue()).isEqualTo(kamilId.getValue() + 1);
-		assertThat(grzegorzId.getValue()).isEqualTo(kamilId.getValue() + 2);
-		assertThat(michalId.getValue()).isEqualTo(kamilId.getValue() + 3);
-		assertThat(patrykId.getValue()).isEqualTo(kamilId.getValue() + 4);
+		assertThat(userTwo.getValue()).isEqualTo(userOne.getValue() + 1);
+		assertThat(userThree.getValue()).isEqualTo(userOne.getValue() + 2);
+		assertThat(userFour.getValue()).isEqualTo(userOne.getValue() + 3);
+		assertThat(userFive.getValue()).isEqualTo(userOne.getValue() + 4);
 	}
 
 	@Test
 	void should_not_be_able_to_create_user_with_same_username() {
 		// given
-		final Username username = anyUsername();
-		tut.createUser(username, anyUserPassword());
+		final Username username = createAnyUsername();
+		tut.createUser(CreateUserSample.builder().username(username).build());
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.createUser(username, anyUserPassword()));
+		final Throwable thrown = catchThrowable(() -> tut.createUser(CreateUserSample.builder().username(username).build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(UsernameIsTakenException.class);
@@ -90,9 +93,9 @@ class UserServiceTest {
 	@Test
 	void should_login_user_when_credentials_are_correct() {
 		// given
-		final Username createdUsername = anyUsername();
-		final UserPassword createdPassword = anyUserPassword();
-		final UserId createdUserId = tut.createUser(createdUsername, createdPassword);
+		final Username createdUsername = createAnyUsername();
+		final UserPassword createdPassword = createAnyUserPassword();
+		final UserId createdUserId = tut.createUser(CreateUserSample.builder().username(createdUsername).userPassword(createdPassword).build());
 
 		// when
 		final UserId loggedUserId = tut.login(createdUsername, createdPassword);
@@ -104,10 +107,14 @@ class UserServiceTest {
 	@Test
 	void should_throw_exception_when_given_wrong_username() {
 		// given
-		tut.createUser(new Username("Dominik"), anyUserPassword());
+		final UserPassword password = createAnyUserPassword();
+		final Username username = new Username("Dominik");
+		final Username wrongUsername = new Username("asd");
+
+		tut.createUser(CreateUserSample.builder().username(username).userPassword(password).build());
 
 		// when
-		final Throwable differentUsername = catchThrowable(() -> tut.login(new Username("Kamil"), anyUserPassword()));
+		final Throwable differentUsername = catchThrowable(() -> tut.login(wrongUsername, password));
 
 		// then
 		assertThat(differentUsername).isInstanceOf(InvalidCredentialsException.class);
@@ -116,21 +123,17 @@ class UserServiceTest {
 	@Test
 	void should_throw_exception_when_given_wrong_password() {
 		// given
-		tut.createUser(anyUsername(), new UserPassword("password"));
+		final Username username = createAnyUsername();
+		final UserPassword password = new UserPassword("password");
+		final UserPassword wrongPassword = new UserPassword("asd");
+
+		tut.createUser(CreateUserSample.builder().username(username).userPassword(password).build());
 
 		// when
-		final Throwable differentPassword = catchThrowable(() -> tut.login(anyUsername(), new UserPassword("wrong")));
+		final Throwable differentPassword = catchThrowable(() -> tut.login(username, wrongPassword));
 
 		// then
 		assertThat(differentPassword).isInstanceOf(InvalidCredentialsException.class);
-	}
-
-	private static Username anyUsername() {
-		return new Username(RandomStringUtils.randomAlphabetic(5));
-	}
-
-	private static UserPassword anyUserPassword() {
-		return new UserPassword("asd");
 	}
 
 }

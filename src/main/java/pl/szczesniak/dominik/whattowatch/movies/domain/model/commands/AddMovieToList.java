@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.domain.model;
+package pl.szczesniak.dominik.whattowatch.movies.domain.model.commands;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

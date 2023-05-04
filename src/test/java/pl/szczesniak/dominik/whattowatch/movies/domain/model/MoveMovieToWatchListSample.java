@@ -1,6 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
 import lombok.Builder;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import static java.util.Optional.ofNullable;

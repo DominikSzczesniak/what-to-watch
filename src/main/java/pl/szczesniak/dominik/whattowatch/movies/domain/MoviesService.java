@@ -2,10 +2,10 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToList;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -19,7 +19,7 @@ public class MoviesService {
 	private final UserProvider userProvider;
 	private final WatchedMoviesRepository watchedRepository;
 
-	public MovieId addMovieToList(AddMovieToList command) {
+	public MovieId addMovieToList(final AddMovieToList command) {
 		if (!userProvider.exists(command.getUserId())) {
 			throw new UserDoesNotExistException("User doesn't exist. Didn't add movie to any list");
 		}
