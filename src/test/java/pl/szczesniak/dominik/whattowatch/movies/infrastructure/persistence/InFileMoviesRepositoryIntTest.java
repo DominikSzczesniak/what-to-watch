@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieIdSample.createAnyMovieId;
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 class InFileMoviesRepositoryIntTest {
 
@@ -73,7 +75,7 @@ class InFileMoviesRepositoryIntTest {
 	@Test
 	void user_should_save_movie() {
 		// given
-		final UserId userId = new UserId(1);
+		final UserId userId = createAnyUserId();
 
 		// when
 		tut.save(MovieSample.builder().userId(userId).build());
@@ -86,8 +88,8 @@ class InFileMoviesRepositoryIntTest {
 	@Test
 	void user_should_delete_movie() {
 		//given
-		final MovieId movieId = tut.nextMovieId();
-		final UserId userId = new UserId(1);
+		final MovieId movieId = createAnyMovieId();
+		final UserId userId = createAnyUserId();
 
 		tut.save(MovieSample.builder().movieId(movieId).userId(userId).build());
 		tut.save(MovieSample.builder().userId(userId).build());
@@ -103,9 +105,9 @@ class InFileMoviesRepositoryIntTest {
 	@Test
 	void should_not_remove_movie_when_movieid_does_not_belong_to_userid() {
 		//given
-		final UserId userIdOne = new UserId(1);
-		final UserId userIdTwo = new UserId(2);
-		final MovieId movieId = tut.nextMovieId();
+		final UserId userIdOne = createAnyUserId();
+		final UserId userIdTwo = createAnyUserId();
+		final MovieId movieId = createAnyMovieId();
 
 		tut.save(MovieSample.builder().userId(userIdOne).movieId(movieId).build());
 		tut.save(MovieSample.builder().userId(userIdTwo).build());
@@ -120,8 +122,6 @@ class InFileMoviesRepositoryIntTest {
 	@Test
 	void next_movieid_should_be_one_higher_than_previously_created_movieid() {
 		// given
-		tut.nextMovieId();
-		tut.nextMovieId();
 		final MovieId lastMovieId = tut.nextMovieId();
 
 		// when
@@ -134,9 +134,9 @@ class InFileMoviesRepositoryIntTest {
 	@Test
 	void should_find_saved_movie_when_movie_belongs_to_user_otherwise_should_return_empty() {
 		// given
-		final UserId userIdOne = new UserId(1);
-		final UserId userIdTwo = new UserId(2);
-		final MovieId movieId = tut.nextMovieId();
+		final UserId userIdOne = createAnyUserId();
+		final UserId userIdTwo = createAnyUserId();
+		final MovieId movieId = createAnyMovieId();
 		final Movie movie = MovieSample.builder().movieId(movieId).userId(userIdOne).build();
 
 		// when
@@ -152,12 +152,10 @@ class InFileMoviesRepositoryIntTest {
 	@Test
 	void should_return_matching_movie() {
 		// given
-		final UserId userIdOne = new UserId(1);
-		tut.save(MovieSample.builder().userId(userIdOne).build());
-		final MovieId movieId = tut.nextMovieId();
-		final Movie createdMovie = MovieSample.builder().movieId(movieId).movieTitle(new MovieTitle("Star Wars")).userId(userIdOne).build();
+		final UserId userIdOne = createAnyUserId();
+		final MovieId movieId = createAnyMovieId();
+		final Movie createdMovie = MovieSample.builder().movieId(movieId).userId(userIdOne).build();
 		tut.save(createdMovie);
-		tut.save(MovieSample.builder().userId(userIdOne).build());
 
 		// when
 		final Movie foundMovie = tut.findBy(movieId, userIdOne).get();

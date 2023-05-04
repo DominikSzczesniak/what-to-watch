@@ -13,7 +13,7 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.
 public class MovieSample {
 
 	@Builder
-	public static Movie build(final MovieId movieId, final MovieTitle movieTitle, final UserId userId) {
+	private static Movie build(final MovieId movieId, final MovieTitle movieTitle, final UserId userId) {
 		return new Movie(
 				ofNullable(movieId).orElse(createAnyMovieId()),
 				ofNullable(movieTitle).orElse(createAnyMovieTitle()),
