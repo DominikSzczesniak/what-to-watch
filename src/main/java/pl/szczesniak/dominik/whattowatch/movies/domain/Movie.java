@@ -25,7 +25,4 @@ public class Movie {
 		return new Movie(movieId, title, userId);
 	}
 
-	void update(final MovieTitle title) {
-		this.title = title;
-	}
 }

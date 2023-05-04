@@ -57,11 +57,6 @@ public class MoviesService {
 		}
 	}
 
-	public Movie updateMovie(final MovieId movieId, final UserId userId, final MovieTitle title) {
-		final Movie movie = repository.findBy(movieId, userId).get();
-		movie.update(title);
-		return movie;
-	}
 }
 
 
