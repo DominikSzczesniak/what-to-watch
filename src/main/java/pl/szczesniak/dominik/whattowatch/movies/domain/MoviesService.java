@@ -60,11 +60,12 @@ public class MoviesService {
 		}
 	}
 
-	public Movie updateMovie(final MovieId movieId, final UserId userId, final MovieTitle title) {
-		final Movie movie = repository.findBy(movieId, userId).get();
+	public void updateMovieTitle(final MovieId movieId, final UserId userId, final MovieTitle title) {
+		final Movie movie = repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId));
 		movie.update(title);
-		return movie;
+		repository.update(movie);
 	}
+
 }
 
 

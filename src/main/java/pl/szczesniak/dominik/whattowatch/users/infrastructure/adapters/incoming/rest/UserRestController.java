@@ -18,6 +18,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 @RequiredArgsConstructor
 @RestController

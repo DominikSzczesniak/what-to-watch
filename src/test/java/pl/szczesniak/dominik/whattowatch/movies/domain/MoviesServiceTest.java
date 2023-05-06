@@ -2,8 +2,8 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToListSample;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoveMovieToWatchListSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
@@ -17,6 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesToWatchServiceConfiguration.moviesToWatchService;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieIdSample.createAnyMovieId;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 class MoviesServiceTest {
@@ -281,7 +283,7 @@ class MoviesServiceTest {
 		final MovieTitle changedTitle = new MovieTitle("Star Wars");
 
 		// when
-		tut.updateMovie(movieId, userId, changedTitle);
+		tut.updateMovieTitle(movieId, userId, changedTitle);
 
 		// then
 		assertThat(tut.getMoviesToWatch(userId))
@@ -289,4 +291,30 @@ class MoviesServiceTest {
 				.containsExactly(changedTitle);
 	}
 
+	@Test
+	void should_throw_exception_when_trying_to_change_title_of_nonexistent_movie() {
+		// given
+		final UserId userId = userProvider.addUser(createAnyUserId());
+
+		// when
+		final Throwable thrown = catchThrowable(() -> tut.updateMovieTitle(createAnyMovieId(), userId, createAnyMovieTitle()));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
+	}
+
+	@Test
+	void should_not_be_able_to_change_title_when_not_users_movie() {
+		// given
+		final UserId user = userProvider.addUser(createAnyUserId());
+		final UserId differentUser = userProvider.addUser(createAnyUserId());
+
+		tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+
+		// when
+		final Throwable thrown = catchThrowable(() -> tut.updateMovieTitle(createAnyMovieId(), differentUser, createAnyMovieTitle()));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
+	}
 }

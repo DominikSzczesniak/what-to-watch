@@ -1,7 +1,8 @@
-package pl.szczesniak.dominik.whattowatch.users.domain.model;
+package pl.szczesniak.dominik.whattowatch.users.domain.model.commands;
 
 import lombok.Builder;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
 import static java.util.Optional.ofNullable;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserPasswordSample.createAnyUserPassword;

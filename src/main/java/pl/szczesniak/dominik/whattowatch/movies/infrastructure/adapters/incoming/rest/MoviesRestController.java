@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,6 +65,11 @@ public class MoviesRestController {
 		return ResponseEntity.badRequest().build();
 	}
 
+	@PutMapping("/api/movies/{movieId}")
+	public void updateMovieTitle(@PathVariable final Integer movieId, @RequestBody final UpdateMovieDto updateMovieDto) {
+		moviesService.updateMovie(new MovieId(movieId), new UserId(updateMovieDto.getUserId()), new MovieTitle(updateMovieDto.getTitle()));
+	}
+
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<?> handleIllegalArgumentException() {
 		return ResponseEntity.badRequest().build();
@@ -87,4 +93,9 @@ public class MoviesRestController {
 		UserId userId;
 	}
 
+	@Value
+	private static class UpdateMovieDto {
+		String title;
+		Integer userId;
+	}
 }

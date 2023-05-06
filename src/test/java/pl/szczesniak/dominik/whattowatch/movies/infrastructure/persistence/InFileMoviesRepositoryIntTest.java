@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieIdSample.createAnyMovieId;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 class InFileMoviesRepositoryIntTest {
@@ -162,6 +163,26 @@ class InFileMoviesRepositoryIntTest {
 
 		// then
 		assertThat(foundMovie).isEqualTo(createdMovie);
+	}
+
+	@Test
+	void should_change_movie_title() {
+		// given
+		final UserId userId = createAnyUserId();
+		final MovieTitle title = createAnyMovieTitle();
+		final MovieId movieId = createAnyMovieId();
+		final Movie movie = MovieSample.builder().movieId(movieId).userId(userId).movieTitle(title).build();
+		tut.save(movie);
+
+		final MovieTitle changedTitle = new MovieTitle("Star Wars");
+		final Movie movieWithDifferentTitle = MovieSample.builder().movieId(movieId).userId(userId).movieTitle(changedTitle).build();
+
+		// when
+		tut.update(movieWithDifferentTitle);
+
+		// then
+		List<Movie> all = tut.findAll(userId);
+		assertThat(all).extracting(Movie::getTitle).containsOnly(changedTitle);
 	}
 
 }

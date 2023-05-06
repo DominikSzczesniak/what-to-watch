@@ -11,6 +11,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -127,11 +128,6 @@ public class InFileMoviesRepository implements MoviesRepository {
 		return Optional.empty();
 	}
 
-	@Override
-	public Movie updateMovie(final MovieId movieId, final UserId userId, final MovieTitle title) {
-		return null;
-	}
-
 	private void renameFile(final File oldFile, final String fileNameOfUsers, final File newFile) {
 		oldFile.delete();
 		final File dump = new File(fileNameOfUsers);
@@ -167,6 +163,30 @@ public class InFileMoviesRepository implements MoviesRepository {
 			throw new UncheckedIOException(e);
 		}
 		return new MovieId(id);
+	}
+
+	@Override
+	public void update(final Movie movie) {
+		try {
+			BufferedReader file = new BufferedReader(new FileReader(fileNameOfMovies));
+			StringBuilder inputBuilder = new StringBuilder();
+			String line;
+			while ((line = file.readLine()) != null) {
+				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
+				if (listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV).equals(String.valueOf(movie.getMovieId().getValue()))) {
+					line = movie.getUserId().getValue() + "," + movie.getMovieId().getValue() + "," + movie.getTitle().getValue();
+				}
+				inputBuilder.append(line);
+				inputBuilder.append('\n');
+			}
+			file.close();
+			FileOutputStream fileOut = new FileOutputStream(fileNameOfMovies);
+			fileOut.write(inputBuilder.toString().getBytes());
+			fileOut.close();
+
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 	}
 
 	private void overwriteMovieIdFile(final MovieId movieId) {

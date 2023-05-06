@@ -1,7 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import org.junit.jupiter.api.Test;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.CreateUserSample;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUserSample;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
 import static org.assertj.core.api.Assertions.assertThat;

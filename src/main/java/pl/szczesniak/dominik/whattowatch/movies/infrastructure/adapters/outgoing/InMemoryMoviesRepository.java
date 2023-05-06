@@ -3,7 +3,6 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoin
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashMap;
@@ -56,10 +55,9 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 	}
 
 	@Override
-	public Movie updateMovie(final MovieId movieId, final UserId userId, final MovieTitle title) {
-		final Movie movie = movies.get(movieId);
-		movie.update(title);
-		return movie;
+	public void update(final Movie movie) {
+		movies.put(movie.getMovieId(), movie);
 	}
+
 
 }
