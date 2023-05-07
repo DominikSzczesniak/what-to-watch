@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -25,13 +25,12 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping
 public class MoviesRestController {
 
 	private final MoviesService moviesService;
 
 	@GetMapping("/api/movies")
-	public List<MovieDto> findAllMoviesToWatch(@RequestBody final Integer userId) {
+	public List<MovieDto> findAllMoviesToWatch(@RequestHeader("userId") final Integer userId) {
 		return moviesService.getMoviesToWatch(new UserId(userId)).stream()
 				.map(movie -> new MovieDto(movie.getTitle(), movie.getMovieId(), movie.getUserId()))
 				.toList();
@@ -43,8 +42,9 @@ public class MoviesRestController {
 	}
 
 	@DeleteMapping("/api/movies")
-	public void removeMovieFromList(@RequestBody CreateMovieToRemoveDto movieToRemoveDto) {
+	public ResponseEntity<?> removeMovieFromList(@RequestBody CreateMovieToRemoveDto movieToRemoveDto) {
 		moviesService.removeMovieFromList(new MovieId(movieToRemoveDto.getMovieId()), new UserId(movieToRemoveDto.getUserId()));
+		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping("/api/movies/watchedmovies")
@@ -61,6 +61,11 @@ public class MoviesRestController {
 
 	@ExceptionHandler(MovieDoesNotExistException.class)
 	public ResponseEntity<?> handleMovieDoesNotExistException() {
+		return ResponseEntity.badRequest().build();
+	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<?> handleIllegalArgumentException() {
 		return ResponseEntity.badRequest().build();
 	}
 
