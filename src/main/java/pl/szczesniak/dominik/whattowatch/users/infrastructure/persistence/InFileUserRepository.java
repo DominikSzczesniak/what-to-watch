@@ -1,13 +1,14 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UserAlreadyExistsException;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.exceptions.UsernameIsTakenException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
+@Repository
 public class InFileUserRepository implements UserRepository {
 
 	private final String fileNameOfUsers;
@@ -30,6 +31,10 @@ public class InFileUserRepository implements UserRepository {
 	private final static int INDEX_WITH_USERNAME_IN_CSV = 0;
 	private final static int ID_OF_FIRST_CREATED_USER_EVER = 1;
 
+	public InFileUserRepository(@Value("fileNameOfUsers.csv") final String fileNameOfUsers, @Value("usersIdFileName.csv") final String usersIdFileName) {
+		this.fileNameOfUsers = fileNameOfUsers;
+		this.usersIdFileName = usersIdFileName;
+	}
 
 	@Override
 	public void create(final User user) {

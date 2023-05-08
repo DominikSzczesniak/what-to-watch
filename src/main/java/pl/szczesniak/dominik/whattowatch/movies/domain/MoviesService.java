@@ -3,7 +3,6 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
@@ -33,22 +32,25 @@ public class MoviesService {
 	}
 
 	public List<Movie> getMoviesToWatch(final UserId userId) {
+		checkUserExists(userId);
 		return repository.findAll(userId);
 	}
 
 	public List<WatchedMovie> getWatchedMovies(final UserId userId) {
+		checkUserExists(userId);
 		return watchedRepository.findAllBy(userId);
 	}
 
 	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
 		checkUserExists(command.getUserId());
-		final WatchedMovie watchedMovie = new WatchedMovie(command.getMovieId(), getTitleById(command.getMovieId(), command.getUserId()), command.getUserId());
+		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		final WatchedMovie watchedMovie = movie.markAsWatched();
 		watchedRepository.add(watchedMovie);
 		repository.removeMovie(command.getMovieId(), command.getUserId());
 	}
 
-	private MovieTitle getTitleById(final MovieId movieId, final UserId userId) {
-		return repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId)).getTitle();
+	private Movie getMovie(final MovieId movieId, final UserId userId) {
+		return repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 
 	private void checkUserExists(final UserId userId) {

@@ -1,6 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence.InMemoryUserRepository;
+import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.InMemoryUserRepository;
 
 public class TestUserServiceConfiguration {
 

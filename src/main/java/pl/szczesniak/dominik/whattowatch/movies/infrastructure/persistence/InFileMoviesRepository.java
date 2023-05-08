@@ -1,6 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 import static pl.szczesniak.dominik.whattowatch.movies.domain.Movie.recreate;
 
-@RequiredArgsConstructor
+@Repository
 public class InFileMoviesRepository implements MoviesRepository {
 
 	private final String fileNameOfMovies;
@@ -31,6 +32,12 @@ public class InFileMoviesRepository implements MoviesRepository {
 	private static final int INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV = 1;
 	private static final int INDEX_WITH_MOVIE_TITLE_NUMBER_IN_CSV = 2;
 	private static final int ID_OF_FIRST_CREATED_MOVIE_EVER = 1;
+
+	public InFileMoviesRepository(@Value("${what-to-watch.persistence.in-file-repository-movies.filename}") String fileNameOfMovies,
+								  @Value("${what-to-watch.persistence.in-file-repository-movies-id.filename}") String moviesIdFileName) {
+		this.fileNameOfMovies = fileNameOfMovies;
+		this.moviesIdFileName = moviesIdFileName;
+	}
 
 	@Override
 	public void save(final Movie movie) {
@@ -144,7 +151,7 @@ public class InFileMoviesRepository implements MoviesRepository {
 		return movieId;
 	}
 
-	MovieId findNextMovieId() {
+	public MovieId findNextMovieId() {
 		int id = ID_OF_FIRST_CREATED_MOVIE_EVER;
 		try (final BufferedReader br = new BufferedReader(new FileReader(moviesIdFileName))) {
 			String line;
