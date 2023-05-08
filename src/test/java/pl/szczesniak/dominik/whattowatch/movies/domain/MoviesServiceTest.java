@@ -71,6 +71,15 @@ class MoviesServiceTest {
 	}
 
 	@Test
+	void should_not_be_able_to_get_movies_to_watch_list_when_user_does_not_exist() {
+		// when
+		final Throwable thrown = catchThrowable(() -> tut.getMoviesToWatch(createAnyUserId()));
+
+		// then
+		assertThat(thrown).isInstanceOf(UserDoesNotExistException.class);
+	}
+
+	@Test
 	void user_should_be_able_to_add_movies_with_same_title() {
 		// given
 		final UserId userId = userProvider.addUser(createAnyUserId());

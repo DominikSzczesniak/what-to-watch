@@ -14,23 +14,17 @@
 					"item": [
 						{
 							"name": "get watched movies list",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
 							"request": {
 								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "1",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "userId",
+										"value": "1",
+										"type": "text"
 									}
-								},
+								],
 								"url": {
-									"raw": "localhost:8080/api/movies/watchedmovies",
+									"raw": "localhost:8080/api/movies/watched",
 									"host": [
 										"localhost"
 									],
@@ -38,7 +32,7 @@
 									"path": [
 										"api",
 										"movies",
-										"watchedmovies"
+										"watched"
 									]
 								}
 							},
@@ -48,18 +42,15 @@
 							"name": "move movie to watched list",
 							"request": {
 								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "1",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "userId",
+										"value": "1",
+										"type": "text"
 									}
-								},
+								],
 								"url": {
-									"raw": "localhost:8080/api/movies/1/watchedmovies",
+									"raw": "localhost:8080/api/movies/1/watched",
 									"host": [
 										"localhost"
 									],
@@ -68,7 +59,7 @@
 										"api",
 										"movies",
 										"1",
-										"watchedmovies"
+										"watched"
 									]
 								}
 							},
@@ -83,7 +74,13 @@
 					},
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "    1",
@@ -139,7 +136,13 @@
 					"name": "delete movie",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"movieId\": \"1\",\r\n    \"userId\": \"1\"\r\n}",
@@ -150,14 +153,15 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/movies",
+							"raw": "localhost:8080/api/movies/1",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"api",
-								"movies"
+								"movies",
+								"1"
 							]
 						}
 					},
@@ -183,14 +187,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/user",
+							"raw": "localhost:8080/api/users",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"api",
-								"user"
+								"users"
 							]
 						}
 					},
@@ -198,11 +202,8 @@
 				},
 				{
 					"name": "login user",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -214,14 +215,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/user",
+							"raw": "localhost:8080/api/login",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"api",
-								"user"
+								"login"
 							]
 						}
 					},

@@ -25,4 +25,7 @@ public class Movie {
 		return new Movie(movieId, title, userId);
 	}
 
+	WatchedMovie markAsWatched() {
+		return new WatchedMovie(movieId, title, userId);
+	}
 }

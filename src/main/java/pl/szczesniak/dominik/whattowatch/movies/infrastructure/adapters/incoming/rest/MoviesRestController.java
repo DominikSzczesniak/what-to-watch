@@ -41,21 +41,21 @@ public class MoviesRestController {
 		return moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle(movieDto.getTitle()), new UserId(movieDto.userId)).build());
 	}
 
-	@DeleteMapping("/api/movies")
-	public ResponseEntity<?> removeMovieFromList(@RequestBody CreateMovieToRemoveDto movieToRemoveDto) {
-		moviesService.removeMovieFromList(new MovieId(movieToRemoveDto.getMovieId()), new UserId(movieToRemoveDto.getUserId()));
+	@DeleteMapping("/api/movies/{movieId}")
+	public ResponseEntity<?> removeMovieFromList(@RequestHeader("userId") Integer userId, @PathVariable Integer movieId) {
+		moviesService.removeMovieFromList(new MovieId(movieId), new UserId(userId));
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/api/movies/watchedmovies")
-	public List<MovieDto> findWatchedMovies(@RequestBody final Integer userId) {
+	@GetMapping("/api/movies/watched")
+	public List<MovieDto> findWatchedMovies(@RequestHeader("userId") Integer userId) {
 		return moviesService.getWatchedMovies(new UserId(userId)).stream()
 				.map(movie -> new MovieDto(movie.getTitle(), movie.getMovieId(), movie.getUserId()))
 				.toList();
 	}
 
-	@PostMapping("/api/movies/{movieId}/watchedmovies")
-	public void moveMovieToWatchedList(@PathVariable Integer movieId, @RequestBody final Integer userId) {
+	@PostMapping("/api/movies/{movieId}/watched")
+	public void moveMovieToWatchedList(@PathVariable Integer movieId, @RequestHeader("userId") Integer userId) {
 		moviesService.moveMovieToWatchedList(new MoveMovieToWatchedMoviesList(new MovieId(movieId), new UserId(userId)));
 	}
 
@@ -72,13 +72,6 @@ public class MoviesRestController {
 	@ExceptionHandler(UserDoesNotExistException.class)
 	public ResponseEntity<?> handleUserDoesNotExistException() {
 		return ResponseEntity.badRequest().build();
-	}
-
-
-	@Data
-	private static class CreateMovieToRemoveDto {
-		private Integer movieId;
-		private Integer userId;
 	}
 
 	@Data

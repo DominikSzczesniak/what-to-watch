@@ -33,7 +33,8 @@ public class InFileMoviesRepository implements MoviesRepository {
 	private static final int INDEX_WITH_MOVIE_TITLE_NUMBER_IN_CSV = 2;
 	private static final int ID_OF_FIRST_CREATED_MOVIE_EVER = 1;
 
-	public InFileMoviesRepository(@Value("${in.file.movies.file}") String fileNameOfMovies, @Value("${movies.id.file.name}") String moviesIdFileName) {
+	public InFileMoviesRepository(@Value("${what-to-watch.persistence.in-file-repository-movies.filename}") String fileNameOfMovies,
+								  @Value("${what-to-watch.persistence.in-file-repository-movies-id.filename}") String moviesIdFileName) {
 		this.fileNameOfMovies = fileNameOfMovies;
 		this.moviesIdFileName = moviesIdFileName;
 	}
