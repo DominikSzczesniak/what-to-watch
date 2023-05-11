@@ -48,6 +48,11 @@ public class MoviesRestController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PutMapping("/api/movies/{movieId}")
+	public void updateMovie(@RequestHeader("userId") Integer userId, @PathVariable final Integer movieId, @RequestBody final UpdateMovieDto updateMovieDto) {
+		moviesService.updateMovieTitle(new MovieId(movieId), new UserId(userId), new MovieTitle(updateMovieDto.getMovieTitle()));
+	}
+
 	@GetMapping("/api/movies/watched")
 	public List<MovieDto> findWatchedMovies(@RequestHeader("userId") Integer userId) {
 		return moviesService.getWatchedMovies(new UserId(userId)).stream()
@@ -63,11 +68,6 @@ public class MoviesRestController {
 	@ExceptionHandler(MovieDoesNotExistException.class)
 	public ResponseEntity<?> handleMovieDoesNotExistException() {
 		return ResponseEntity.badRequest().build();
-	}
-
-	@PutMapping("/api/movies/{movieId}")
-	public void updateMovieTitle(@PathVariable final Integer movieId, @RequestBody final UpdateMovieDto updateMovieDto) {
-		moviesService.updateMovie(new MovieId(movieId), new UserId(updateMovieDto.getUserId()), new MovieTitle(updateMovieDto.getTitle()));
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
@@ -93,9 +93,8 @@ public class MoviesRestController {
 		UserId userId;
 	}
 
-	@Value
+	@Data
 	private static class UpdateMovieDto {
-		String title;
-		Integer userId;
+		private String movieTitle;
 	}
 }

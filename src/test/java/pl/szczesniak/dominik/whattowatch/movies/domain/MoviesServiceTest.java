@@ -277,7 +277,7 @@ class MoviesServiceTest {
 	void should_update_movie_title() {
 		// given
 		final UserId userId = userProvider.addUser(createAnyUserId());
-		final MovieTitle title = new MovieTitle("Parasite");
+		final MovieTitle title = createAnyMovieTitle();
 		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().movieTitle(title).userId(userId).build());
 
 		final MovieTitle changedTitle = new MovieTitle("Star Wars");
