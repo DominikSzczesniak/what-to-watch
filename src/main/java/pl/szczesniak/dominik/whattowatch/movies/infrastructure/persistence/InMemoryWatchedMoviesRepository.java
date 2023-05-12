@@ -27,4 +27,5 @@ public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository 
 				.filter(movie -> movie.getUserId().equals(userId))
 				.collect(Collectors.toList());
 	}
+
 }

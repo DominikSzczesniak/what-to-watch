@@ -97,4 +97,5 @@ public class MoviesRestController {
 	private static class UpdateMovieDto {
 		private String movieTitle;
 	}
+
 }
