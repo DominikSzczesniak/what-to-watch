@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
+package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.persistence;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

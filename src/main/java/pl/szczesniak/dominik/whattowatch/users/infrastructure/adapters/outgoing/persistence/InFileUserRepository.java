@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.persistence;
+package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.persistence;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -31,7 +31,8 @@ public class InFileUserRepository implements UserRepository {
 	private final static int INDEX_WITH_USERNAME_IN_CSV = 0;
 	private final static int ID_OF_FIRST_CREATED_USER_EVER = 1;
 
-	public InFileUserRepository(@Value("fileNameOfUsers.csv") final String fileNameOfUsers, @Value("usersIdFileName.csv") final String usersIdFileName) {
+	public InFileUserRepository(@Value("${what-to-watch.persistence.in-file-repository-users.filename}") final String fileNameOfUsers,
+								@Value("${what-to-watch.persistence.in-file-repository-users-id.filename}") final String usersIdFileName) {
 		this.fileNameOfUsers = fileNameOfUsers;
 		this.usersIdFileName = usersIdFileName;
 	}

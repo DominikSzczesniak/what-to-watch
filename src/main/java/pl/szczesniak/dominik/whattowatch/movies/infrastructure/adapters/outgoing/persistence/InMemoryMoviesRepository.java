@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.persistence;
 
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
@@ -23,8 +23,13 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 	}
 
 	@Override
-	public void save(final Movie movie) {
+	public void create(final Movie movie) {
 		movies.put(movie.getMovieId(), movie);
+	}
+
+	@Override
+	public void update(final Movie movie) {
+		movies.replace(movie.getMovieId(), movie);
 	}
 
 	@Override
@@ -52,11 +57,6 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 		return movies.values().stream()
 				.filter(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId))
 				.findFirst();
-	}
-
-	@Override
-	public void update(final Movie movie) {
-		movies.put(movie.getMovieId(), movie);
 	}
 
 }

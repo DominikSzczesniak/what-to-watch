@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing;
+package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.persistence;
 
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;

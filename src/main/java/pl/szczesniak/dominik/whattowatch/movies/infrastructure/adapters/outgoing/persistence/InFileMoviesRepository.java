@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.persistence;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -41,13 +41,38 @@ public class InFileMoviesRepository implements MoviesRepository {
 	}
 
 	@Override
-	public void save(final Movie movie) {
+	public void create(final Movie movie) {
 		createFile();
 		try (final FileWriter fw = new FileWriter(fileNameOfMovies, true)) {
 			final BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(movie.getUserId().getValue() + "," + movie.getMovieId().getValue() + "," + movie.getTitle().getValue());
 			bw.newLine();
 			bw.close();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
+	@Override
+	public void update(final Movie movie) {
+		createFile();
+		try {
+			BufferedReader file = new BufferedReader(new FileReader(fileNameOfMovies));
+			StringBuilder inputBuilder = new StringBuilder();
+			String line;
+			while ((line = file.readLine()) != null) {
+				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
+				if (listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV).equals(String.valueOf(movie.getMovieId().getValue()))) {
+					line = movie.getUserId().getValue() + "," + movie.getMovieId().getValue() + "," + movie.getTitle().getValue();
+				}
+				inputBuilder.append(line);
+				inputBuilder.append('\n');
+			}
+			file.close();
+			FileOutputStream fileOut = new FileOutputStream(fileNameOfMovies);
+			fileOut.write(inputBuilder.toString().getBytes());
+			fileOut.close();
+
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
@@ -163,30 +188,6 @@ public class InFileMoviesRepository implements MoviesRepository {
 			throw new UncheckedIOException(e);
 		}
 		return new MovieId(id);
-	}
-
-	@Override
-	public void update(final Movie movie) {
-		try {
-			BufferedReader file = new BufferedReader(new FileReader(fileNameOfMovies));
-			StringBuilder inputBuilder = new StringBuilder();
-			String line;
-			while ((line = file.readLine()) != null) {
-				final List<String> listLine = Arrays.stream(line.split("[,]")).toList();
-				if (listLine.get(INDEX_WITH_MOVIE_ID_NUMBER_IN_CSV).equals(String.valueOf(movie.getMovieId().getValue()))) {
-					line = movie.getUserId().getValue() + "," + movie.getMovieId().getValue() + "," + movie.getTitle().getValue();
-				}
-				inputBuilder.append(line);
-				inputBuilder.append('\n');
-			}
-			file.close();
-			FileOutputStream fileOut = new FileOutputStream(fileNameOfMovies);
-			fileOut.write(inputBuilder.toString().getBytes());
-			fileOut.close();
-
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
 	}
 
 	private void overwriteMovieIdFile(final MovieId movieId) {

@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.domain;
+package pl.szczesniak.dominik.whattowatch.movies.domain.model.commands;
 
 import lombok.Builder;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -10,11 +10,11 @@ import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieIdSampl
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
-public class MovieSample {
+public class UpdateMovieSample {
 
 	@Builder
-	private static Movie build(final MovieId movieId, final MovieTitle movieTitle, final UserId userId) {
-		return new Movie(
+	private static UpdateMovie build(final MovieId movieId, final UserId userId, final MovieTitle movieTitle) {
+		return new UpdateMovie(
 				ofNullable(movieId).orElse(createAnyMovieId()),
 				ofNullable(userId).orElse(createAnyUserId()),
 				ofNullable(movieTitle).orElse(createAnyMovieTitle())

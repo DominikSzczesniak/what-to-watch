@@ -18,6 +18,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -50,7 +51,7 @@ public class MoviesRestController {
 
 	@PutMapping("/api/movies/{movieId}")
 	public void updateMovie(@RequestHeader("userId") Integer userId, @PathVariable final Integer movieId, @RequestBody final UpdateMovieDto updateMovieDto) {
-		moviesService.updateMovieTitle(new MovieId(movieId), new UserId(userId), new MovieTitle(updateMovieDto.getMovieTitle()));
+		moviesService.updateMovie(new UpdateMovie(new MovieId(movieId), new UserId(userId), new MovieTitle(updateMovieDto.getMovieTitle())));
 	}
 
 	@GetMapping("/api/movies/watched")

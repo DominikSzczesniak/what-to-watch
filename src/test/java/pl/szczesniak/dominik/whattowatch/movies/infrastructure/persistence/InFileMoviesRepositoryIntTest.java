@@ -7,6 +7,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.persistence.InFileMoviesRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.File;
@@ -66,7 +67,7 @@ class InFileMoviesRepositoryIntTest {
 		tut = new InFileMoviesRepository(testMoviesFile.getAbsolutePath(), testFileId.getAbsolutePath() + testFileId.getName());
 
 		// when
-		tut.save(MovieSample.builder().movieId(new MovieId(5)).movieTitle(new MovieTitle("Parasite")).userId(new UserId(1)).build());
+		tut.create(MovieSample.builder().movieId(new MovieId(5)).movieTitle(new MovieTitle("Parasite")).userId(new UserId(1)).build());
 
 		// then
 		final String line = "1,5,Parasite";
@@ -79,8 +80,8 @@ class InFileMoviesRepositoryIntTest {
 		final UserId userId = createAnyUserId();
 
 		// when
-		tut.save(MovieSample.builder().userId(userId).build());
-		tut.save(MovieSample.builder().userId(userId).build());
+		tut.create(MovieSample.builder().userId(userId).build());
+		tut.create(MovieSample.builder().userId(userId).build());
 
 		// then
 		assertThat(tut.findAll(userId)).hasSize(2);
@@ -92,8 +93,8 @@ class InFileMoviesRepositoryIntTest {
 		final MovieId movieId = createAnyMovieId();
 		final UserId userId = createAnyUserId();
 
-		tut.save(MovieSample.builder().movieId(movieId).userId(userId).build());
-		tut.save(MovieSample.builder().userId(userId).build());
+		tut.create(MovieSample.builder().movieId(movieId).userId(userId).build());
+		tut.create(MovieSample.builder().userId(userId).build());
 		assertThat(tut.findAll(userId)).hasSize(2);
 
 		// when
@@ -110,8 +111,8 @@ class InFileMoviesRepositoryIntTest {
 		final UserId userIdTwo = createAnyUserId();
 		final MovieId movieId = createAnyMovieId();
 
-		tut.save(MovieSample.builder().userId(userIdOne).movieId(movieId).build());
-		tut.save(MovieSample.builder().userId(userIdTwo).build());
+		tut.create(MovieSample.builder().userId(userIdOne).movieId(movieId).build());
+		tut.create(MovieSample.builder().userId(userIdTwo).build());
 
 		// when
 		tut.removeMovie(movieId, userIdTwo);
@@ -141,7 +142,7 @@ class InFileMoviesRepositoryIntTest {
 		final Movie movie = MovieSample.builder().movieId(movieId).userId(userIdOne).build();
 
 		// when
-		tut.save(movie);
+		tut.create(movie);
 
 		// then
 		assertThat(tut.findBy(movieId, userIdTwo)).isEmpty();
@@ -156,7 +157,7 @@ class InFileMoviesRepositoryIntTest {
 		final UserId userIdOne = createAnyUserId();
 		final MovieId movieId = createAnyMovieId();
 		final Movie createdMovie = MovieSample.builder().movieId(movieId).userId(userIdOne).build();
-		tut.save(createdMovie);
+		tut.create(createdMovie);
 
 		// when
 		final Movie foundMovie = tut.findBy(movieId, userIdOne).get();
@@ -172,7 +173,7 @@ class InFileMoviesRepositoryIntTest {
 		final MovieTitle title = createAnyMovieTitle();
 		final MovieId movieId = createAnyMovieId();
 		final Movie movie = MovieSample.builder().movieId(movieId).userId(userId).movieTitle(title).build();
-		tut.save(movie);
+		tut.create(movie);
 
 		final MovieTitle changedTitle = new MovieTitle("Star Wars");
 		final Movie movieWithDifferentTitle = MovieSample.builder().movieId(movieId).userId(userId).movieTitle(changedTitle).build();
