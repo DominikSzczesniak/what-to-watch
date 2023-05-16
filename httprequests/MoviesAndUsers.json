@@ -166,6 +166,40 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "update movie title",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/movies/1/changed",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"movies",
+								"1",
+								"changed"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

@@ -2,10 +2,12 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.AddMovieToListSample;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MoveMovieToWatchListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchListSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -16,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesToWatchServiceConfiguration.moviesToWatchService;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 class MoviesServiceTest {
@@ -265,6 +268,67 @@ class MoviesServiceTest {
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().movieId(starWars).userId(userId).build()));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
+	}
+
+	@Test
+	void should_update_movie_title() {
+		// given
+		final UserId userId = userProvider.addUser(createAnyUserId());
+		final MovieTitle title = createAnyMovieTitle();
+		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().movieTitle(title).userId(userId).build());
+
+		final MovieTitle changedTitle = new MovieTitle("Star Wars");
+
+		// when
+		tut.updateMovie(UpdateMovieSample.builder().movieId(movieId).userId(userId).movieTitle(changedTitle).build());
+
+		// then
+		assertThat(tut.getMoviesToWatch(userId))
+				.extracting(Movie::getTitle)
+				.containsExactly(changedTitle);
+	}
+
+	@Test
+	void should_throw_exception_when_trying_to_update_to_illegal_title() {
+		// given
+		final UserId userId = userProvider.addUser(createAnyUserId());
+		final MovieTitle title = createAnyMovieTitle();
+		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().movieTitle(title).userId(userId).build());
+
+		// when
+		Throwable thrownOne = catchThrowable(() -> tut.updateMovie(UpdateMovieSample.builder().movieId(movieId).userId(userId).movieTitle(new MovieTitle(" ")).build()));
+		Throwable thrownTwo = catchThrowable(() -> tut.updateMovie(UpdateMovieSample.builder().movieId(movieId).userId(userId).movieTitle(new MovieTitle(";")).build()));
+
+		// then
+		assertThat(thrownOne).isInstanceOf(IllegalArgumentException.class);
+		assertThat(thrownTwo).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
+	void should_throw_exception_when_trying_to_change_title_of_nonexistent_movie() {
+		// given
+		final UserId userId = userProvider.addUser(createAnyUserId());
+
+		// when
+		final Throwable thrown = catchThrowable(() -> tut.updateMovie(UpdateMovieSample.builder().userId(userId).build()));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
+	}
+
+	@Test
+	void should_not_be_able_to_change_title_when_not_users_movie() {
+		// given
+		final UserId user = userProvider.addUser(createAnyUserId());
+		final UserId differentUser = userProvider.addUser(createAnyUserId());
+
+		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+
+		// when
+		final Throwable thrown = catchThrowable(() -> tut.updateMovie(UpdateMovieSample.builder().movieId(movieId).userId(differentUser).build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);

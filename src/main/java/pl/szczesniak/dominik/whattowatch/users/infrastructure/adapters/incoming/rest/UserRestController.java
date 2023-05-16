@@ -3,10 +3,10 @@ package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +26,7 @@ public class UserRestController {
 	private final UserService userService;
 
 	@PostMapping("/api/login")
-	public UserId loginUser(@RequestBody final CreateUserDto userDto) {
+	public UserId loginUser(@RequestBody final LoginUserDto userDto) {
 		return userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()));
 	}
 
@@ -55,6 +55,12 @@ public class UserRestController {
 	private static class CreateUserDto {
 		private String username;
 		private String password;
+	}
+
+	@Value
+	private static class LoginUserDto {
+		String username;
+		String password;
 	}
 
 }

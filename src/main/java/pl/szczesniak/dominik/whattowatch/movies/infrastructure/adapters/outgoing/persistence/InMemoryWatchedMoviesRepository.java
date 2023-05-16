@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.persistence;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.persistence;
 
 import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.WatchedMovie;
@@ -27,4 +27,5 @@ public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository 
 				.filter(movie -> movie.getUserId().equals(userId))
 				.collect(Collectors.toList());
 	}
+
 }

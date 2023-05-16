@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.MovieDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -22,8 +23,8 @@ public class MoviesService {
 		if (!userProvider.exists(command.getUserId())) {
 			throw new UserDoesNotExistException("User doesn't exist. Didn't add movie to any list");
 		}
-		final Movie movie = new Movie(repository.nextMovieId(), command.getMovieTitle(), command.getUserId());
-		repository.save(movie);
+		final Movie movie = new Movie(repository.nextMovieId(), command.getUserId(), command.getMovieTitle());
+		repository.create(movie);
 		return movie.getMovieId();
 	}
 
@@ -49,14 +50,24 @@ public class MoviesService {
 		repository.removeMovie(command.getMovieId(), command.getUserId());
 	}
 
-	private Movie getMovie(final MovieId movieId, final UserId userId) {
-		return repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId));
-	}
-
 	private void checkUserExists(final UserId userId) {
 		if (!userProvider.exists(userId)) {
 			throw new UserDoesNotExistException("User with userId: " + userId + " doesn't exist. Action aborted");
 		}
+	}
+
+	private Movie getMovie(final MovieId movieId, final UserId userId) {
+		return findMovie(movieId, userId);
+	}
+
+	public void updateMovie(final UpdateMovie command) {
+		final Movie movie = findMovie(command.getMovieId(), command.getUserId());
+		movie.update(command.getTitle());
+		repository.update(movie);
+	}
+
+	private Movie findMovie(final MovieId movieId, final UserId userId) {
+		return repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 
 }

@@ -10,7 +10,9 @@ public interface MoviesRepository {
 
 	MovieId nextMovieId();
 
-	void save(Movie movie);
+	void create(Movie movie);
+
+	void update(Movie movie);
 
 	List<Movie> findAll(UserId userId);
 
