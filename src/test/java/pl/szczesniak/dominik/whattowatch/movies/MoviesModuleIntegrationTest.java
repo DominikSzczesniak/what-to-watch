@@ -5,15 +5,31 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import pl.szczesniak.dominik.whattowatch.movies.AddMovieToWatchRestInvoker.AddMovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.FindMoviesToWatchRestInvoker.MovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.FindWatchedMoviesRestInvoker.WatchedMovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.UpdateMovieToWatchRestInvoker.UpdateMovieDto;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.AddMovieToWatchRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.AddMovieToWatchRestInvoker.AddMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindMoviesToWatchRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindMoviesToWatchRestInvoker.MovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindWatchedMoviesRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindWatchedMoviesRestInvoker.WatchedMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.RemoveMovieToWatchFromListRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.SetMovieToWatchCoverRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.UpdateMovieToWatchRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.UpdateMovieToWatchRestInvoker.UpdateMovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.domain.UserProvider;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.GetMovieToWatchCoverRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.SetMovieToWatchCoverRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.GetMovieToWatchCoverRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.MoveMovieToWatchToWatchedListInvoker;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,6 +63,12 @@ class MoviesModuleIntegrationTest {
 
 	@Autowired
 	private MoveMovieToWatchToWatchedListInvoker moveMovieToWatchToWatchedListRest;
+
+	@Autowired
+	private SetMovieToWatchCoverRestInvoker setMovieToWatchCoverRest;
+
+	@Autowired
+	private GetMovieToWatchCoverRestInvoker getMovieToWatch
 
 	private Integer userId;
 
@@ -177,6 +199,44 @@ class MoviesModuleIntegrationTest {
 		assertThat(getWatchedMoviesResponse.getBody())
 				.extracting(WatchedMovieDto::getTitle, WatchedMovieDto::getUserId, WatchedMovieDto::getMovieId)
 				.containsExactly(tuple(movieTitle.getValue(), userId, addMovieResponse.getBody()));
+	}
+
+	@Test
+	void should_save_cover_and_read_it() throws IOException {
+		// given
+		final MovieTitle movieTitle = createAnyMovieTitle();
+
+		final ResponseEntity<Integer> addMovieResponse = addMovieRest.addMovie(
+				AddMovieDto.builder().title(movieTitle.getValue()).userId(userId).build(),
+				Integer.class
+		);
+
+		// then
+		assertMovieWasAdded(addMovieResponse);
+
+		// when
+		final File coverFile = new File("src/test/resources/imagesTest/2x.png");
+		final String filename = coverFile.getName();
+		final String originalFilename = coverFile.getName();
+		final String contentType = "image/png";
+		final byte[] content = Files.readAllBytes(coverFile.toPath());
+
+		final MultipartFile multipartFile = new MockMultipartFile(filename, originalFilename, contentType, content);
+		final ResponseEntity<?> responseEntity = setMovieToWatchCoverRest.setCover(userId, addMovieResponse.getBody(), multipartFile);
+
+		// then
+		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		// when
+		ResponseEntity<byte[]> movieToWatchCover = getMovieToWatchCoverRest.getMovieToWatchCover(userId, addMovieResponse.getBody());
+
+		// then
+		final HttpHeaders headers = movieToWatchCover.getHeaders();
+		final String contentTypeHeader = headers.getFirst(HttpHeaders.CONTENT_TYPE);
+
+		assertThat(movieToWatchCover.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(movieToWatchCover.getBody()).containsExactly(multipartFile.getInputStream().readAllBytes());
+		assertThat(contentTypeHeader).isEqualTo(contentType);
 	}
 
 	private static void assertMovieWasAdded(final ResponseEntity<Integer> addMovieResponse) {

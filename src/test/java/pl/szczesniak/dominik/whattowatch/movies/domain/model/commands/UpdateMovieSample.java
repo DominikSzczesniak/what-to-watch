@@ -14,11 +14,11 @@ public class UpdateMovieSample {
 
 	@Builder
 	private static UpdateMovie build(final MovieId movieId, final UserId userId, final MovieTitle movieTitle) {
-		return new UpdateMovie(
-				ofNullable(movieId).orElse(createAnyMovieId()),
-				ofNullable(userId).orElse(createAnyUserId()),
-				ofNullable(movieTitle).orElse(createAnyMovieTitle())
-		);
+		return UpdateMovie.builder(
+						ofNullable(movieId).orElse(createAnyMovieId()),
+						ofNullable(userId).orElse(createAnyUserId()),
+						ofNullable(movieTitle).orElse(createAnyMovieTitle()))
+				.build();
 	}
 
 }

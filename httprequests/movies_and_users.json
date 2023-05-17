@@ -263,6 +263,107 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Movie Poster",
+			"item": [
+				{
+					"name": "get movie cover",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							},
+							{
+								"key": "filename",
+								"value": "Gladge.png",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/movies/1/cover",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"movies",
+								"1",
+								"cover"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update movie cover",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "",
+									"type": "file",
+									"src": "/C:/Users/sarat/Desktop/Gladge.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:8080/api/movies/1/cover",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"movies",
+								"1",
+								"cover"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete movie cover",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/movies/1/cover",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"movies",
+								"1",
+								"cover"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

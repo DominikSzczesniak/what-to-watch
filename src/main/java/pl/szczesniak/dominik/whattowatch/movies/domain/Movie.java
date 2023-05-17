@@ -17,6 +17,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.util.Optional;
+
 import static java.util.Objects.requireNonNull;
 
 @Entity
@@ -39,6 +41,8 @@ public class Movie {
 	@AttributeOverride(name = "value", column = @Column(name = "movietitle_value"))
 	private MovieTitle title;
 
+	private MovieCover cover;
+
 	Movie(final UserId userId, final MovieTitle title) {
 		this.userId = requireNonNull(userId, "UserId cannot be null");
 		this.title = requireNonNull(title, "MovieTitle cannot be null");
@@ -52,8 +56,16 @@ public class Movie {
 		this.title = title;
 	}
 
+	public void updateCover(final MovieCover cover) {
+		this.cover = cover;
+	}
+
 	public MovieId getMovieId() {
 		return new MovieId(movieId);
+	}
+
+	public Optional<MovieCover> getCover() {
+		return Optional.ofNullable(cover);
 	}
 
 }
