@@ -35,7 +35,7 @@ class UserRestControllerIntegrationTest {
 		final ResponseEntity<UserId> createUserResponse = restTemplate.exchange(
 				"/api/users",
 				HttpMethod.POST,
-				new HttpEntity<>(getCreateUserDto(username, password)),
+				new HttpEntity<>(new CreateUserDto(username, password)),
 				UserId.class
 		);
 
@@ -54,10 +54,6 @@ class UserRestControllerIntegrationTest {
 		assertThat(loginUserResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(loginUserResponse.getBody()).isNotNull();
 		assertThat(loginUserResponse.getBody().getValue()).isGreaterThan(0);
-	}
-
-	private static CreateUserDto getCreateUserDto(final String username, final String password) {
-		return new CreateUserDto(username, password);
 	}
 
 	@Data
