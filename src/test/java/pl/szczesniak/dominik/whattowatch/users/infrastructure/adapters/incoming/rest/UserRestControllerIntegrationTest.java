@@ -34,7 +34,7 @@ class UserRestControllerIntegrationTest {
 		final ResponseEntity<Void> createUserResponse = restTemplate.exchange(
 				"/api/users",
 				HttpMethod.POST,
-				new HttpEntity<>(createAnyUser(username, password)),
+				new HttpEntity<>(createUser(username, password)),
 				Void.class
 		);
 
@@ -50,7 +50,7 @@ class UserRestControllerIntegrationTest {
 		assertThat(loginUserResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 	}
 
-	private static Map<String, String> createAnyUser(final String username, final String password) {
+	private static Map<String, String> createUser(final String username, final String password) {
 		return Map.of(
 				"username", username,
 				"password", password
