@@ -28,9 +28,11 @@ class UserRestControllerIntegrationTest {
 
 	@Test
 	void should_create_user_and_login_on_him() {
-		// when
+		// given
 		final String username = createAnyUsername().getValue();
 		final String password = createAnyUserPassword().getValue();
+
+		// when
 
 		final ResponseEntity<UserId> createUserResponse = restTemplate.exchange(
 				"/api/users",
