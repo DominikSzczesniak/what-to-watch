@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -31,28 +32,28 @@ class UserRestControllerIntegrationTest {
 		final String username = createAnyUsername().getValue();
 		final String password = createAnyUserPassword().getValue();
 
-		final ResponseEntity<Void> createUserResponse = restTemplate.exchange(
+		final ResponseEntity<UserId> createUserResponse = restTemplate.exchange(
 				"/api/users",
 				HttpMethod.POST,
 				new HttpEntity<>(getCreateUserDto(username, password)),
-				Void.class
+				UserId.class
 		);
 
 		// then
 		assertThat(createUserResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		// when
-		final ResponseEntity<Integer> loginUserResponse = restTemplate.exchange(
+		final ResponseEntity<UserId> loginUserResponse = restTemplate.exchange(
 				"/api/login",
 				HttpMethod.POST,
 				new HttpEntity<>(new LoginUserDto(username, password)),
-				Integer.class
+				UserId.class
 		);
 
 		// then
 		assertThat(loginUserResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(loginUserResponse.getBody()).isNotNull();
-		assertThat(loginUserResponse.getBody()).isGreaterThan(0);
+		assertThat(loginUserResponse.getBody().getValue()).isGreaterThan(0);
 	}
 
 	private static CreateUserDto getCreateUserDto(final String username, final String password) {
