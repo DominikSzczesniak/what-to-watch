@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
@@ -10,9 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-
-import java.util.Map;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -20,6 +19,7 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserPasswordS
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSample.createAnyUsername;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@ActiveProfiles("memory")
 class UserRestControllerIntegrationTest {
 
 	@Autowired
@@ -34,33 +34,36 @@ class UserRestControllerIntegrationTest {
 		final ResponseEntity<Void> createUserResponse = restTemplate.exchange(
 				"/api/users",
 				HttpMethod.POST,
-				new HttpEntity<>(createUser(username, password)),
+				new HttpEntity<>(getCreateUserDto(username, password)),
 				Void.class
 		);
 
 		// then
 		assertThat(createUserResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-		final ResponseEntity<UserId> loginUserResponse = restTemplate.exchange(
+		// when
+		final ResponseEntity<Integer> loginUserResponse = restTemplate.exchange(
 				"/api/login",
 				HttpMethod.POST,
 				new HttpEntity<>(new LoginUserDto(username, password)),
-				UserId.class
+				Integer.class
 		);
+
+		// then
 		assertThat(loginUserResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(loginUserResponse.getBody()).isNotNull();
+		assertThat(loginUserResponse.getBody()).isGreaterThan(0);
 	}
 
-	private static Map<String, String> createUser(final String username, final String password) {
-		return Map.of(
-				"username", username,
-				"password", password
-		);
+	private static CreateUserDto getCreateUserDto(final String username, final String password) {
+		return new CreateUserDto(username, password);
 	}
 
 	@Data
+	@AllArgsConstructor
 	private static class CreateUserDto {
-		String username;
-		String password;
+		private String username;
+		private String password;
 	}
 
 	@Value
