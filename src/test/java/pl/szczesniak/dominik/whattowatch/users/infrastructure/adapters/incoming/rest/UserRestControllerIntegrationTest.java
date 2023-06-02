@@ -1,7 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker.CreateUserDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -24,22 +23,18 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSampl
 class UserRestControllerIntegrationTest {
 
 	@Autowired
+	CreateUserRestInvoker createUserRest;
+
+	@Autowired
 	private TestRestTemplate restTemplate;
 
 	@Test
 	void should_create_user_and_login_on_him() {
 		// given
-		final String username = createAnyUsername().getValue();
-		final String password = createAnyUserPassword().getValue();
+		final CreateUserDto userToCreate = createAnyUser();
 
 		// when
-
-		final ResponseEntity<UserId> createUserResponse = restTemplate.exchange(
-				"/api/users",
-				HttpMethod.POST,
-				new HttpEntity<>(new CreateUserDto(username, password)),
-				UserId.class
-		);
+		final ResponseEntity<UserId> createUserResponse = createUserRest.createUser(userToCreate, UserId.class);
 
 		// then
 		assertThat(createUserResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -48,7 +43,7 @@ class UserRestControllerIntegrationTest {
 		final ResponseEntity<UserId> loginUserResponse = restTemplate.exchange(
 				"/api/login",
 				HttpMethod.POST,
-				new HttpEntity<>(new LoginUserDto(username, password)),
+				new HttpEntity<>(new LoginUserDto(userToCreate.getUsername(), userToCreate.getPassword())),
 				UserId.class
 		);
 
@@ -58,11 +53,8 @@ class UserRestControllerIntegrationTest {
 		assertThat(loginUserResponse.getBody().getValue()).isGreaterThan(0);
 	}
 
-	@Data
-	@AllArgsConstructor
-	private static class CreateUserDto {
-		private String username;
-		private String password;
+	private static CreateUserDto createAnyUser() {
+		return new CreateUserDto(createAnyUsername().getValue(), createAnyUserPassword().getValue());
 	}
 
 	@Value
