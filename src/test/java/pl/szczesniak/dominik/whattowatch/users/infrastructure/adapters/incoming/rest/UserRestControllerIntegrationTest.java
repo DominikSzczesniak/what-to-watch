@@ -23,7 +23,7 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSampl
 class UserRestControllerIntegrationTest {
 
 	@Autowired
-	CreateUserRestInvoker createUserRest;
+	private CreateUserRestInvoker createUserRest;
 
 	@Autowired
 	private TestRestTemplate restTemplate;

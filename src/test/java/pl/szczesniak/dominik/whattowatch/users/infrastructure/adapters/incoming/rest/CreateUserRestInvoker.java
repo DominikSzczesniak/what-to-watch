@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CreateUserRestInvoker {
 
-	private final TestRestTemplate restTemplate;
-
 	private static final String URL = "/api/users";
+
+	private final TestRestTemplate restTemplate;
 
 	public <T> ResponseEntity<T> createUser(final CreateUserDto createUserDto, final Class<T> responseType) {
 		return restTemplate.exchange(
