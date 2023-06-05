@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
@@ -27,14 +26,14 @@ public class UserRestController {
 	private final UserService userService;
 
 	@PostMapping("/api/login")
-	public UserId loginUser(@RequestBody final LoginUserDto userDto) {
-		return userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()));
+	public Integer loginUser(@RequestBody final LoginUserDto userDto) {
+		return userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())).getValue();
 	}
 
 	@PostMapping("/api/users")
 	@ResponseStatus(HttpStatus.CREATED)
-	public UserId createUser(@RequestBody final CreateUserDto userDto) {
-		return userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())));
+	public Integer createUser(@RequestBody final CreateUserDto userDto) {
+		return userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()))).getValue();
 	}
 
 	@ExceptionHandler(UsernameIsTakenException.class)

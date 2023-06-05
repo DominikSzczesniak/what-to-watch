@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.persistence;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -24,7 +23,6 @@ import java.util.Optional;
 
 import static pl.szczesniak.dominik.whattowatch.movies.domain.Movie.recreate;
 
-@Repository
 public class InFileMoviesRepository implements MoviesRepository {
 
 	private final String fileNameOfMovies;

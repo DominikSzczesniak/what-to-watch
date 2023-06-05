@@ -2,10 +2,8 @@ package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 
-@Profile("memory")
 @Configuration
 public class MemoryProfileUserRepoConfiguration {
 
