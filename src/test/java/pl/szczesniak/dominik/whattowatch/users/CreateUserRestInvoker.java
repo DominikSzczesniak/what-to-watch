@@ -9,6 +9,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserPasswordSample.createAnyUserPassword;
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSample.createAnyUsername;
+
 @Component
 @RequiredArgsConstructor
 public class CreateUserRestInvoker {
@@ -24,6 +27,10 @@ public class CreateUserRestInvoker {
 				new HttpEntity<>(createUserDto),
 				responseType
 		);
+	}
+
+	public static CreateUserDto createAnyUser() {
+		return new CreateUserDto(createAnyUsername().getValue(), createAnyUserPassword().getValue());
 	}
 
 	@Data
