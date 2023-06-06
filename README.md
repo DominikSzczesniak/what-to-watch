@@ -42,3 +42,16 @@ also tv shows).
 
 ## Project Status
 Project is still under development. I am currently using it to learn new technologies and gain practice in coding.
+
+## Testing the app:
+Repositories are filled with data at application start.
+In order to test you can just import MoviesAndUsers.json file from httprequests folder to postman. File has all 
+endpoints handled in the app.
+
+## Information about the data:
+
+Created user's credentials are: 
+
+Username: Dominik Password: 123
+
+User's repository is filled with 10 movies, 2 of them already moved to watchedMovies.
