@@ -3,10 +3,8 @@ package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker.CreateUserDto;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.LoginUserRestInvoker.LoginUserDto;
 
@@ -16,7 +14,6 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserPasswordS
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSample.createAnyUsername;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ActiveProfiles("memory")
 class UserModuleIntegrationTest {
 
 	@Autowired
@@ -24,9 +21,6 @@ class UserModuleIntegrationTest {
 
 	@Autowired
 	private LoginUserRestInvoker loginUserRest;
-
-	@Autowired
-	private TestRestTemplate restTemplate;
 
 	@Test
 	void should_create_user_and_login_on_him() {
@@ -85,7 +79,7 @@ class UserModuleIntegrationTest {
 		assertThat(createUserResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		// when
-		ResponseEntity<Integer> duplicatedUsernameResponse = createUserRest.createUser(
+		final ResponseEntity<Integer> duplicatedUsernameResponse = createUserRest.createUser(
 				new CreateUserDto(userToCreate.getUsername(),
 						createAnyUserPassword().getValue()),
 				Integer.class
