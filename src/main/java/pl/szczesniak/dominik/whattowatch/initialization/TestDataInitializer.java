@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.Initialization;
+package pl.szczesniak.dominik.whattowatch.initialization;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
