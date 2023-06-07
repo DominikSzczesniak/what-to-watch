@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.initialization;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -16,6 +17,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 
 @Component
 @RequiredArgsConstructor
+@Profile("test")
 public class TestDataInitializer {
 
 	private final MoviesService moviesService;
