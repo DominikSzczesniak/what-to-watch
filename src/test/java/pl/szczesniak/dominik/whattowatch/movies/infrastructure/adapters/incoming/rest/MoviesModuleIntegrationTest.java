@@ -196,7 +196,7 @@ class MoviesModuleIntegrationTest {
 
 	private ResponseEntity<Integer> getLoginUserResponse() {
 		// when
-		final CreateUserDto userToCreate = createAnyUser();
+		final CreateUserDto userToCreate = new CreateUserDto(createAnyUsername().getValue(), createAnyUserPassword().getValue());
 		final ResponseEntity<Integer> createUserResponse = createUserRest.createUser(userToCreate, Integer.class);
 
 
@@ -216,10 +216,6 @@ class MoviesModuleIntegrationTest {
 		assertThat(addMovieResponse.getBody()).isNotNull();
 		assertThat(addMovieResponse.getBody()).isGreaterThan(0);
 		return addMovieResponse;
-	}
-
-	public static CreateUserDto createAnyUser() {
-		return new CreateUserDto(createAnyUsername().getValue(), createAnyUserPassword().getValue());
 	}
 
 }
