@@ -1,6 +1,6 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest;
+package pl.szczesniak.dominik.whattowatch.movies;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -27,10 +27,12 @@ public class AddMovieRestInvoker {
 	}
 
 	@Data
-	@AllArgsConstructor
+	@Builder
 	public static class CreateMovieDto {
+
 		private String title;
 		private Integer userId;
+
 	}
 
 }

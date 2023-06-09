@@ -1,7 +1,10 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest;
+package pl.szczesniak.dominik.whattowatch.movies;
 
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import lombok.ToString;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -29,11 +32,16 @@ public class FindWatchedMoviesRestInvoker {
 		);
 	}
 
-	@Value
+	@Getter
+	@ToString
+	@EqualsAndHashCode
+	@Builder
 	public static class WatchedMovieDto {
-		String title;
-		Integer movieId;
-		Integer userId;
+
+		private final String title;
+		private final Integer movieId;
+		private final Integer userId;
+
 	}
 
 }

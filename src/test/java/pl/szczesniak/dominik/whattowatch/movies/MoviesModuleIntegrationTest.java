@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest;
+package pl.szczesniak.dominik.whattowatch.movies;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,15 +9,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import pl.szczesniak.dominik.whattowatch.movies.AddMovieRestInvoker.CreateMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.FindMoviesToWatchRestInvoker.MovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.FindWatchedMoviesRestInvoker.WatchedMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.UpdateMovieRestInvoker.UpdateMovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.AddMovieRestInvoker.CreateMovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.FindMoviesToWatchRestInvoker.MovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.FindWatchedMoviesRestInvoker.WatchedMovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.UpdateMovieRestInvoker.UpdateMovieDto;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker.CreateUserDto;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.LoginUserRestInvoker;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.LoginUserRestInvoker.LoginUserDto;
+import pl.szczesniak.dominik.whattowatch.users.CreateUserRestInvoker;
+import pl.szczesniak.dominik.whattowatch.users.CreateUserRestInvoker.CreateUserDto;
+import pl.szczesniak.dominik.whattowatch.users.LoginUserRestInvoker;
+import pl.szczesniak.dominik.whattowatch.users.LoginUserRestInvoker.LoginUserDto;
 
 import java.util.List;
 
@@ -65,8 +65,7 @@ class MoviesModuleIntegrationTest {
 		final ResponseEntity<Integer> addMovieResponse = getAddMovieResponse(userId, movieTitle);
 
 		// when
-		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", String.valueOf(userId));
+		final HttpHeaders headers = getUserIdHeader(userId);
 
 		final ResponseEntity<List<MovieDto>> findMoviesResponse = findMoviesToWatchRest.findMoviesToWatch(headers);
 
@@ -91,8 +90,7 @@ class MoviesModuleIntegrationTest {
 		final ResponseEntity<Integer> addMovieResponse = getAddMovieResponse(userId, movieTitle);
 
 		// when
-		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", String.valueOf(userId));
+		final HttpHeaders headers = getUserIdHeader(userId);
 
 		final Integer movieId = addMovieResponse.getBody();
 
@@ -102,8 +100,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(deleteMovieResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
 		// when
-		final HttpHeaders listHeaders = new HttpHeaders();
-		listHeaders.set("userId", String.valueOf(userId));
+		final HttpHeaders listHeaders = getUserIdHeader(userId);
 
 		final ResponseEntity<List<MovieDto>> findMoviesResponse = findMoviesToWatchRest.findMoviesToWatch(listHeaders);
 
@@ -124,10 +121,9 @@ class MoviesModuleIntegrationTest {
 		final ResponseEntity<Integer> addMovieResponse = getAddMovieResponse(userId, movieTitle);
 
 		// when
-		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", String.valueOf(userId));
+		final HttpHeaders headers = getUserIdHeader(userId);
 		final Integer movieId = addMovieResponse.getBody();
-		final UpdateMovieDto updateMovieDto = new UpdateMovieDto(createAnyMovieTitle().getValue());
+		final UpdateMovieDto updateMovieDto = UpdateMovieDto.builder().movieTitle(createAnyMovieTitle().getValue()).build();
 
 		final ResponseEntity<Void> updateMovieResponse = updateMovieRest.updateMovie(headers, updateMovieDto, void.class, movieId);
 
@@ -135,8 +131,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(updateMovieResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		// when
-		final HttpHeaders listHeaders = new HttpHeaders();
-		listHeaders.set("userId", String.valueOf(userId));
+		final HttpHeaders listHeaders = getUserIdHeader(userId);
 
 		final ResponseEntity<List<MovieDto>> findMoviesResponse = findMoviesToWatchRest.findMoviesToWatch(listHeaders);
 
@@ -157,8 +152,7 @@ class MoviesModuleIntegrationTest {
 
 		final Integer userId = loginUserResponse.getBody();
 		final MovieTitle movieTitle = createAnyMovieTitle();
-		final HttpHeaders userIdHeader = new HttpHeaders();
-		userIdHeader.set("userId", String.valueOf(userId));
+		final HttpHeaders userIdHeader = getUserIdHeader(userId);
 
 		final ResponseEntity<Integer> addMovieResponse = getAddMovieResponse(userId, movieTitle);
 
@@ -196,11 +190,14 @@ class MoviesModuleIntegrationTest {
 
 	private ResponseEntity<Integer> getLoginUserResponse() {
 		// when
-		final CreateUserDto userToCreate = new CreateUserDto(createAnyUsername().getValue(), createAnyUserPassword().getValue());
+		final CreateUserDto userToCreate = createAnyUser();
 		final ResponseEntity<Integer> createUserResponse = createUserRest.createUser(userToCreate, Integer.class);
 
 
-		final ResponseEntity<Integer> loginUserResponse = loginUserRest.loginUser(new LoginUserDto(userToCreate.getUsername(), userToCreate.getPassword()), Integer.class);
+		final ResponseEntity<Integer> loginUserResponse = loginUserRest.loginUser(
+				LoginUserDto.builder().username(userToCreate.getUsername()).password(userToCreate.getPassword()).build(),
+				Integer.class
+		);
 
 		// then
 		assertThat(createUserResponse.getBody()).isEqualTo(loginUserResponse.getBody());
@@ -209,13 +206,26 @@ class MoviesModuleIntegrationTest {
 
 	private ResponseEntity<Integer> getAddMovieResponse(final Integer userId, final MovieTitle movieTitle) {
 		// when
-		final ResponseEntity<Integer> addMovieResponse = addMovieRest.addMovie(new CreateMovieDto(movieTitle.getValue(), userId), Integer.class);
+		final ResponseEntity<Integer> addMovieResponse = addMovieRest.addMovie(
+				CreateMovieDto.builder().title(movieTitle.getValue()).userId(userId).build(),
+				Integer.class
+		);
 
 		// then
 		assertThat(addMovieResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(addMovieResponse.getBody()).isNotNull();
 		assertThat(addMovieResponse.getBody()).isGreaterThan(0);
 		return addMovieResponse;
+	}
+
+	private static CreateUserDto createAnyUser() {
+		return CreateUserDto.builder().username(createAnyUsername().getValue()).password(createAnyUserPassword().getValue()).build();
+	}
+
+	private static HttpHeaders getUserIdHeader(final Integer userId) {
+		final HttpHeaders headers = new HttpHeaders();
+		headers.set("userId", String.valueOf(userId));
+		return headers;
 	}
 
 }
