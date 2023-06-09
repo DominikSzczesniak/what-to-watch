@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 
 @Configuration
-public class MemoryProfileUserRepoConfiguration {
+public class UserRepoConfiguration {
 
 	@Bean
 	public UserRepository userRepository() {

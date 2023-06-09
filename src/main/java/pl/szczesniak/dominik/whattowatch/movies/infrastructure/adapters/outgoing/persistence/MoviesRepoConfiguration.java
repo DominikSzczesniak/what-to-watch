@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 
 @Configuration
-public class MemoryProfileMoviesRepoConfiguration {
+public class MoviesRepoConfiguration {
 
 	@Bean
 	public MoviesRepository moviesRepository() {

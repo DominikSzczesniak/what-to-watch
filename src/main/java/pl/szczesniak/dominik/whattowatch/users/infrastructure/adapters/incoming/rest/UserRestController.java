@@ -26,8 +26,14 @@ public class UserRestController {
 	private final UserService userService;
 
 	@PostMapping("/api/login")
-	public Integer loginUser(@RequestBody final LoginUserDto userDto) {
-		return userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())).getValue();
+	public ResponseEntity<Integer> loginUser(@RequestBody final LoginUserDto userDto) {
+		int userId;
+		try {
+			userId = userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())).getValue();
+		} catch (InvalidCredentialsException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(userId);
 	}
 
 	@PostMapping("/api/users")

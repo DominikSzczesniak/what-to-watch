@@ -1,12 +1,12 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest;
+package pl.szczesniak.dominik.whattowatch.users;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker.CreateUserDto;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.LoginUserRestInvoker.LoginUserDto;
+import pl.szczesniak.dominik.whattowatch.users.CreateUserRestInvoker.CreateUserDto;
+import pl.szczesniak.dominik.whattowatch.users.LoginUserRestInvoker.LoginUserDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -34,8 +34,8 @@ class UserModuleIntegrationTest {
 		assertThat(createUserResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		// when
-		final ResponseEntity<Integer> loginUserResponse = loginUserRest.loginUser(new LoginUserDto(userToCreate.getUsername(),
-				userToCreate.getPassword()),
+		final ResponseEntity<Integer> loginUserResponse = loginUserRest.loginUser(
+				LoginUserDto.builder().username(userToCreate.getUsername()).password(userToCreate.getPassword()).build(),
 				Integer.class
 		);
 
@@ -57,14 +57,13 @@ class UserModuleIntegrationTest {
 		assertThat(createUserResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		// when
-		final ResponseEntity<Integer> loginUserResponse = loginUserRest.loginUser(new LoginUserDto(
-				userToCreate.getUsername(),
-				createAnyUserPassword().getValue()),
+		final ResponseEntity<Integer> loginUserResponse = loginUserRest.loginUser(
+				LoginUserDto.builder().username(userToCreate.getUsername()).password(createAnyUserPassword().getValue()).build(),
 				Integer.class
 		);
 
 		// then
-		assertThat(loginUserResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(loginUserResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
 
 	@Test
@@ -80,8 +79,7 @@ class UserModuleIntegrationTest {
 
 		// when
 		final ResponseEntity<Integer> duplicatedUsernameResponse = createUserRest.createUser(
-				new CreateUserDto(userToCreate.getUsername(),
-						createAnyUserPassword().getValue()),
+				new CreateUserDto(userToCreate.getUsername(), createAnyUserPassword().getValue()),
 				Integer.class
 		);
 
@@ -90,7 +88,7 @@ class UserModuleIntegrationTest {
 	}
 
 	private static CreateUserDto createAnyUser() {
-		return new CreateUserDto(createAnyUsername().getValue(), createAnyUserPassword().getValue());
+		return CreateUserDto.builder().username(createAnyUsername().getValue()).password(createAnyUserPassword().getValue()).build();
 	}
 
 }

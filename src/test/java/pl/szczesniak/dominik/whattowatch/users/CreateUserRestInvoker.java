@@ -1,6 +1,7 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest;
+package pl.szczesniak.dominik.whattowatch.users;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -28,6 +29,7 @@ public class CreateUserRestInvoker {
 
 	@Data
 	@AllArgsConstructor
+	@Builder
 	public static class CreateUserDto {
 		private String username;
 		private String password;
