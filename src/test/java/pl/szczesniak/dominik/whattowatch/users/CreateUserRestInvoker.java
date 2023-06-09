@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.users;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +27,11 @@ public class CreateUserRestInvoker {
 	}
 
 	@Data
-	@AllArgsConstructor
 	@Builder
 	public static class CreateUserDto {
 		private String username;
 		private String password;
+
 	}
 
 }

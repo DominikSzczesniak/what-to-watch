@@ -79,7 +79,7 @@ class UserModuleIntegrationTest {
 
 		// when
 		final ResponseEntity<Integer> duplicatedUsernameResponse = createUserRest.createUser(
-				new CreateUserDto(userToCreate.getUsername(), createAnyUserPassword().getValue()),
+				CreateUserDto.builder().username(userToCreate.getUsername()).password(createAnyUserPassword().getValue()).build(),
 				Integer.class
 		);
 
