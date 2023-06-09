@@ -1,7 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.users;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,15 +28,14 @@ public class LoginUserRestInvoker {
 		);
 	}
 
-	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	@Getter
 	@ToString
 	@EqualsAndHashCode
 	@Builder
 	public static class LoginUserDto {
 
-		String username;
-		String password;
+		private final String username;
+		private final String password;
 
 	}
 

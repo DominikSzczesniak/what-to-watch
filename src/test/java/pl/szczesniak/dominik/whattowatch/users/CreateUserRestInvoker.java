@@ -29,8 +29,9 @@ public class CreateUserRestInvoker {
 	@Data
 	@Builder
 	public static class CreateUserDto {
-		private String username;
-		private String password;
+
+		private final String username;
+		private final String password;
 
 	}
 
