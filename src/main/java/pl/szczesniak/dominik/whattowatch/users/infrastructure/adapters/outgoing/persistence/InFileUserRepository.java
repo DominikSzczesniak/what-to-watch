@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.persistence;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -22,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public class InFileUserRepository implements UserRepository {
 
 	private final String fileNameOfUsers;

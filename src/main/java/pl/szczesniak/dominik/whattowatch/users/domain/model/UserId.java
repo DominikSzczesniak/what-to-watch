@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
-import lombok.Getter;
 import lombok.Value;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -8,7 +7,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Value
 public class UserId {
 
-	@Getter
 	int value;
 
 	public UserId(final int value) {

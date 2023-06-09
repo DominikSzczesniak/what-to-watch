@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
@@ -26,14 +26,19 @@ public class UserRestController {
 	private final UserService userService;
 
 	@PostMapping("/api/login")
-	public UserId loginUser(@RequestBody final LoginUserDto userDto) {
-		return userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()));
+	public ResponseEntity<Integer> loginUser(@RequestBody final LoginUserDto userDto) {
+		try {
+			final Integer userId = userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())).getValue();
+			return ResponseEntity.status(HttpStatus.OK).body(userId);
+		} catch (InvalidCredentialsException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+		}
 	}
 
 	@PostMapping("/api/users")
-	public ResponseEntity<?> createUser(@RequestBody final CreateUserDto userDto) {
-		userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())));
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+	@ResponseStatus(HttpStatus.CREATED)
+	public Integer createUser(@RequestBody final CreateUserDto userDto) {
+		return userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()))).getValue();
 	}
 
 	@ExceptionHandler(UsernameIsTakenException.class)
