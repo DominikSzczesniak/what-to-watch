@@ -1,11 +1,19 @@
 package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
-import lombok.Value;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
+import java.io.Serializable;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@Value
-public class UserId {
+@Getter
+@ToString
+@RequiredArgsConstructor
+@EqualsAndHashCode
+public class UserId implements Serializable {
 
 	int value;
 
