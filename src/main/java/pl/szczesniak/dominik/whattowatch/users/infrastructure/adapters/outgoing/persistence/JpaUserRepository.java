@@ -5,7 +5,10 @@ import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,7 +21,15 @@ public class JpaUserRepository implements UserRepository {
 
 	@Override
 	public void create(final User user) {
+		if (usernameIsTaken(user.getUsername())) {
+			throw new UsernameIsTakenException("Please choose different name, " + user.getUsername() + " is already taken");
+		}
 		springDataJpaRepository.save(user);
+	}
+
+	private boolean usernameIsTaken(final Username username) {
+		List<User> all = springDataJpaRepository.findAll();
+		return all.stream().anyMatch(user -> user.getUsername().getValue().equalsIgnoreCase(username.getValue()));
 	}
 
 	@Override
@@ -28,17 +39,17 @@ public class JpaUserRepository implements UserRepository {
 
 	@Override
 	public boolean exists(final UserId userId) {
-		return springDataJpaRepository.existsById(userId.getValue());
+		return springDataJpaRepository.existsById(userId);
 	}
 
 	@Override
 	public Optional<User> findBy(final UserId userId) {
-		return springDataJpaRepository.findById(userId.getValue());
+		return springDataJpaRepository.findById(userId);
 	}
 
 	@Override
 	public Optional<User> findBy(final String username) {
-		return springDataJpaRepository.findByUserNameEquals(username);
+		return Optional.empty();
 	}
 
 }

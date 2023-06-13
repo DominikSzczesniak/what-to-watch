@@ -69,7 +69,7 @@ class InFileUserRepositoryIntTest {
 		// then
 		final List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
 		assertThat(users).hasSize(3)
-				.extracting(User::getUserId, User::getUserName)
+				.extracting(User::getUserId, User::getUsername)
 				.contains(
 						tuple(new UserId(1), new Username("Dominik")),
 						tuple(new UserId(2), new Username("Patryk")),
@@ -90,7 +90,7 @@ class InFileUserRepositoryIntTest {
 		// then
 		final List<User> users = List.of(dominik.get(), patryk.get(), michal.get());
 		assertThat(users).hasSize(3)
-				.extracting(User::getUserId, User::getUserName)
+				.extracting(User::getUserId, User::getUsername)
 				.contains(
 						tuple(new UserId(1), new Username("Dominik")),
 						tuple(new UserId(2), new Username("Patryk")),
@@ -150,18 +150,18 @@ class InFileUserRepositoryIntTest {
 		tut.create(userThree);
 
 		// when
-		final Optional<User> optionalUserOne = tut.findBy(userOne.getUserName().getValue());
-		final Optional<User> optionalUserTwo = tut.findBy(userTwo.getUserName().getValue());
-		final Optional<User> optionalUserThree = tut.findBy(userThree.getUserName().getValue());
+		final Optional<User> optionalUserOne = tut.findBy(userOne.getUsername().getValue());
+		final Optional<User> optionalUserTwo = tut.findBy(userTwo.getUsername().getValue());
+		final Optional<User> optionalUserThree = tut.findBy(userThree.getUsername().getValue());
 
 		// then
 		final List<User> users = List.of(optionalUserOne.get(), optionalUserTwo.get(), optionalUserThree.get());
 		assertThat(users)
-				.extracting(User::getUserId, User::getUserName)
+				.extracting(User::getUserId, User::getUsername)
 				.contains(
-						tuple(userOneId, userOne.getUserName()),
-						tuple(userTwoId, userTwo.getUserName()),
-						tuple(userThreeId, userThree.getUserName())
+						tuple(userOneId, userOne.getUsername()),
+						tuple(userTwoId, userTwo.getUsername()),
+						tuple(userThreeId, userThree.getUsername())
 				);
 	}
 
@@ -187,11 +187,11 @@ class InFileUserRepositoryIntTest {
 		// then
 		final List<User> users = List.of(optionalUserOne.get(), optionalUserTwo.get(), optionalUserThree.get());
 		assertThat(users)
-				.extracting(User::getUserId, User::getUserName)
+				.extracting(User::getUserId, User::getUsername)
 				.contains(
-						tuple(userOneId, userOne.getUserName()),
-						tuple(userTwoId, userTwo.getUserName()),
-						tuple(userThreeId, userThree.getUserName())
+						tuple(userOneId, userOne.getUsername()),
+						tuple(userTwoId, userTwo.getUsername()),
+						tuple(userThreeId, userThree.getUsername())
 				);
 	}
 

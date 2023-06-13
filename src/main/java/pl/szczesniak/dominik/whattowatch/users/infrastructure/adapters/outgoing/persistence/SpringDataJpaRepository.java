@@ -3,12 +3,9 @@ package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
-
-import java.util.Optional;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @Repository
-public interface SpringDataJpaRepository extends JpaRepository<User, Integer> {
-
-	Optional<User> findByUserNameEquals(String username);
+public interface SpringDataJpaRepository extends JpaRepository<User, UserId> {
 
 }

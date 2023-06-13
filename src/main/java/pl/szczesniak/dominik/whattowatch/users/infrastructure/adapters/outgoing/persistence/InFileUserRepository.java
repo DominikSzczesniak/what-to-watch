@@ -38,8 +38,8 @@ public class InFileUserRepository implements UserRepository {
 	@Override
 	public void create(final User user) {
 		createFile();
-		if (usernameIsTaken(user.getUserName().getValue())) {
-			throw new UsernameIsTakenException("Please choose different name, " + user.getUserName() + " is already taken");
+		if (usernameIsTaken(user.getUsername().getValue())) {
+			throw new UsernameIsTakenException("Please choose different name, " + user.getUsername() + " is already taken");
 		}
 		if (exists(user.getUserId())) {
 			throw new UserAlreadyExistsException("user already exists");
@@ -70,7 +70,7 @@ public class InFileUserRepository implements UserRepository {
 	}
 
 	private static void writeLine(final User user, final BufferedWriter bw) throws IOException {
-		bw.write(user.getUserName().getValue() + "," + (user.getUserId().getValue()));
+		bw.write(user.getUsername().getValue() + "," + (user.getUserId().getValue()));
 		bw.newLine();
 		bw.close();
 	}

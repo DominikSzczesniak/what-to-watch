@@ -1,12 +1,22 @@
 package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
-import lombok.Value;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@Value
+@Embeddable
+@Getter
+@RequiredArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class UserPassword {
 
+	@Column(name = "password_value")
 	String value;
 
 	public UserPassword(final String value) {

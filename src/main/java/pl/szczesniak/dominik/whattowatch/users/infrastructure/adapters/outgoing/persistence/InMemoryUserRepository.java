@@ -18,8 +18,8 @@ public class InMemoryUserRepository implements UserRepository {
 
 	@Override
 	public void create(final User user) {
-		if (usernameIsTaken(user.getUserName().getValue())) {
-			throw new UsernameIsTakenException("Please choose different name, " + user.getUserName() + " is already taken");
+		if (usernameIsTaken(user.getUsername().getValue())) {
+			throw new UsernameIsTakenException("Please choose different name, " + user.getUsername() + " is already taken");
 		}
 		if (exists(user.getUserId())) {
 			throw new UserAlreadyExistsException("user already exists");
@@ -44,11 +44,11 @@ public class InMemoryUserRepository implements UserRepository {
 
 	@Override
 	public Optional<User> findBy(final String username) {
-		return users.values().stream().filter(user -> user.getUserName().getValue().equals(username)).findFirst();
+		return users.values().stream().filter(user -> user.getUsername().getValue().equals(username)).findFirst();
 	}
 
 	private boolean usernameIsTaken(final String username) {
-		return users.values().stream().anyMatch(user -> username.equalsIgnoreCase(user.getUserName().getValue()));
+		return users.values().stream().anyMatch(user -> username.equalsIgnoreCase(user.getUsername().getValue()));
 	}
 
 }
