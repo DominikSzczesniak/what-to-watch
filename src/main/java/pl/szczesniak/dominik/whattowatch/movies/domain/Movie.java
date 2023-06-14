@@ -13,6 +13,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @Entity
+@Getter
 @Table(name = "app_movie")
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,13 +21,10 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 public class Movie {
 
 	@EmbeddedId
-	@Getter
 	private MovieId movieId;
 
-	@Getter
 	private UserId userId;
 
-	@Getter
 	private MovieTitle title;
 
 	Movie(final MovieId movieId, final UserId userId, final MovieTitle title) {
