@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class JpaUserRepository implements UserRepository {
 
-	private final SpringDataJpaRepository springDataJpaRepository;
+	private final SpringDataJpaUserRepository springDataJpaUserRepository;
 	public final AtomicInteger nextId = new AtomicInteger(0);
 
 	@Override
@@ -24,11 +24,11 @@ public class JpaUserRepository implements UserRepository {
 		if (usernameIsTaken(user.getUsername())) {
 			throw new UsernameIsTakenException("Please choose different name, " + user.getUsername() + " is already taken");
 		}
-		springDataJpaRepository.save(user);
+		springDataJpaUserRepository.save(user);
 	}
 
 	private boolean usernameIsTaken(final Username username) {
-		List<User> all = springDataJpaRepository.findAll();
+		List<User> all = springDataJpaUserRepository.findAll();
 		return all.stream().anyMatch(user -> user.getUsername().getValue().equalsIgnoreCase(username.getValue()));
 	}
 
@@ -39,12 +39,12 @@ public class JpaUserRepository implements UserRepository {
 
 	@Override
 	public boolean exists(final UserId userId) {
-		return springDataJpaRepository.existsById(userId);
+		return springDataJpaUserRepository.existsById(userId);
 	}
 
 	@Override
 	public Optional<User> findBy(final UserId userId) {
-		return springDataJpaRepository.findById(userId);
+		return springDataJpaUserRepository.findById(userId);
 	}
 
 	@Override
