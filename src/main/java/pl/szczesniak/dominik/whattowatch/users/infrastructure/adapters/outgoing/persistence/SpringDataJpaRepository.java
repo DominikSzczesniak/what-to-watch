@@ -5,7 +5,11 @@ import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.util.Optional;
+
 @Repository
 public interface SpringDataJpaRepository extends JpaRepository<User, UserId> {
+
+	Optional<User> findUserByUsername_Value(String username);
 
 }

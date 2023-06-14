@@ -49,7 +49,7 @@ public class JpaUserRepository implements UserRepository {
 
 	@Override
 	public Optional<User> findBy(final String username) {
-		return Optional.empty();
+		return springDataJpaRepository.findUserByUsername_Value(username);
 	}
 
 }

@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
@@ -19,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 @Entity
 @Table(name = "app_user")
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"userId"})
 public class User {
@@ -39,11 +41,4 @@ public class User {
 		this.userPassword = requireNonNull(userPassword, "UserPassword must not be null.");
 	}
 
-	@Override
-	public String toString() {
-		return "User{" +
-				"userId=" + userId +
-				", username=" + username +
-				'}';
-	}
 }
