@@ -5,35 +5,36 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
+
 @Component
 @RequiredArgsConstructor
-public class UpdateMovieRestInvoker {
+public class AddMovieToWatchRestInvoker {
 
-	private static final String URL = "/api/movies/{movieId}";
+	private static final String URL = "/api/movies";
 
 	private final TestRestTemplate restTemplate;
 
-	public <T> ResponseEntity<T> updateMovie(final HttpHeaders headers, final UpdateMovieDto updateMovieDto, final Class<T> responseType, final Integer movieId) {
-		final HttpEntity<UpdateMovieDto> requestEntity = new HttpEntity<>(updateMovieDto, headers);
+	public <T> ResponseEntity<T> addMovie(final AddMovieDto addMovieDto, final Class<T> responseType) {
 		return restTemplate.exchange(
 				URL,
-				HttpMethod.PUT,
-				requestEntity,
-				responseType,
-				movieId
+				HttpMethod.POST,
+				new HttpEntity<>(addMovieDto),
+				responseType
 		);
 	}
 
 	@Data
 	@Builder
-	public static class UpdateMovieDto {
+	public static class AddMovieDto {
 
-		private final String movieTitle;
+		@Builder.Default
+		private String title = createAnyMovieTitle().getValue();
+		private Integer userId;
 
 	}
 

@@ -1,38 +1,31 @@
 package pl.szczesniak.dominik.whattowatch.movies;
 
-import lombok.Builder;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class AddMovieRestInvoker {
+public class MoveMovieToWatchToWatchedListInvoker {
 
-	private static final String URL = "/api/movies";
+	private static final String URL = "/api/movies/{movieId}/watched";
 
 	private final TestRestTemplate restTemplate;
 
-	public <T> ResponseEntity<T> addMovie(final CreateMovieDto createMovieDto, final Class<T> responseType) {
+	public ResponseEntity<Void> findMoviesToWatch(final Integer userId, final Integer movieId) {
+		final HttpHeaders headers = new HttpHeaders();
+		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.POST,
-				new HttpEntity<>(createMovieDto),
-				responseType
-		);
-	}
-
-	@Data
-	@Builder
-	public static class CreateMovieDto {
-
-		private String title;
-		private Integer userId;
-
+				new HttpEntity<>(headers),
+				void.class,
+				movieId
+				);
 	}
 
 }

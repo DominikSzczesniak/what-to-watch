@@ -10,18 +10,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RemoveMovieFromListRestInvoker {
+public class RemoveMovieToWatchFromListRestInvoker {
 
 	private static final String URL = "/api/movies/{movieId}";
 
 	private final TestRestTemplate restTemplate;
 
-	public <T> ResponseEntity<T> removeMovie(final HttpHeaders headers, final Class<T> responseType, final Integer movieId) {
+	public ResponseEntity<Void> removeMovie(final Integer userId, final Integer movieId) {
+		final HttpHeaders headers = new HttpHeaders();
+		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.DELETE,
 				new HttpEntity<>(headers),
-				responseType,
+				void.class,
 				movieId
 		);
 	}

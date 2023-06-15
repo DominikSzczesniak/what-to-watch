@@ -1,49 +1,45 @@
 package pl.szczesniak.dominik.whattowatch.movies;
 
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
 
 @Component
 @RequiredArgsConstructor
-public class FindWatchedMoviesRestInvoker {
+public class UpdateMovieToWatchRestInvoker {
 
-	private static final String URL = "/api/movies/watched";
+	private static final String URL = "/api/movies/{movieId}";
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<List<WatchedMovieDto>> findWatchedMovies(final Integer userId) {
+	public ResponseEntity<Void> updateMovie(final UpdateMovieDto updateMovieDto, final Integer userId, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
+		final HttpEntity<UpdateMovieDto> requestEntity = new HttpEntity<>(updateMovieDto, headers);
 		return restTemplate.exchange(
 				URL,
-				HttpMethod.GET,
-				new HttpEntity<>(headers),
-				new ParameterizedTypeReference<>() {
-				}
+				HttpMethod.PUT,
+				requestEntity,
+				void.class,
+				movieId
 		);
 	}
 
-	@Getter
-	@ToString
-	@EqualsAndHashCode
+	@Data
 	@Builder
-	public static class WatchedMovieDto {
+	public static class UpdateMovieDto {
 
-		private final String title;
-		private final Integer movieId;
-		private final Integer userId;
+		@Builder.Default
+		private final String movieTitle = createAnyMovieTitle().getValue();
+
 
 	}
 
