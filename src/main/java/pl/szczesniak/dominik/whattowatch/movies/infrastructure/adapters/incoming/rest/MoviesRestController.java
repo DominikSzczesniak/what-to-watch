@@ -34,13 +34,13 @@ public class MoviesRestController {
 	@GetMapping("/api/movies")
 	public List<MovieDto> findAllMoviesToWatch(@RequestHeader("userId") final Integer userId) {
 		return moviesService.getMoviesToWatch(new UserId(userId)).stream()
-				.map(movie -> new MovieDto(movie.getTitle(), movie.getMovieId(), movie.getUserId()))
+				.map(movie -> new MovieDto(movie.getTitle().getValue(), movie.getMovieId().getValue(), movie.getUserId().getValue()))
 				.toList();
 	}
 
 	@PostMapping("/api/movies")
-	public MovieId addMovie(@RequestBody final CreateMovieDto movieDto) {
-		return moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle(movieDto.getTitle()), new UserId(movieDto.userId)).build());
+	public Integer addMovie(@RequestBody final CreateMovieDto movieDto) {
+		return moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle(movieDto.getTitle()), new UserId(movieDto.userId)).build()).getValue();
 	}
 
 	@DeleteMapping("/api/movies/{movieId}")
@@ -57,7 +57,7 @@ public class MoviesRestController {
 	@GetMapping("/api/movies/watched")
 	public List<MovieDto> findWatchedMovies(@RequestHeader("userId") Integer userId) {
 		return moviesService.getWatchedMovies(new UserId(userId)).stream()
-				.map(movie -> new MovieDto(movie.getTitle(), movie.getMovieId(), movie.getUserId()))
+				.map(movie -> new MovieDto(movie.getTitle().getValue(), movie.getMovieId().getValue(), movie.getUserId().getValue()))
 				.toList();
 	}
 
@@ -89,9 +89,9 @@ public class MoviesRestController {
 
 	@Value
 	private static class MovieDto {
-		MovieTitle title;
-		MovieId movieId;
-		UserId userId;
+		String title;
+		Integer movieId;
+		Integer userId;
 	}
 
 	@Data
