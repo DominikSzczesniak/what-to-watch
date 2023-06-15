@@ -44,7 +44,7 @@ public class MoviesService {
 
 	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
 		checkUserExists(command.getUserId());
-		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		final Movie movie = findMovie(command.getMovieId(), command.getUserId());
 		final WatchedMovie watchedMovie = movie.markAsWatched();
 		watchedRepository.add(watchedMovie);
 		repository.removeMovie(command.getMovieId(), command.getUserId());

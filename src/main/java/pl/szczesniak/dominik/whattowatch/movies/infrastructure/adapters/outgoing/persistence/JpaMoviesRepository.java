@@ -41,12 +41,14 @@ public class JpaMoviesRepository implements MoviesRepository {
 
 	@Override
 	public void removeMovie(final MovieId movieId, final UserId userId) {
-		springDataJpaMoviesRepository.deleteByMovieIdAndUserId(movieId, userId);
+		if (springDataJpaMoviesRepository.existsMovieByUserIdAndMovieId(userId, movieId)) {
+			springDataJpaMoviesRepository.deleteById(movieId);
+		}
 	}
 
 	@Override
 	public Optional<Movie> findBy(final MovieId movieId, final UserId userId) {
-		return Optional.empty();
+		return springDataJpaMoviesRepository.findByMovieIdAndUserId(movieId, userId);
 	}
 
 }
