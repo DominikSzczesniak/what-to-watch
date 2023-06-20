@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
-import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,10 +28,8 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UserId userId;
 
-	@Embedded
 	private Username username;
 
-	@Embedded
 	private UserPassword userPassword;
 
 	public User(final Username username, final UserId userId, final UserPassword userPassword) {
