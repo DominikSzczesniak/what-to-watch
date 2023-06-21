@@ -4,6 +4,7 @@ package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -53,6 +54,11 @@ public class UserRestController {
 
 	@ExceptionHandler(UserAlreadyExistsException.class)
 	public ResponseEntity<?> handleUserAlreadyExistsException() {
+		return ResponseEntity.badRequest().build();
+	}
+
+	@ExceptionHandler(PSQLException.class)
+	public ResponseEntity<?> handlePSQLException() {
 		return ResponseEntity.badRequest().build();
 	}
 

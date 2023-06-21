@@ -1,11 +1,12 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,7 +19,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import static java.util.Objects.requireNonNull;
 
 @Entity
-@Table(name = "app_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username_value"})})
+@Table(name = "app_user")
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,8 +30,10 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UserId userId;
 
+	@AttributeOverride(name = "value", column = @Column(name = "username_value", unique = true))
 	private Username username;
 
+	@AttributeOverride(name = "value", column = @Column(name = "password_value"))
 	private UserPassword userPassword;
 
 	public User(final Username username, final UserId userId, final UserPassword userPassword) {
