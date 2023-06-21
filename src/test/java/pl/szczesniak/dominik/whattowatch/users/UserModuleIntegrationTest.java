@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 import pl.szczesniak.dominik.whattowatch.users.CreateUserRestInvoker.CreateUserDto;
 import pl.szczesniak.dominik.whattowatch.users.LoginUserRestInvoker.LoginUserDto;
 
@@ -14,6 +15,7 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserPasswordS
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSample.createAnyUsername;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@TestPropertySource("classpath:application-test.properties")
 class UserModuleIntegrationTest {
 
 	@Autowired
