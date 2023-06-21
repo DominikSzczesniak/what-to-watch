@@ -1,5 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -21,10 +23,13 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 public class Movie {
 
 	@EmbeddedId
+	@AttributeOverride(name = "value", column = @Column(name = "movieid_value"))
 	private MovieId movieId;
 
+	@AttributeOverride(name = "value", column = @Column(name = "userId_value"))
 	private UserId userId;
 
+	@AttributeOverride(name = "value", column = @Column(name = "movieTitle_value"))
 	private MovieTitle title;
 
 	Movie(final MovieId movieId, final UserId userId, final MovieTitle title) {

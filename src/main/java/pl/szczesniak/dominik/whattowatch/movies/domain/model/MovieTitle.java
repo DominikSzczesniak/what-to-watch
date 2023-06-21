@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +15,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 @EqualsAndHashCode
 public class MovieTitle {
 
-	@Column(name = "movieTitle_value")
 	String value;
 
 	public MovieTitle(final String value) {

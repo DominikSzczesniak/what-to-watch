@@ -28,6 +28,7 @@ public class User {
 
 	@EmbeddedId
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@AttributeOverride(name = "value", column = @Column(name = "userId_value"))
 	private UserId userId;
 
 	@AttributeOverride(name = "value", column = @Column(name = "username_value", unique = true))
