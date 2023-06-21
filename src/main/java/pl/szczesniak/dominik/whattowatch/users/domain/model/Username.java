@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 @EqualsAndHashCode
 public class Username {
 
-	@Column(name = "username_value", unique = true)
+	@Column(name = "username_value")
 	String value;
 
 	public Username(final String value) {

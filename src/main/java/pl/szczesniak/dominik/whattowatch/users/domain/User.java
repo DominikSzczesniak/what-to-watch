@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import static java.util.Objects.requireNonNull;
 
 @Entity
-@Table(name = "app_user")
+@Table(name = "app_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username_value"})})
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
