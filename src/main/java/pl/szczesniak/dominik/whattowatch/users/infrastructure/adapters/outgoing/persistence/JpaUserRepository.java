@@ -5,10 +5,7 @@ import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,20 +13,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class JpaUserRepository implements UserRepository {
 
-	private final SpringDataJpaUserRepository springDataJpaUserRepository;
 	public final AtomicInteger nextId = new AtomicInteger(0);
+
+	private final SpringDataJpaUserRepository springDataJpaUserRepository;
 
 	@Override
 	public void create(final User user) {
-		if (usernameIsTaken(user.getUsername())) {
-			throw new UsernameIsTakenException("Please choose different name, " + user.getUsername() + " is already taken");
-		}
 		springDataJpaUserRepository.save(user);
-	}
-
-	private boolean usernameIsTaken(final Username username) {
-		List<User> all = springDataJpaUserRepository.findAll();
-		return all.stream().anyMatch(user -> user.getUsername().getValue().equalsIgnoreCase(username.getValue()));
 	}
 
 	@Override

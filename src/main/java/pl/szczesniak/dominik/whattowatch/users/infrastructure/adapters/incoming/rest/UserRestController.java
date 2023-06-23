@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.postgresql.util.PSQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +26,8 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameI
 @RestController
 public class UserRestController {
 
+	private static final Logger logger = LoggerFactory.getLogger(UserRestController.class);
+
 	private final UserService userService;
 
 	@PostMapping("/api/login")
@@ -38,8 +42,17 @@ public class UserRestController {
 
 	@PostMapping("/api/users")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Integer createUser(@RequestBody final CreateUserDto userDto) {
-		return userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()))).getValue();
+	public ResponseEntity<Integer> createUser(@RequestBody final CreateUserDto userDto) {
+		boolean isUsernameTaken = checkUsernameAvailability(new Username(userDto.getUsername()));
+		if (isUsernameTaken) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		final Integer userId = userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()))).getValue();
+		return ResponseEntity.status(HttpStatus.CREATED).body(userId);
+	}
+
+	private boolean checkUsernameAvailability(final Username username) {
+		return userService.isUsernameTaken(username);
 	}
 
 	@ExceptionHandler(UsernameIsTakenException.class)
@@ -58,8 +71,9 @@ public class UserRestController {
 	}
 
 	@ExceptionHandler(PSQLException.class)
-	public ResponseEntity<?> handlePSQLException() {
-		return ResponseEntity.badRequest().build();
+	public ResponseEntity<?> handlePSQLException(final PSQLException ex) {
+		logger.error("An exception occurred while handling PSQLException", ex);
+		return ResponseEntity.internalServerError().build();
 	}
 
 	@Data

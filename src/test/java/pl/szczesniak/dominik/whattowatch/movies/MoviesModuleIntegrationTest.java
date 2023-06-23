@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.TestPropertySource;
 import pl.szczesniak.dominik.whattowatch.movies.AddMovieToWatchRestInvoker.AddMovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.FindMoviesToWatchRestInvoker.MovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.FindWatchedMoviesRestInvoker.WatchedMovieDto;
@@ -26,7 +25,6 @@ import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSa
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@TestPropertySource("classpath:application-test.properties")
 class MoviesModuleIntegrationTest {
 
 	@MockBean

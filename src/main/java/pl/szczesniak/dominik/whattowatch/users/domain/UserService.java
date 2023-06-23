@@ -28,4 +28,8 @@ public class UserService {
 				.orElseThrow(() -> new InvalidCredentialsException("Invalid credentials, could not log in.")).getUserId();
 	}
 
+	public boolean isUsernameTaken(final Username username) {
+		return repository.findBy(username.getValue()).isPresent();
+	}
+
 }
