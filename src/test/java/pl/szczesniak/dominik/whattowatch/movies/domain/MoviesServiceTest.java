@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
@@ -13,11 +14,13 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoes
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesToWatchServiceConfiguration.moviesToWatchService;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentSample.createAnyComment;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
@@ -334,4 +337,64 @@ class MoviesServiceTest {
 		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
 	}
 
+	@Test
+	void should_add_comment_to_movie() {
+		// given
+		final UserId user = userProvider.addUser(createAnyUserId());
+		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+
+		// when
+		final String anyComment = createAnyComment();
+		tut.addCommentToMovie(user, movieId, anyComment);
+
+		// then
+		final List<MovieComment> comments = tut.findMovie(movieId, user).getComments();
+		assertThat(comments).extracting(MovieComment::getValue).containsExactly(anyComment);
+	}
+
+	@Test
+	void should_not_add_comment_to_not_users_movie() {
+		// given
+		final UserId user = userProvider.addUser(createAnyUserId());
+		final UserId differentUser = userProvider.addUser(createAnyUserId());
+		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+
+		// when
+		final String anyComment = createAnyComment();
+		final Throwable thrown = catchThrowable(() -> tut.addCommentToMovie(differentUser, movieId, anyComment));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
+	}
+
+	@Test
+	void should_delete_comment() {
+		// given
+		final UserId user = userProvider.addUser(createAnyUserId());
+
+		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+		final UUID commentId = tut.addCommentToMovie(user, movieId, createAnyComment());
+
+		// when
+		tut.deleteCommentFromMovie(user, movieId, commentId);
+
+		// then
+		final List<MovieComment> comments = tut.findMovie(movieId, user).getComments();
+		assertThat(comments).isEmpty();
+	}
+
+	@Test
+	void should_not_delete_comment_from_not_users_movie() {
+		// given
+		final UserId user = userProvider.addUser(createAnyUserId());
+		final UserId differentUser = userProvider.addUser(createAnyUserId());
+		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+		final UUID commentId = tut.addCommentToMovie(user, movieId, createAnyComment());
+
+		// when
+		final Throwable thrown = catchThrowable(() -> tut.deleteCommentFromMovie(differentUser, movieId, commentId));
+
+		// then
+		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
+	}
 }

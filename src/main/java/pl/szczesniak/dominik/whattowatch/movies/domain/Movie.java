@@ -13,11 +13,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import static java.util.Objects.requireNonNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -39,6 +43,8 @@ public class Movie {
 	@AttributeOverride(name = "value", column = @Column(name = "movietitle_value"))
 	private MovieTitle title;
 
+	private final List<MovieComment> comments = new ArrayList<>();
+
 	Movie(final UserId userId, final MovieTitle title) {
 		this.userId = requireNonNull(userId, "UserId cannot be null");
 		this.title = requireNonNull(title, "MovieTitle cannot be null");
@@ -50,6 +56,16 @@ public class Movie {
 
 	public void update(final MovieTitle title) {
 		this.title = title;
+	}
+
+	public UUID addComment(final String comment) {
+		final UUID commentId = UUID.randomUUID();
+		this.comments.add(new MovieComment(commentId, comment));
+		return commentId;
+	}
+
+	public void deleteComment(final MovieComment movieComment) {
+		comments.remove(movieComment);
 	}
 
 	public MovieId getMovieId() {

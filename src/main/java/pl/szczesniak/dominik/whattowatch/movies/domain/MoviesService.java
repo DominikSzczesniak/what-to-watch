@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
@@ -11,6 +12,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.UserDoes
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class MoviesService {
@@ -44,7 +47,7 @@ public class MoviesService {
 
 	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
 		checkUserExists(command.getUserId());
-		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		final Movie movie = findMovie(command.getMovieId(), command.getUserId());
 		final WatchedMovie watchedMovie = movie.markAsWatched();
 		watchedRepository.add(watchedMovie);
 		repository.removeMovie(command.getMovieId(), command.getUserId());
@@ -57,13 +60,30 @@ public class MoviesService {
 	}
 
 	public void updateMovie(final UpdateMovie command) {
-		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		final Movie movie = findMovie(command.getMovieId(), command.getUserId());
 		movie.update(command.getTitle());
 		repository.update(movie);
 	}
 
-	private Movie getMovie(final MovieId movieId, final UserId userId) {
-		return repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId));
+	public Movie findMovie(final MovieId movieId, final UserId userId) {
+		Movie movie = repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId));
+		return movie;
+	}
+
+	public UUID addCommentToMovie(final UserId userId, final MovieId movieId, final String comment) {
+		final Movie movie = findMovie(movieId, userId);
+		final UUID commentId = movie.addComment(comment);
+		repository.update(movie);
+		return commentId;
+	}
+
+	public void deleteCommentFromMovie(final UserId userId, final MovieId movieId, final UUID commentId) {
+		final Movie movie = findMovie(movieId, userId);
+		final Optional<MovieComment> foundComment = movie.getComments().stream().filter(comment -> comment.getCommentId().equals(commentId)).findFirst();
+		if (foundComment.isPresent()) {
+			movie.deleteComment(foundComment.get());
+			repository.update(movie);
+		}
 	}
 
 }
