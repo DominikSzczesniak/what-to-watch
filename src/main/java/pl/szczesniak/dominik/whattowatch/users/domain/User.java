@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
@@ -28,7 +29,8 @@ public class User {
 
 	@EmbeddedId
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@AttributeOverride(name = "value", column = @Column(name = "userId_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "userid_value"))
+	@Setter
 	private UserId userId;
 
 	@AttributeOverride(name = "value", column = @Column(name = "username_value", unique = true))
@@ -37,9 +39,8 @@ public class User {
 	@AttributeOverride(name = "value", column = @Column(name = "password_value"))
 	private UserPassword userPassword;
 
-	public User(final Username username, final UserId userId, final UserPassword userPassword) {
+	public User(final Username username, final UserPassword userPassword) {
 		this.username = requireNonNull(username, "Username must not be null.");
-		this.userId = requireNonNull(userId, "UserId must not be null.");
 		this.userPassword = requireNonNull(userPassword, "UserPassword must not be null.");
 	}
 

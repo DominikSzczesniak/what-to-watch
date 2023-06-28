@@ -7,13 +7,11 @@ import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 @RequiredArgsConstructor
 public class JpaUserRepository implements UserRepository {
 
-	public final AtomicInteger nextId = new AtomicInteger(0);
 
 	private final SpringDataJpaUserRepository springDataJpaUserRepository;
 
@@ -22,10 +20,6 @@ public class JpaUserRepository implements UserRepository {
 		springDataJpaUserRepository.save(user);
 	}
 
-	@Override
-	public UserId nextUserId() {
-		return new UserId(nextId.incrementAndGet());
-	}
 
 	@Override
 	public boolean exists(final UserId userId) {

@@ -43,9 +43,14 @@ public class Movie {
 		this.title = requireNonNull(title, "MovieTitle cannot be null");
 	}
 
-	public static Movie recreate(final MovieId movieId, final MovieTitle title, final UserId userId) {
-		return new Movie(movieId, userId, title);
-	}
+//	Movie(final UserId userId, final MovieTitle title) { // TODO
+//		this.userId = requireNonNull(userId, "UserId cannot be null");
+//		this.title = requireNonNull(title, "MovieTitle cannot be null");
+//	}
+//
+//	void setMovieId(final MovieId movieId) {
+//		this.movieId = movieId;
+//	}
 
 	WatchedMovie markAsWatched() {
 		return new WatchedMovie(movieId, userId, title);

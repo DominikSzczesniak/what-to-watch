@@ -13,7 +13,7 @@ public class UserService {
 	private final UserRepository repository;
 
 	public UserId createUser(final CreateUser command) {
-		final User user = new User(command.getUsername(), repository.nextUserId(), command.getUserPassword());
+		final User user = new User(command.getUsername(), command.getUserPassword());
 		repository.create(user);
 		return user.getUserId();
 	}

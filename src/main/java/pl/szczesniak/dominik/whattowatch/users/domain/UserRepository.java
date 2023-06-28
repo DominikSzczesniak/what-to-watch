@@ -8,8 +8,6 @@ public interface UserRepository {
 
 	void create(User user);
 
-	UserId nextUserId();
-
 	boolean exists(UserId userId);
 
 	Optional<User> findBy(UserId userId);

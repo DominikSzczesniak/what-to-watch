@@ -41,7 +41,7 @@ public class UserRestController {
 	}
 
 	@PostMapping("/api/users")
-	public ResponseEntity<Integer> createUser(@RequestBody final CreateUserDto userDto) {
+	public ResponseEntity<?> createUser(@RequestBody final CreateUserDto userDto) {
 		final Integer userId = userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()))).getValue();
 		return ResponseEntity.status(HttpStatus.CREATED).body(userId);
 	}

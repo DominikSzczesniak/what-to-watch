@@ -24,12 +24,8 @@ public class InMemoryUserRepository implements UserRepository {
 		if (exists(user.getUserId())) {
 			throw new UserAlreadyExistsException("user already exists");
 		}
+		user.setUserId(new UserId(nextId.incrementAndGet()));
 		users.put(user.getUserId(), user);
-	}
-
-	@Override
-	public UserId nextUserId() {
-		return new UserId(nextId.incrementAndGet());
 	}
 
 	@Override
