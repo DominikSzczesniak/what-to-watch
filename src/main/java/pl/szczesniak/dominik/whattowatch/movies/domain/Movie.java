@@ -4,6 +4,8 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -16,20 +18,21 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @Entity
 @Getter
-@Table(name = "app_movie")
+@Table(name = "movie")
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"movieId"})
 public class Movie {
 
 	@EmbeddedId
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@AttributeOverride(name = "value", column = @Column(name = "movieid_value"))
 	private MovieId movieId;
 
-	@AttributeOverride(name = "value", column = @Column(name = "userId_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "userid_value"))
 	private UserId userId;
 
-	@AttributeOverride(name = "value", column = @Column(name = "movieTitle_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "movieitle_value"))
 	private MovieTitle title;
 
 	Movie(final MovieId movieId, final UserId userId, final MovieTitle title) {

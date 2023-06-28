@@ -16,20 +16,20 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @Entity
 @Getter
-@Table(name = "app_watchedMovie")
+@Table(name = "watchedMovie")
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"movieId"})
 public class WatchedMovie {
 
 	@EmbeddedId
-	@AttributeOverride(name = "value", column = @Column(name = "movieId_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "movieid_value"))
 	private MovieId movieId;
 
-	@AttributeOverride(name = "value", column = @Column(name = "movieTitle_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "movietitle_value"))
 	private MovieTitle title;
 
-	@AttributeOverride(name = "value", column = @Column(name = "userId_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "userid_value"))
 	private UserId userId;
 
 	WatchedMovie(final MovieId movieId, final MovieTitle title, final UserId userId) {

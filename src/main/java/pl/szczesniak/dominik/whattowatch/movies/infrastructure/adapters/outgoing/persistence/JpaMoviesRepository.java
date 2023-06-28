@@ -31,7 +31,7 @@ public class JpaMoviesRepository implements MoviesRepository {
 
 	@Override
 	public void update(final Movie movie) {
-		springDataJpaMoviesRepository.saveAndFlush(movie);
+		springDataJpaMoviesRepository.save(movie);
 	}
 
 	@Override
@@ -41,9 +41,7 @@ public class JpaMoviesRepository implements MoviesRepository {
 
 	@Override
 	public void removeMovie(final MovieId movieId, final UserId userId) {
-		if (springDataJpaMoviesRepository.existsMovieByUserIdAndMovieId(userId, movieId)) {
 			springDataJpaMoviesRepository.deleteById(movieId);
-		}
 	}
 
 	@Override
