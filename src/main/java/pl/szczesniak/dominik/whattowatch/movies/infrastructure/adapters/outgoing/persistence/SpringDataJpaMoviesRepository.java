@@ -16,5 +16,4 @@ public interface SpringDataJpaMoviesRepository extends JpaRepository<Movie, Movi
 
 	Optional<Movie> findByMovieIdAndUserId(MovieId movieId, UserId userId);
 
-	boolean existsMovieByUserIdAndMovieId(UserId userId, MovieId movieId);
 }

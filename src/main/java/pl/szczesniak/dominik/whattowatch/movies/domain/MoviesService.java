@@ -44,7 +44,7 @@ public class MoviesService {
 
 	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
 		checkUserExists(command.getUserId());
-		final Movie movie = findMovie(command.getMovieId(), command.getUserId());
+		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		final WatchedMovie watchedMovie = movie.markAsWatched();
 		watchedRepository.add(watchedMovie);
 		repository.removeMovie(command.getMovieId(), command.getUserId());
@@ -56,17 +56,13 @@ public class MoviesService {
 		}
 	}
 
-	private Movie getMovie(final MovieId movieId, final UserId userId) {
-		return findMovie(movieId, userId);
-	}
-
 	public void updateMovie(final UpdateMovie command) {
-		final Movie movie = findMovie(command.getMovieId(), command.getUserId());
+		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		movie.update(command.getTitle());
 		repository.update(movie);
 	}
 
-	private Movie findMovie(final MovieId movieId, final UserId userId) {
+	private Movie getMovie(final MovieId movieId, final UserId userId) {
 		return repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 

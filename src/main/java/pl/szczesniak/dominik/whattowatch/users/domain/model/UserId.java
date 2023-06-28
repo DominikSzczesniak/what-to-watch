@@ -3,7 +3,7 @@ package pl.szczesniak.dominik.whattowatch.users.domain.model;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -11,15 +11,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Embeddable
 @Getter
 @ToString
-@RequiredArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 public class UserId {
 
-	Integer value;
+	private Integer value;
 
 	public UserId(final int value) {
-		this.value = value;
 		checkArgument(value > 0, "UserId value must be higher than 0");
+		this.value = value;
 	}
 
 }
