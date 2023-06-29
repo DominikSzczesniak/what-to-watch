@@ -1,9 +1,6 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.persistence;
+package pl.szczesniak.dominik.whattowatch.users.domain;
 
-import pl.szczesniak.dominik.whattowatch.users.domain.User;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.util.HashMap;
@@ -21,10 +18,7 @@ public class InMemoryUserRepository implements UserRepository {
 		if (usernameIsTaken(user.getUsername().getValue())) {
 			throw new UsernameIsTakenException("Please choose different name, " + user.getUsername() + " is already taken");
 		}
-		if (exists(user.getUserId())) {
-			throw new UserAlreadyExistsException("user already exists");
-		}
-		user.setUserId(new UserId(nextId.incrementAndGet()));
+		user.setUserId(nextId.incrementAndGet());
 		users.put(user.getUserId(), user);
 	}
 

@@ -12,7 +12,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JpaUserRepository implements UserRepository {
 
-
 	private final SpringDataJpaUserRepository springDataJpaUserRepository;
 
 	@Override

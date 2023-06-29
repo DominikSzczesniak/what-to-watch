@@ -2,10 +2,10 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -27,11 +27,11 @@ import static java.util.Objects.requireNonNull;
 @EqualsAndHashCode(of = {"userId"})
 public class User {
 
-	@EmbeddedId
+	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@AttributeOverride(name = "value", column = @Column(name = "userid_value"))
-	@Setter
-	private UserId userId;
+	@Setter(AccessLevel.PACKAGE)
+	private Integer userId;
 
 	@AttributeOverride(name = "value", column = @Column(name = "username_value", unique = true))
 	private Username username;
@@ -42,6 +42,10 @@ public class User {
 	public User(final Username username, final UserPassword userPassword) {
 		this.username = requireNonNull(username, "Username must not be null.");
 		this.userPassword = requireNonNull(userPassword, "UserPassword must not be null.");
+	}
+
+	public UserId getUserId() {
+		return new UserId(userId);
 	}
 
 }
