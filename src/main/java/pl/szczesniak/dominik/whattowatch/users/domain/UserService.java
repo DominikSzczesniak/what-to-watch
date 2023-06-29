@@ -12,18 +12,17 @@ public class UserService {
 
 	private final UserRepository repository;
 
-	public Long createUser(final CreateUser command) {
+	public UserId createUser(final CreateUser command) {
 		final User user = new User(command.getUsername(), command.getUserPassword());
-		final Long createdUserId = repository.create(user);
-		user.setUserId(new UserId(createdUserId));
-		return createdUserId;
+		repository.create(user);
+		return user.getUserId();
 	}
 
 	public boolean exists(final UserId userId) {
 		return repository.exists(userId);
 	}
 
-	public Long login(final Username username, final UserPassword userPassword) {
+	public UserId login(final Username username, final UserPassword userPassword) {
 		return repository.findBy(username.getValue())
 				.filter(user -> user.getUserPassword().equals(userPassword))
 				.orElseThrow(() -> new InvalidCredentialsException("Invalid credentials, could not log in.")).getUserId();

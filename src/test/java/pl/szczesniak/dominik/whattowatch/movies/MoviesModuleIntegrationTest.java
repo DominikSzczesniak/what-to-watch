@@ -48,7 +48,7 @@ class MoviesModuleIntegrationTest {
 	@Autowired
 	private MoveMovieToWatchToWatchedListInvoker moveMovieToWatchToWatchedListRest;
 
-	private Long userId;
+	private Integer userId;
 
 	@BeforeEach
 	void setUp() {

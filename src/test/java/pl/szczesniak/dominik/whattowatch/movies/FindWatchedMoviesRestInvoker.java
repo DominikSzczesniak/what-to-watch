@@ -23,7 +23,7 @@ public class FindWatchedMoviesRestInvoker {
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<List<WatchedMovieDto>> findWatchedMovies(final Long userId) {
+	public ResponseEntity<List<WatchedMovieDto>> findWatchedMovies(final Integer userId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
@@ -43,7 +43,7 @@ public class FindWatchedMoviesRestInvoker {
 
 		private final String title;
 		private final Integer movieId;
-		private final Long userId;
+		private final Integer userId;
 
 	}
 

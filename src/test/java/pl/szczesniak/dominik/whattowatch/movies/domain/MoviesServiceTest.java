@@ -206,7 +206,7 @@ class MoviesServiceTest {
 		final MovieId movieThreeId = tut.addMovieToList(movieThree);
 
 		// when
-		tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().movieId(movieTwoId).userId(userId.getValue()).build());
+		tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().movieId(movieTwoId).userId(userId).build());
 
 		// then
 		assertThat(tut.getMoviesToWatch(userId))
@@ -240,7 +240,7 @@ class MoviesServiceTest {
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder()
-				.movieId(movieToMove).userId(notQualifiedUser.getValue()).build()));
+				.movieId(movieToMove).userId(notQualifiedUser).build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
@@ -252,7 +252,7 @@ class MoviesServiceTest {
 		final UserId userId = userProvider.addUser(createAnyUserId());
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().userId(userId.getValue()).build()));
+		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().userId(userId).build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);
@@ -267,7 +267,7 @@ class MoviesServiceTest {
 		tut.removeMovieFromList(starWars, userId);
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().movieId(starWars).userId(userId.getValue()).build()));
+		final Throwable thrown = catchThrowable(() -> tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().movieId(starWars).userId(userId).build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(MovieDoesNotExistException.class);

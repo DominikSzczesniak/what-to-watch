@@ -32,7 +32,7 @@ public class MoviesRestController {
 	private final MoviesService moviesService;
 
 	@GetMapping("/api/movies")
-	public List<MovieDto> findAllMoviesToWatch(@RequestHeader("userId") final Long userId) {
+	public List<MovieDto> findAllMoviesToWatch(@RequestHeader("userId") final Integer userId) {
 		return moviesService.getMoviesToWatch(new UserId(userId)).stream()
 				.map(movie -> new MovieDto(movie.getTitle().getValue(), movie.getMovieId().getValue(), movie.getUserId().getValue()))
 				.toList();
@@ -40,30 +40,30 @@ public class MoviesRestController {
 
 	@PostMapping("/api/movies")
 	public Integer addMovie(@RequestBody final CreateMovieDto movieDto) {
-		return moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle(movieDto.getTitle()), movieDto.getUserId()).build()).getValue();
+		return moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle(movieDto.getTitle()), new UserId(movieDto.userId)).build()).getValue();
 	}
 
 	@DeleteMapping("/api/movies/{movieId}")
-	public ResponseEntity<?> removeMovieFromList(@RequestHeader("userId") Long userId, @PathVariable Integer movieId) {
+	public ResponseEntity<?> removeMovieFromList(@RequestHeader("userId") Integer userId, @PathVariable Integer movieId) {
 		moviesService.removeMovieFromList(new MovieId(movieId), new UserId(userId));
 		return ResponseEntity.noContent().build();
 	}
 
 	@PutMapping("/api/movies/{movieId}")
-	public void updateMovie(@RequestHeader("userId") Long userId, @PathVariable final Integer movieId, @RequestBody final UpdateMovieDto updateMovieDto) {
+	public void updateMovie(@RequestHeader("userId") Integer userId, @PathVariable final Integer movieId, @RequestBody final UpdateMovieDto updateMovieDto) {
 		moviesService.updateMovie(new UpdateMovie(new MovieId(movieId), new UserId(userId), new MovieTitle(updateMovieDto.getMovieTitle())));
 	}
 
 	@GetMapping("/api/movies/watched")
-	public List<MovieDto> findWatchedMovies(@RequestHeader("userId") Long userId) {
+	public List<MovieDto> findWatchedMovies(@RequestHeader("userId") Integer userId) {
 		return moviesService.getWatchedMovies(new UserId(userId)).stream()
 				.map(movie -> new MovieDto(movie.getTitle().getValue(), movie.getMovieId().getValue(), movie.getUserId().getValue()))
 				.toList();
 	}
 
 	@PostMapping("/api/movies/{movieId}/watched")
-	public void moveMovieToWatchedList(@PathVariable Integer movieId, @RequestHeader("userId") Long userId) {
-		moviesService.moveMovieToWatchedList(new MoveMovieToWatchedMoviesList(new MovieId(movieId), userId));
+	public void moveMovieToWatchedList(@PathVariable Integer movieId, @RequestHeader("userId") Integer userId) {
+		moviesService.moveMovieToWatchedList(new MoveMovieToWatchedMoviesList(new MovieId(movieId), new UserId(userId)));
 	}
 
 	@ExceptionHandler(MovieDoesNotExistException.class)
@@ -84,14 +84,14 @@ public class MoviesRestController {
 	@Data
 	private static class CreateMovieDto {
 		private String title;
-		private Long userId;
+		private Integer userId;
 	}
 
 	@Value
 	private static class MovieDto {
 		String title;
 		Integer movieId;
-		Long userId;
+		Integer userId;
 	}
 
 	@Data

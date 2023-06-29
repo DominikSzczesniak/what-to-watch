@@ -15,10 +15,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 @EqualsAndHashCode
 public class UserId {
 
-	private Long value;
+	private Integer value;
 
-	public UserId(final Long value) {
-		checkArgument(value > 0L, "UserId value must be higher than 0");
+	public UserId(final int value) {
+		checkArgument(value > 0, "UserId value must be higher than 0");
 		this.value = value;
 	}
 

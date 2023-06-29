@@ -14,7 +14,7 @@ public class AddMovieToListSample {
 	private static AddMovieToList build(final MovieTitle movieTitle, final UserId userId) {
 		return AddMovieToList.builder(
 						ofNullable(movieTitle).orElse(createAnyMovieTitle()),
-						ofNullable(userId.getValue()).orElse(createAnyUserId().getValue())
+						ofNullable(userId).orElse(createAnyUserId())
 				)
 				.build();
 	}

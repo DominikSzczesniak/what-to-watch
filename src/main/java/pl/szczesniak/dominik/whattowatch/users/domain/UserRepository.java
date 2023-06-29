@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface UserRepository {
 
-	Long create(User user);
+	void create(User user);
 
 	boolean exists(UserId userId);
 

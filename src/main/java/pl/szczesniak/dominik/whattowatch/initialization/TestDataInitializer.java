@@ -10,6 +10,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
@@ -24,7 +25,7 @@ public class TestDataInitializer {
 
 	@PostConstruct
 	public void fillDatabase() {
-		final Long userId = userService.createUser(new CreateUser(new Username("Dominik"), new UserPassword("123")));
+		final UserId userId = userService.createUser(new CreateUser(new Username("Dominik"), new UserPassword("123")));
 
 		moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle("Star Wars"), userId).build());
 		final MovieId parasite = moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle("Parasite"), userId).build());

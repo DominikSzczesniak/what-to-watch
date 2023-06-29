@@ -2,15 +2,16 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
@@ -26,10 +27,11 @@ import static java.util.Objects.requireNonNull;
 @EqualsAndHashCode(of = {"userId"})
 public class User {
 
-	@Id
+	@EmbeddedId
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@AttributeOverride(name = "value", column = @Column(name = "userid_value"))
-	private Long userId;
+	@Setter
+	private UserId userId;
 
 	@AttributeOverride(name = "value", column = @Column(name = "username_value", unique = true))
 	private Username username;
@@ -40,10 +42,6 @@ public class User {
 	public User(final Username username, final UserPassword userPassword) {
 		this.username = requireNonNull(username, "Username must not be null.");
 		this.userPassword = requireNonNull(userPassword, "UserPassword must not be null.");
-	}
-
-	void setUserId(final UserId userId) {
-		this.userId = userId.getValue();
 	}
 
 }
