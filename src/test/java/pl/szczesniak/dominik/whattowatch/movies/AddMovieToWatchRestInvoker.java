@@ -34,7 +34,7 @@ public class AddMovieToWatchRestInvoker {
 
 		@Builder.Default
 		private String title = createAnyMovieTitle().getValue();
-		private Integer userId;
+		private Long userId;
 
 	}
 

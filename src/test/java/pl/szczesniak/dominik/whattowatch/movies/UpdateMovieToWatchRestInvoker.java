@@ -20,7 +20,7 @@ public class UpdateMovieToWatchRestInvoker {
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<Void> updateMovie(final UpdateMovieDto updateMovieDto, final Integer userId, final Integer movieId) {
+	public ResponseEntity<Void> updateMovie(final UpdateMovieDto updateMovieDto, final Long userId, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		final HttpEntity<UpdateMovieDto> requestEntity = new HttpEntity<>(updateMovieDto, headers);

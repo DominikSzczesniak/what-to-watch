@@ -2,7 +2,6 @@ package pl.szczesniak.dominik.whattowatch.movies.domain.model.commands;
 
 import lombok.Builder;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import static java.util.Optional.ofNullable;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieIdSample.createAnyMovieId;
@@ -11,10 +10,10 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.
 public class MoveMovieToWatchListSample {
 
 	@Builder
-	private static MoveMovieToWatchedMoviesList build(final MovieId movieId, final UserId userId) {
+	private static MoveMovieToWatchedMoviesList build(final MovieId movieId, final Long userId) {
 		return new MoveMovieToWatchedMoviesList(
 				ofNullable(movieId).orElse(createAnyMovieId()),
-				ofNullable(userId).orElse(createAnyUserId())
+				ofNullable(userId).orElse(createAnyUserId().getValue())
 		);
 	}
 

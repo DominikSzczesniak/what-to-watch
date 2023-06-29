@@ -31,9 +31,9 @@ public class UserRestController {
 	private final UserService userService;
 
 	@PostMapping("/api/login")
-	public ResponseEntity<Integer> loginUser(@RequestBody final LoginUserDto userDto) {
+	public ResponseEntity<Long> loginUser(@RequestBody final LoginUserDto userDto) {
 		try {
-			final Integer userId = userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())).getValue();
+			final Long userId = userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()));
 			return ResponseEntity.status(HttpStatus.OK).body(userId);
 		} catch (InvalidCredentialsException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
@@ -42,7 +42,7 @@ public class UserRestController {
 
 	@PostMapping("/api/users")
 	public ResponseEntity<?> createUser(@RequestBody final CreateUserDto userDto) {
-		final Integer userId = userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()))).getValue();
+		final Long userId = userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())));
 		return ResponseEntity.status(HttpStatus.CREATED).body(userId);
 	}
 

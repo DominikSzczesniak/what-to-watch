@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
@@ -18,18 +17,18 @@ public class AddMovieToList {
 	@NonNull
 	private final MovieTitle movieTitle;
 	@NonNull
-	private final UserId userId;
+	private final Long userId;
 
-	public static AddMovieToListBuilder builder(final MovieTitle movieTitle, final UserId userId) {
+	public static AddMovieToListBuilder builder(final MovieTitle movieTitle, final Long userId) {
 		return new AddMovieToListBuilder(movieTitle, userId);
 	}
 
 	@ToString
 	public static class AddMovieToListBuilder {
 		private final MovieTitle movieTitle;
-		private final UserId userId;
+		private final Long userId;
 
-		private AddMovieToListBuilder(final MovieTitle movieTitle, final UserId userId) {
+		private AddMovieToListBuilder(final MovieTitle movieTitle, final Long userId) {
 			this.movieTitle = movieTitle;
 			this.userId = userId;
 		}

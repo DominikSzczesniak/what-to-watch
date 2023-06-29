@@ -16,19 +16,20 @@ public class JpaUserRepository implements UserRepository {
 	private final SpringDataJpaUserRepository springDataJpaUserRepository;
 
 	@Override
-	public void create(final User user) {
-		springDataJpaUserRepository.save(user);
+	public Long create(final User user) {
+		final User savedUser = springDataJpaUserRepository.save(user);
+		return user.getUserId();
 	}
 
 
 	@Override
 	public boolean exists(final UserId userId) {
-		return springDataJpaUserRepository.existsById(userId);
+		return springDataJpaUserRepository.existsById(userId.getValue());
 	}
 
 	@Override
 	public Optional<User> findBy(final UserId userId) {
-		return springDataJpaUserRepository.findById(userId);
+		return springDataJpaUserRepository.findById(userId.getValue());
 	}
 
 	@Override

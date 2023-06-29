@@ -3,29 +3,26 @@ package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UserAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryUserRepository implements UserRepository {
 
 	private final Map<UserId, User> users = new HashMap<>();
-	public final AtomicInteger nextId = new AtomicInteger(0);
+	public final AtomicLong nextId = new AtomicLong(0L);
 
 	@Override
-	public void create(final User user) {
+	public Long create(final User user) {
 		if (usernameIsTaken(user.getUsername().getValue())) {
 			throw new UsernameIsTakenException("Please choose different name, " + user.getUsername() + " is already taken");
 		}
-		if (exists(user.getUserId())) {
-			throw new UserAlreadyExistsException("user already exists");
-		}
-		user.setUserId(new UserId(nextId.incrementAndGet()));
-		users.put(user.getUserId(), user);
+		long userId = nextId.incrementAndGet();
+		users.put(new UserId(userId), user);
+		return userId;
 	}
 
 	@Override

@@ -16,7 +16,7 @@ public class MoveMovieToWatchToWatchedListInvoker {
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<Void> findMoviesToWatch(final Integer userId, final Integer movieId) {
+	public ResponseEntity<Void> findMoviesToWatch(final Long userId, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(

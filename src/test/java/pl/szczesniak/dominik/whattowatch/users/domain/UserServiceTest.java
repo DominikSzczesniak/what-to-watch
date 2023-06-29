@@ -40,10 +40,10 @@ class UserServiceTest {
 	@Test
 	void user_should_exist_when_previously_created() {
 		// given
-		final UserId createdUserId = tut.createUser(CreateUserSample.builder().build());
+		final long createdUserId = tut.createUser(CreateUserSample.builder().build());
 
 		// when
-		final boolean checkExist = tut.exists(createdUserId);
+		final boolean checkExist = tut.exists(new UserId(createdUserId));
 
 		// then
 		assertThat(checkExist).isTrue();
@@ -52,8 +52,8 @@ class UserServiceTest {
 	@Test
 	void created_users_should_have_different_ids() {
 		// when
-		final UserId userOne = tut.createUser(CreateUserSample.builder().build());
-		final UserId userTwo = tut.createUser(CreateUserSample.builder().build());
+		final Long userOne = tut.createUser(CreateUserSample.builder().build());
+		final Long userTwo = tut.createUser(CreateUserSample.builder().build());
 
 		// then
 		assertThat(userOne).isNotEqualTo(userTwo);
@@ -62,19 +62,19 @@ class UserServiceTest {
 	@Test
 	void every_next_user_has_id_higher_by_one() {
 		// given
-		final UserId userOne = tut.createUser(CreateUserSample.builder().build());
+		final Long userOne = tut.createUser(CreateUserSample.builder().build());
 
 		// when
-		final UserId userTwo = tut.createUser(CreateUserSample.builder().build());
-		final UserId userThree = tut.createUser(CreateUserSample.builder().build());
-		final UserId userFour = tut.createUser(CreateUserSample.builder().build());
-		final UserId userFive = tut.createUser(CreateUserSample.builder().build());
+		final Long userTwo = tut.createUser(CreateUserSample.builder().build());
+		final Long userThree = tut.createUser(CreateUserSample.builder().build());
+		final Long userFour = tut.createUser(CreateUserSample.builder().build());
+		final Long userFive = tut.createUser(CreateUserSample.builder().build());
 
 		// then
-		assertThat(userTwo.getValue()).isEqualTo(userOne.getValue() + 1);
-		assertThat(userThree.getValue()).isEqualTo(userOne.getValue() + 2);
-		assertThat(userFour.getValue()).isEqualTo(userOne.getValue() + 3);
-		assertThat(userFive.getValue()).isEqualTo(userOne.getValue() + 4);
+		assertThat(userTwo).isEqualTo(userOne + 1);
+		assertThat(userThree).isEqualTo(userOne + 2);
+		assertThat(userFour).isEqualTo(userOne + 3);
+		assertThat(userFive).isEqualTo(userOne + 4);
 	}
 
 	@Test
@@ -95,10 +95,10 @@ class UserServiceTest {
 		// given
 		final Username createdUsername = createAnyUsername();
 		final UserPassword createdPassword = createAnyUserPassword();
-		final UserId createdUserId = tut.createUser(CreateUserSample.builder().username(createdUsername).userPassword(createdPassword).build());
+		final Long createdUserId = tut.createUser(CreateUserSample.builder().username(createdUsername).userPassword(createdPassword).build());
 
 		// when
-		final UserId loggedUserId = tut.login(createdUsername, createdPassword);
+		final Long loggedUserId = tut.login(createdUsername, createdPassword);
 
 		// then
 		assertThat(loggedUserId).isEqualTo(createdUserId);

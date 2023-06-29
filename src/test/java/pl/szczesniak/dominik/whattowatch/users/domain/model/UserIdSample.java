@@ -5,7 +5,7 @@ import java.util.Random;
 public class UserIdSample {
 
 	public static UserId createAnyUserId() {
-		return new UserId(new Random().nextInt(1, 99999));
+		return new UserId(new Random().nextLong(1, 99999));
 	}
 
 }

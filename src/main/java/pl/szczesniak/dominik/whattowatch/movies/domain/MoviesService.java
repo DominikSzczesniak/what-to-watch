@@ -20,10 +20,10 @@ public class MoviesService {
 	private final WatchedMoviesRepository watchedRepository;
 
 	public MovieId addMovieToList(final AddMovieToList command) {
-		if (!userProvider.exists(command.getUserId())) {
+		if (!userProvider.exists(new UserId(command.getUserId()))) {
 			throw new UserDoesNotExistException("User doesn't exist. Didn't add movie to any list");
 		}
-		final Movie movie = new Movie(repository.nextMovieId(), command.getUserId(), command.getMovieTitle()); // nie wyciagac z bazy id -- 2 konstruktory jeden bez id jeden z lub setter pakietowy
+		final Movie movie = new Movie(repository.nextMovieId(), new UserId(command.getUserId()), command.getMovieTitle()); // nie wyciagac z bazy id -- 2 konstruktory jeden bez id jeden z lub setter pakietowy
 		repository.create(movie);
 		return movie.getMovieId();
 	}
@@ -43,11 +43,11 @@ public class MoviesService {
 	}
 
 	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
-		checkUserExists(command.getUserId());
-		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		checkUserExists(new UserId(command.getUserId()));
+		final Movie movie = getMovie(command.getMovieId(), new UserId(command.getUserId()));
 		final WatchedMovie watchedMovie = movie.markAsWatched();
 		watchedRepository.add(watchedMovie);
-		repository.removeMovie(command.getMovieId(), command.getUserId());
+		repository.removeMovie(command.getMovieId(), new UserId(command.getUserId()));
 	}
 
 	private void checkUserExists(final UserId userId) {
