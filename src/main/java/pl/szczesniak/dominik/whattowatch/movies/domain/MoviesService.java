@@ -23,7 +23,7 @@ public class MoviesService {
 		if (!userProvider.exists(command.getUserId())) {
 			throw new UserDoesNotExistException("User doesn't exist. Didn't add movie to any list");
 		}
-		final Movie movie = new Movie(repository.nextMovieId(), command.getUserId(), command.getMovieTitle()); // nie wyciagac z bazy id -- 2 konstruktory jeden bez id jeden z lub setter pakietowy
+		final Movie movie = new Movie(command.getUserId(), command.getMovieTitle());
 		repository.create(movie);
 		return movie.getMovieId();
 	}

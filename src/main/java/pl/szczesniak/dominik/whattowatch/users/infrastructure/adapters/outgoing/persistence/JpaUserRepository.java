@@ -22,12 +22,7 @@ public class JpaUserRepository implements UserRepository {
 
 	@Override
 	public boolean exists(final UserId userId) {
-		return springDataJpaUserRepository.existsById(userId);
-	}
-
-	@Override
-	public Optional<User> findBy(final UserId userId) {
-		return springDataJpaUserRepository.findById(userId);
+		return springDataJpaUserRepository.existsById(userId.getValue());
 	}
 
 	@Override

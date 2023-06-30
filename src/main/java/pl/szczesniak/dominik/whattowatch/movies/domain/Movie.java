@@ -2,15 +2,16 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
@@ -26,10 +27,11 @@ import static java.util.Objects.requireNonNull;
 @EqualsAndHashCode(of = {"movieId"})
 public class Movie {
 
-	@EmbeddedId
+	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@AttributeOverride(name = "value", column = @Column(name = "movieid_value"))
-	private MovieId movieId;
+	@Setter(AccessLevel.PACKAGE)
+	private Integer movieId;
 
 	@AttributeOverride(name = "value", column = @Column(name = "userid_value"))
 	private UserId userId;
@@ -37,27 +39,21 @@ public class Movie {
 	@AttributeOverride(name = "value", column = @Column(name = "movietitle_value"))
 	private MovieTitle title;
 
-	Movie(final MovieId movieId, final UserId userId, final MovieTitle title) {
-		this.movieId = requireNonNull(movieId, "MovieId cannot be null");
+	Movie(final UserId userId, final MovieTitle title) {
 		this.userId = requireNonNull(userId, "UserId cannot be null");
 		this.title = requireNonNull(title, "MovieTitle cannot be null");
 	}
 
-//	Movie(final UserId userId, final MovieTitle title) { // TODO
-//		this.userId = requireNonNull(userId, "UserId cannot be null");
-//		this.title = requireNonNull(title, "MovieTitle cannot be null");
-//	}
-//
-//	void setMovieId(final MovieId movieId) {
-//		this.movieId = movieId;
-//	}
-
 	WatchedMovie markAsWatched() {
-		return new WatchedMovie(movieId, userId, title);
+		return new WatchedMovie(new MovieId(movieId), userId, title);
 	}
 
 	public void update(final MovieTitle title) {
 		this.title = title;
+	}
+
+	public MovieId getMovieId() {
+		return new MovieId(movieId);
 	}
 
 }

@@ -9,20 +9,12 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 @RequiredArgsConstructor
 public class JpaMoviesRepository implements MoviesRepository {
 
 	private final SpringDataJpaMoviesRepository springDataJpaMoviesRepository;
-
-	private final AtomicInteger nextId = new AtomicInteger(0);
-
-	@Override
-	public MovieId nextMovieId() {
-		return new MovieId(nextId.incrementAndGet());
-	}
 
 	@Override
 	public void create(final Movie movie) {
@@ -41,12 +33,12 @@ public class JpaMoviesRepository implements MoviesRepository {
 
 	@Override
 	public void removeMovie(final MovieId movieId, final UserId userId) {
-			springDataJpaMoviesRepository.deleteById(movieId);
+		springDataJpaMoviesRepository.deleteById(movieId.getValue());
 	}
 
 	@Override
 	public Optional<Movie> findBy(final MovieId movieId, final UserId userId) {
-		return springDataJpaMoviesRepository.findByMovieIdAndUserId(movieId, userId);
+		return springDataJpaMoviesRepository.findByMovieIdAndUserId(movieId.getValue(), userId);
 	}
 
 }

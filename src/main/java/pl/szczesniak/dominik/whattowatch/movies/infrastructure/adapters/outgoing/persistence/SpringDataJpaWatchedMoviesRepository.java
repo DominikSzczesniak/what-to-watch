@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface SpringDataJpaWatchedMoviesRepository extends JpaRepository<WatchedMovie, MovieId> {
 
-	List<WatchedMovie> findAllByUserId(final UserId userId);
+	List<WatchedMovie> findAllByUserId(UserId userId);
 
 }

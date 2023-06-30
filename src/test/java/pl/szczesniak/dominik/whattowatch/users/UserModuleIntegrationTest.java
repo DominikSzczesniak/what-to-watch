@@ -86,7 +86,7 @@ class UserModuleIntegrationTest {
 		));
 
 		// then
-		assertThat(thrown).isInstanceOf(RestClientException.class); // TODO: ZAPYTAC
+		assertThat(thrown).isInstanceOf(RestClientException.class);
 	}
 
 	private static CreateUserDto createAnyUser() {

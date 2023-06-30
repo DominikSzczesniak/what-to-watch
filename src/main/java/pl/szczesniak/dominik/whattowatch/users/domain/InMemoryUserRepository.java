@@ -28,11 +28,6 @@ public class InMemoryUserRepository implements UserRepository {
 	}
 
 	@Override
-	public Optional<User> findBy(final UserId userId) {
-		return Optional.ofNullable(users.get(userId));
-	}
-
-	@Override
 	public Optional<User> findBy(final String username) {
 		return users.values().stream().filter(user -> user.getUsername().getValue().equals(username)).findFirst();
 	}

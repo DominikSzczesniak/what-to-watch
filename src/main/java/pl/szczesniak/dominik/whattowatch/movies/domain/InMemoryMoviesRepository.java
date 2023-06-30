@@ -1,7 +1,5 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.persistence;
+package pl.szczesniak.dominik.whattowatch.movies.domain;
 
-import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
-import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -18,12 +16,8 @@ public class InMemoryMoviesRepository implements MoviesRepository {
 	private final Map<MovieId, Movie> movies = new HashMap<>();
 
 	@Override
-	public MovieId nextMovieId() {
-		return new MovieId(nextId.incrementAndGet());
-	}
-
-	@Override
 	public void create(final Movie movie) {
+		movie.setMovieId(nextId.incrementAndGet());
 		movies.put(movie.getMovieId(), movie);
 	}
 

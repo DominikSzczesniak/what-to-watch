@@ -10,8 +10,6 @@ public interface UserRepository {
 
 	boolean exists(UserId userId);
 
-	Optional<User> findBy(UserId userId);
-
 	Optional<User> findBy(String username);
 
 }
