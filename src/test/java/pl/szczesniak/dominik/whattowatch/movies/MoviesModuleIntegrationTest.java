@@ -47,6 +47,7 @@ class MoviesModuleIntegrationTest {
 
 	@Autowired
 	private MoveMovieToWatchToWatchedListInvoker moveMovieToWatchToWatchedListRest;
+
 	private Integer userId;
 
 	@BeforeEach
@@ -107,7 +108,6 @@ class MoviesModuleIntegrationTest {
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(findMoviesResponse.getBody()).isEmpty();
-
 	}
 
 	@Test
@@ -177,7 +177,6 @@ class MoviesModuleIntegrationTest {
 		assertThat(getWatchedMoviesResponse.getBody())
 				.extracting(WatchedMovieDto::getTitle, WatchedMovieDto::getUserId, WatchedMovieDto::getMovieId)
 				.containsExactly(tuple(movieTitle.getValue(), userId, addMovieResponse.getBody()));
-
 	}
 
 	private static void assertMovieWasAdded(final ResponseEntity<Integer> addMovieResponse) {

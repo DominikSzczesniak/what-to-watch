@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import pl.szczesniak.dominik.whattowatch.users.CreateUserRestInvoker.CreateUserDto;
 import pl.szczesniak.dominik.whattowatch.users.LoginUserRestInvoker.LoginUserDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserPasswordSample.createAnyUserPassword;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSample.createAnyUsername;
@@ -78,13 +80,13 @@ class UserModuleIntegrationTest {
 		assertThat(createUserResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		// when
-		final ResponseEntity<Integer> duplicatedUsernameResponse = createUserRest.createUser(
+		final Throwable thrown = catchThrowable(() -> createUserRest.createUser(
 				CreateUserDto.builder().username(userToCreate.getUsername()).password(createAnyUserPassword().getValue()).build(),
 				Integer.class
-		);
+		));
 
 		// then
-		assertThat(duplicatedUsernameResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(thrown).isInstanceOf(RestClientException.class);
 	}
 
 	private static CreateUserDto createAnyUser() {

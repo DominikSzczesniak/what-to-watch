@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface MoviesRepository {
 
-	MovieId nextMovieId();
-
 	void create(Movie movie);
 
 	void update(Movie movie);

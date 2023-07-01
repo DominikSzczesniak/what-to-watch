@@ -1,13 +1,21 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
-import lombok.Value;
+import jakarta.persistence.Embeddable;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@Value
+@Embeddable
+@Getter
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class MovieTitle {
 
-	String value;
+	private String value;
 
 	public MovieTitle(final String value) {
 		checkArgument(value != null, "Must contain title");

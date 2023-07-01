@@ -23,7 +23,7 @@ public class MoviesService {
 		if (!userProvider.exists(command.getUserId())) {
 			throw new UserDoesNotExistException("User doesn't exist. Didn't add movie to any list");
 		}
-		final Movie movie = new Movie(repository.nextMovieId(), command.getUserId(), command.getMovieTitle());
+		final Movie movie = new Movie(command.getUserId(), command.getMovieTitle());
 		repository.create(movie);
 		return movie.getMovieId();
 	}
@@ -56,17 +56,13 @@ public class MoviesService {
 		}
 	}
 
-	private Movie getMovie(final MovieId movieId, final UserId userId) {
-		return findMovie(movieId, userId);
-	}
-
 	public void updateMovie(final UpdateMovie command) {
-		final Movie movie = findMovie(command.getMovieId(), command.getUserId());
+		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		movie.update(command.getTitle());
 		repository.update(movie);
 	}
 
-	private Movie findMovie(final MovieId movieId, final UserId userId) {
+	private Movie getMovie(final MovieId movieId, final UserId userId) {
 		return repository.findBy(movieId, userId).orElseThrow(() -> new MovieDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 

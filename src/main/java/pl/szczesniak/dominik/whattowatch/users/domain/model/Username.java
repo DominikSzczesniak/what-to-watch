@@ -1,14 +1,22 @@
 package pl.szczesniak.dominik.whattowatch.users.domain.model;
 
 
-import lombok.Value;
+import jakarta.persistence.Embeddable;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@Value
+@Embeddable
+@Getter
+@ToString
+@NoArgsConstructor
+@EqualsAndHashCode
 public class Username {
 
-	String value;
+	private String value;
 
 	public Username(final String value) {
 		checkArgument(value != null, "Must contatin username");
