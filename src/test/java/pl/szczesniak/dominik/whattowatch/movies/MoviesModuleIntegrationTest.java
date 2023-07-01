@@ -10,22 +10,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import pl.szczesniak.dominik.whattowatch.movies.domain.UserProvider;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.AddMovieToWatchRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.AddMovieToWatchRestInvoker.AddMovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindMoviesToWatchRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindMoviesToWatchRestInvoker.MovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindWatchedMoviesRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindWatchedMoviesRestInvoker.WatchedMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.GetMovieToWatchCoverRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.MoveMovieToWatchToWatchedListInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.RemoveMovieToWatchFromListRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.SetMovieToWatchCoverRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.UpdateMovieToWatchRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.UpdateMovieToWatchRestInvoker.UpdateMovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.domain.UserProvider;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.GetMovieToWatchCoverRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.SetMovieToWatchCoverRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.GetMovieToWatchCoverRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.MoveMovieToWatchToWatchedListInvoker;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +66,7 @@ class MoviesModuleIntegrationTest {
 	private SetMovieToWatchCoverRestInvoker setMovieToWatchCoverRest;
 
 	@Autowired
-	private GetMovieToWatchCoverRestInvoker getMovieToWatch
+	private GetMovieToWatchCoverRestInvoker getMovieToWatchCoverRest;
 
 	private Integer userId;
 
