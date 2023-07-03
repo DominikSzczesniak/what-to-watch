@@ -17,21 +17,20 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class FindMoviesToWatchRestInvoker {
+public class FindAllMoviesToWatchRestInvoker {
 
 	private static final String URL = "/api/movies";
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<List<MovieDto>> findMoviesToWatch(final Integer userId) {
+	public ResponseEntity<List<MovieDto>> findAllMoviesToWatch(final Integer userId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,
 				new HttpEntity<>(headers),
-				new ParameterizedTypeReference<>() {
-				}
+				new ParameterizedTypeReference<>() {}
 		);
 	}
 
