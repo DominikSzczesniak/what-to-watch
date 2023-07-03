@@ -12,18 +12,18 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import pl.szczesniak.dominik.whattowatch.movies.domain.UserProvider;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.AddMovieToWatchRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.AddMovieToWatchRestInvoker.AddMovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindMoviesToWatchRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindMoviesToWatchRestInvoker.MovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindWatchedMoviesRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.FindWatchedMoviesRestInvoker.WatchedMovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.GetMovieToWatchCoverRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.MoveMovieToWatchToWatchedListInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.RemoveMovieToWatchFromListRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.SetMovieToWatchCoverRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.UpdateMovieToWatchRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers.UpdateMovieToWatchRestInvoker.UpdateMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddMovieToWatchRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddMovieToWatchRestInvoker.AddMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindMoviesToWatchRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindMoviesToWatchRestInvoker.MovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies.FindWatchedMoviesRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies.FindWatchedMoviesRestInvoker.WatchedMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.GetMovieToWatchCoverRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies.MoveMovieToWatchToWatchedListInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.RemoveMovieToWatchFromListRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.SetMovieToWatchCoverRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.UpdateMovieToWatchRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.UpdateMovieToWatchRestInvoker.UpdateMovieDto;
 
 import java.io.File;
 import java.io.IOException;
@@ -231,10 +231,12 @@ class MoviesModuleIntegrationTest {
 		// then
 		final HttpHeaders headers = movieToWatchCover.getHeaders();
 		final String contentTypeHeader = headers.getFirst(HttpHeaders.CONTENT_TYPE);
+		final String contentDispositionHeader = headers.getFirst(HttpHeaders.CONTENT_DISPOSITION);
 
 		assertThat(movieToWatchCover.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(movieToWatchCover.getBody()).containsExactly(multipartFile.getInputStream().readAllBytes());
 		assertThat(contentTypeHeader).isEqualTo(contentType);
+		assertThat(contentDispositionHeader).isEqualTo("attachment; filename=\"" + filename + "\"");
 	}
 
 	private static void assertMovieWasAdded(final ResponseEntity<Integer> addMovieResponse) {

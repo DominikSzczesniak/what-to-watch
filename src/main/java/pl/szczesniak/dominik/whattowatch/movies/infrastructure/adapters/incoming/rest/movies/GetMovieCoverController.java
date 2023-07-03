@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,11 +26,15 @@ public class GetMovieCoverController {
 
 	@GetMapping("/api/movies/{movieId}/cover")
 	public ResponseEntity<?> getMovieCover(@RequestHeader("userId") final Integer userId, @PathVariable final Integer movieId) {
-		final MovieCoverDTO movieCover = moviesService.getMovieCover(new MovieId(movieId), new UserId(userId));
+		final MovieCoverDTO movieCover = moviesService.getCoverForMovie(new MovieId(movieId), new UserId(userId));
 		final InputStream imageData = movieCover.getCoverContent();
 
+		final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+				.filename(movieCover.getFilename())
+				.build();
+
 		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentDispositionFormData(movieCover.getCoverContentType(), movieCover.getFilename());
+		headers.setContentDisposition(contentDisposition);
 
 		return ResponseEntity
 				.status(HttpStatus.OK)

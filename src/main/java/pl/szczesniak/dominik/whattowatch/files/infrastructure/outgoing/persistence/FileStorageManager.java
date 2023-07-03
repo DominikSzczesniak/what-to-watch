@@ -18,23 +18,23 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class FilesDatabase implements FilesStorage {
+public class FileStorageManager implements FilesStorage {
 
 	private static final String FILES_DIRECTORY = System.getProperty("user.dir") + File.separator + "files";
 
-	private static final Logger logger = LoggerFactory.getLogger(FilesDatabase.class);
+	private static final Logger logger = LoggerFactory.getLogger(FileStorageManager.class);
 
-	public FilesDatabase() {
+	public FileStorageManager() {
 		createDirectoryIfDoesNotExists();
 	}
 
 	private void createDirectoryIfDoesNotExists() {
-		final Path path = Path.of(FilesDatabase.FILES_DIRECTORY);
+		final Path path = Path.of(FileStorageManager.FILES_DIRECTORY);
 		if (!Files.exists(path)) {
 			try {
 				Files.createDirectories(path);
 			} catch (IOException e) {
-				logger.info("Failed to create the directory: " + FilesDatabase.FILES_DIRECTORY);
+				logger.info("Failed to create the directory: " + FileStorageManager.FILES_DIRECTORY);
 				throw new UncheckedIOException(e);
 			}
 		}

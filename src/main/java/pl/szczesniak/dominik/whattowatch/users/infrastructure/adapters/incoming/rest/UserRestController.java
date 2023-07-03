@@ -4,8 +4,6 @@ package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,8 +23,6 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameI
 @RequiredArgsConstructor
 @RestController
 public class UserRestController {
-
-	private static final Logger logger = LoggerFactory.getLogger(UserRestController.class);
 
 	private final UserService userService;
 

@@ -11,7 +11,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieT
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCoverSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovieSample;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.ObjectDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.ByteArrayInputStream;
@@ -365,7 +365,7 @@ class MoviesServiceTest {
 		tut.setMovieCover(coverCommand);
 
 		// then
-		final MovieCoverDTO cover = tut.getMovieCover(movieId, user);
+		final MovieCoverDTO cover = tut.getCoverForMovie(movieId, user);
 		assertThat(cover.getCoverContentType()).isEqualTo(coverCommand.getCoverContentType());
 		assertThat(cover.getFilename()).isEqualTo(coverCommand.getCoverFilename());
 		assertThat(cover.getCoverContent().readAllBytes()).containsExactly(coverContent);
@@ -393,7 +393,7 @@ class MoviesServiceTest {
 				.build());
 
 		// then
-		final MovieCoverDTO coverAfterChange = tut.getMovieCover(movieId, user);
+		final MovieCoverDTO coverAfterChange = tut.getCoverForMovie(movieId, user);
 		assertThat(coverAfterChange.getCoverContentType()).isEqualTo(changedCoverContentType);
 		assertThat(coverAfterChange.getFilename()).isEqualTo(changedCoverFilename);
 		assertThat(coverAfterChange.getCoverContent().readAllBytes()).containsExactly(changedCoverContent);
@@ -406,13 +406,13 @@ class MoviesServiceTest {
 		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
 
 		tut.setMovieCover(SetMovieCoverSample.builder().movieId(movieId).userId(user).build());
-		assertThat(tut.getMovieCover(movieId, user)).isNotNull();
+		assertThat(tut.getCoverForMovie(movieId, user)).isNotNull();
 
 		// when
 		tut.deleteCover(movieId, user);
 
 		// then
-		final Throwable thrown = catchThrowable(() -> tut.getMovieCover(movieId, user));
+		final Throwable thrown = catchThrowable(() -> tut.getCoverForMovie(movieId, user));
 		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
 	}
 
@@ -425,8 +425,8 @@ class MoviesServiceTest {
 		tut.setMovieCover(SetMovieCoverSample.builder().movieId(movieId).userId(user).build());
 
 		// when
-		final MovieCoverDTO firstCover = tut.getMovieCover(movieId, user);
-		final MovieCoverDTO secondCover = tut.getMovieCover(movieId, user);
+		final MovieCoverDTO firstCover = tut.getCoverForMovie(movieId, user);
+		final MovieCoverDTO secondCover = tut.getCoverForMovie(movieId, user);
 
 		// then
 		final byte[] expected = firstCover.getCoverContent().readAllBytes();

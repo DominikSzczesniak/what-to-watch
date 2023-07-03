@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -17,13 +17,13 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class FindMoviesToWatchRestInvoker {
+public class FindWatchedMoviesRestInvoker {
 
-	private static final String URL = "/api/movies";
+	private static final String URL = "/api/movies/watched";
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<List<MovieDto>> findMoviesToWatch(final Integer userId) {
+	public ResponseEntity<List<WatchedMovieDto>> findWatchedMovies(final Integer userId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
@@ -39,7 +39,7 @@ public class FindMoviesToWatchRestInvoker {
 	@ToString
 	@EqualsAndHashCode
 	@Builder
-	public static class MovieDto {
+	public static class WatchedMovieDto {
 
 		private final String title;
 		private final Integer movieId;

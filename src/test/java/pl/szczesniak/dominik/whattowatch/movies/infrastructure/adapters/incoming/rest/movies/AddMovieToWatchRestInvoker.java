@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
 import lombok.Builder;
 import lombok.Data;

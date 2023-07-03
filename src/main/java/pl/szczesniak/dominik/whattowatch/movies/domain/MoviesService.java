@@ -10,7 +10,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieTo
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.ObjectDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.InputStream;
@@ -66,7 +66,7 @@ public class MoviesService {
 				.orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 
-	public MovieCoverDTO getMovieCover(final MovieId movieId, final UserId user) {
+	public MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId user) {
 		checkUserExists(user);
 		final Movie movie = getMovie(movieId, user);
 		final MovieCover movieCover = getMovieCover(movie);
@@ -81,8 +81,9 @@ public class MoviesService {
 		final StoredFileId storedFileId = filesStorage.store(command.getCoverContent());
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		movie.updateCover(
-				new MovieCover(command.getCoverFilename(), command.getCoverContentType(), storedFileId)
+				new MovieCover(command.getCoverFilename(), command.getCoverContentType())
 		);
+		movie.getCover().get().setCoverId(storedFileId);
 		repository.update(movie);
 	}
 

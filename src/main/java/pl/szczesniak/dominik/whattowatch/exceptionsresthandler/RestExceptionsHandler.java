@@ -1,15 +1,15 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest;
+package pl.szczesniak.dominik.whattowatch.exceptionsresthandler;
 
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.exceptions.ObjectDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.exceptions.ObjectDoesNotExistException;
 
 import java.time.LocalDateTime;
 
 @ControllerAdvice
-public class MoviesRestExceptionsHandler {
+public class RestExceptionsHandler {
 
 	@ExceptionHandler(ObjectDoesNotExistException.class)
 	public ResponseEntity<Object> handleObjectDoesNotExistException(final ObjectDoesNotExistException e) {

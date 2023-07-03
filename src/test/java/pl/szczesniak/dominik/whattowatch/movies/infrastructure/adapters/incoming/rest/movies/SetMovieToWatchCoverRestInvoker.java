@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.invokers;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -23,9 +23,10 @@ public class SetMovieToWatchCoverRestInvoker {
 	private final TestRestTemplate restTemplate;
 
 	public ResponseEntity<?> setCover(final Integer userId, final Integer movieId, MultipartFile image) throws IOException {
-		HttpHeaders headers = new HttpHeaders();
+		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", userId.toString());
-		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+
+		final MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 		body.add("image", new ByteArrayResource(image.getBytes()) {
 			@Override
 			public String getFilename() {
@@ -33,7 +34,7 @@ public class SetMovieToWatchCoverRestInvoker {
 			}
 		});
 
-		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+		final HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
 		return restTemplate.exchange(
 				URL,

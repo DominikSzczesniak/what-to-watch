@@ -25,7 +25,7 @@ public class SetMovieCoverController {
 	@PutMapping("/api/movies/{movieId}/cover")
 	public ResponseEntity<?> setMovieCover(@RequestHeader("userId") Integer userId, @PathVariable Integer movieId,
 										   @RequestParam("image") MultipartFile image) throws IOException {
-		SetMovieCover command;
+		final SetMovieCover command;
 		try {
 			command = new SetMovieCover(
 					new UserId(userId),
