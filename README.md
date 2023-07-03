@@ -17,6 +17,7 @@ also tv shows).
 - It is my second project.
 - The purpose of the project is to learn new technologies, mainly Spring Boot.
 - Project architecture focused on ports and adapters.
+- Uses JPA.
 
 
 ## Technologies Used
@@ -24,6 +25,7 @@ also tv shows).
 - Maven
 - Spring Boot
 - REST
+- Hibernate
 - Lombok
 - GIT
 
@@ -35,8 +37,6 @@ also tv shows).
 
 
 ## Planned improvements
-- Adding database
-- Integration tests
 - Spring security
 
 

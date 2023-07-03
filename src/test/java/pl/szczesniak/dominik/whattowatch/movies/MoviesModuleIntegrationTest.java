@@ -7,8 +7,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import pl.szczesniak.dominik.whattowatch.movies.AddCommentToMovieRestInvoker.AddCommentDto;
 import pl.szczesniak.dominik.whattowatch.movies.AddMovieToWatchRestInvoker.AddMovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.FindMoviesToWatchRestInvoker.MovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.DeleteCommentFromMovieToWatchRestInvoker.DeleteCommentDto;
+import pl.szczesniak.dominik.whattowatch.movies.FindAllMoviesToWatchRestInvoker.MovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.FindMovieToWatchRestInvoker.MovieDetailsDTO;
 import pl.szczesniak.dominik.whattowatch.movies.FindWatchedMoviesRestInvoker.WatchedMovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.UpdateMovieToWatchRestInvoker.UpdateMovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.domain.UserProvider;
@@ -21,6 +24,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentSample.createAnyComment;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
@@ -31,7 +35,10 @@ class MoviesModuleIntegrationTest {
 	private UserProvider userProvider;
 
 	@Autowired
-	private FindMoviesToWatchRestInvoker findMoviesToWatchRest;
+	private FindAllMoviesToWatchRestInvoker findAllMoviesToWatchRest;
+
+	@Autowired
+	private FindMovieToWatchRestInvoker findMovieToWatchRest;
 
 	@Autowired
 	private RemoveMovieToWatchFromListRestInvoker removeMovieFromListRest;
@@ -47,6 +54,12 @@ class MoviesModuleIntegrationTest {
 
 	@Autowired
 	private MoveMovieToWatchToWatchedListInvoker moveMovieToWatchToWatchedListRest;
+
+	@Autowired
+	private AddCommentToMovieRestInvoker addCommentToMovieRest;
+
+	@Autowired
+	private DeleteCommentFromMovieToWatchRestInvoker deleteCommentFromMovieToWatchRest;
 
 	private Integer userId;
 
@@ -72,7 +85,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(addMovieResponse.getBody()).isGreaterThan(0);
 
 		// when
-		final ResponseEntity<List<MovieDto>> findMoviesResponse = findMoviesToWatchRest.findMoviesToWatch(userId);
+		final ResponseEntity<List<MovieDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -103,7 +116,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(deleteMovieResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
 		// when
-		final ResponseEntity<List<MovieDto>> findMoviesResponse = findMoviesToWatchRest.findMoviesToWatch(userId);
+		final ResponseEntity<List<MovieDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -134,7 +147,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(updateMovieResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		// when
-		final ResponseEntity<List<MovieDto>> findMoviesResponse = findMoviesToWatchRest.findMoviesToWatch(userId);
+		final ResponseEntity<List<MovieDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -157,13 +170,15 @@ class MoviesModuleIntegrationTest {
 		assertMovieWasAdded(addMovieResponse);
 
 		// when
-		final ResponseEntity<Void> moveMovieToWatchedListResponse = moveMovieToWatchToWatchedListRest.findMoviesToWatch(userId,
-				addMovieResponse.getBody());
+		final ResponseEntity<Void> moveMovieToWatchedListResponse = moveMovieToWatchToWatchedListRest.findMoviesToWatch(
+				userId,
+				addMovieResponse.getBody()
+		);
 
 		// then
 		assertThat(moveMovieToWatchedListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-		final ResponseEntity<List<MovieDto>> findMoviesResponse = findMoviesToWatchRest.findMoviesToWatch(userId);
+		final ResponseEntity<List<MovieDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -177,6 +192,62 @@ class MoviesModuleIntegrationTest {
 		assertThat(getWatchedMoviesResponse.getBody())
 				.extracting(WatchedMovieDto::getTitle, WatchedMovieDto::getUserId, WatchedMovieDto::getMovieId)
 				.containsExactly(tuple(movieTitle.getValue(), userId, addMovieResponse.getBody()));
+	}
+
+	@Test
+	void should_add_comment_to_movie_and_delete_the_comment() {
+		// given
+		final MovieTitle movieTitle = createAnyMovieTitle();
+
+		final ResponseEntity<Integer> addMovieResponse = addMovieRest.addMovie(
+				AddMovieDto.builder().title(movieTitle.getValue()).userId(userId).build(),
+				Integer.class
+		);
+
+		// then
+		assertMovieWasAdded(addMovieResponse);
+
+		// when
+		final String comment = createAnyComment();
+		final ResponseEntity<String> addCommentToMovieResponse = addCommentToMovieRest.addCommentToMovie(
+				userId,
+				addMovieResponse.getBody(),
+				new AddCommentDto(comment)
+		);
+
+		// then
+		assertThat(addCommentToMovieResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		assertThat(addCommentToMovieResponse.getBody()).isNotNull();
+
+		// when
+		final ResponseEntity<MovieDetailsDTO> findMovieToWatchResponse = findMovieToWatchRest.findMovieToWatch(userId, addMovieResponse.getBody());
+
+		// then
+		final MovieDetailsDTO movieDetails = findMovieToWatchResponse.getBody();
+		assertThat(findMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(movieDetails.getComments()).hasSize(1);
+		assertThat(movieDetails.getComments().get(0).getValue()).contains(comment);
+		assertThat(movieDetails.getMovieId()).isEqualTo(addMovieResponse.getBody());
+
+		// when
+		final ResponseEntity<Void> deleteCommentFromMovieToWatchResponse = deleteCommentFromMovieToWatchRest.deleteCommentFromMovieToWatch(
+				userId,
+				addMovieResponse.getBody(),
+				new DeleteCommentDto(addCommentToMovieResponse.getBody())
+		);
+
+		// then
+		assertThat(deleteCommentFromMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+		// when
+		final ResponseEntity<MovieDetailsDTO> findMovieToWatchResponseAfterDeletingComment = findMovieToWatchRest.findMovieToWatch(
+				userId,
+				addMovieResponse.getBody()
+		);
+
+		// then
+		assertThat(findMovieToWatchResponseAfterDeletingComment.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(findMovieToWatchResponseAfterDeletingComment.getBody().getComments()).hasSize(0);
 	}
 
 	private static void assertMovieWasAdded(final ResponseEntity<Integer> addMovieResponse) {

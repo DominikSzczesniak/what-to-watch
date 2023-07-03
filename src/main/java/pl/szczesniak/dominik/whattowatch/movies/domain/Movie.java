@@ -1,11 +1,14 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -13,9 +16,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
@@ -39,17 +47,32 @@ public class Movie {
 	@AttributeOverride(name = "value", column = @Column(name = "movietitle_value"))
 	private MovieTitle title;
 
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "movieId")
+	private List<MovieComment> comments;
+
 	Movie(final UserId userId, final MovieTitle title) {
 		this.userId = requireNonNull(userId, "UserId cannot be null");
 		this.title = requireNonNull(title, "MovieTitle cannot be null");
+		comments = new ArrayList<>();
 	}
 
 	WatchedMovie markAsWatched() {
 		return new WatchedMovie(new MovieId(movieId), userId, title);
 	}
 
-	public void update(final MovieTitle title) {
+	public void updateMovieTitle(final MovieTitle title) {
 		this.title = title;
+	}
+
+	public UUID addComment(final String comment) {
+		final UUID commentId = UUID.randomUUID();
+		this.comments.add(new MovieComment(commentId, movieId, comment));
+		return commentId;
+	}
+
+	public void deleteComment(final MovieComment movieComment) {
+		comments.remove(movieComment);
 	}
 
 	public MovieId getMovieId() {

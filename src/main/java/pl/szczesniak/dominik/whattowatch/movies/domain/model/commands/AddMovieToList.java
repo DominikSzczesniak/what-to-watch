@@ -26,6 +26,7 @@ public class AddMovieToList {
 
 	@ToString
 	public static class AddMovieToListBuilder {
+
 		private final MovieTitle movieTitle;
 		private final UserId userId;
 
