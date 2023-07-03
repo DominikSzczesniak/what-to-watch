@@ -1,10 +1,10 @@
-package pl.szczesniak.dominik.whattowatch.exceptionsresthandler;
+package pl.szczesniak.dominik.whattowatch.commons.infrastructure.spring;
 
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import pl.szczesniak.dominik.whattowatch.exceptions.ObjectDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 
 import java.time.LocalDateTime;
 

@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.exceptions;
+package pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions;
 
 public class ObjectDoesNotExistException extends RuntimeException {
 

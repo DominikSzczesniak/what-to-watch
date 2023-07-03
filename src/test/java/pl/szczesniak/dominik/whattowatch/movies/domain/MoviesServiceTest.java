@@ -11,7 +11,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieT
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCoverSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovieSample;
-import pl.szczesniak.dominik.whattowatch.exceptions.ObjectDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.ByteArrayInputStream;
