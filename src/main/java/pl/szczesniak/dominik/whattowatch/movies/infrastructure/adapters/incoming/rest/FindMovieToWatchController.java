@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,11 +22,8 @@ public class FindMovieToWatchController {
 
 	@GetMapping("/api/movies/{movieId}")
 	public MovieDto findMovieToWatch(@RequestHeader("userId") final Integer userId, @PathVariable Integer movieId) {
-		final Movie movie = moviesService.findMovie(new MovieId(movieId), new UserId(userId));
-		Map<String, String> list = new HashMap<>();
-		movie.getComments().forEach(comment -> list.put(comment.getCommentId().toString(), comment.getValue()));
-//		movie.getComments().ifPresent(comments -> comments.forEach(comment -> list.put(comment.getCommentId().toString(), comment.getValue())));
-		return new MovieDto(movie.getTitle().getValue(), movieId, userId, list);
+		final Movie movie = moviesService.getMovie(new MovieId(movieId), new UserId(userId));
+		return new MovieDto(movie.getTitle().getValue(), movieId, userId, movie.getComments());
 	}
 
 	@Value
@@ -34,7 +31,7 @@ public class FindMovieToWatchController {
 		String title;
 		Integer movieId;
 		Integer userId;
-		Map<String, String> comments;
+		List<MovieComment> comments;
 	}
 
 }

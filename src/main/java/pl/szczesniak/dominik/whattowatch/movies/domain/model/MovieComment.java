@@ -1,14 +1,30 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
-import lombok.Value;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.UUID;
 
-@Value
+@Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode(of = {"commentId"})
 public class MovieComment {
 
-	UUID commentId;
+	@Id
+	private UUID commentId;
 
-	String value;
+	private Integer movieId;
+
+	@Column(name = "comment_value")
+	private String value;
 
 }

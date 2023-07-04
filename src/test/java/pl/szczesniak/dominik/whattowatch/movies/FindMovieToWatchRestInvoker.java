@@ -8,8 +8,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 
-import java.util.Map;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class FindMovieToWatchRestInvoker {
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<MovieDetailsDTO> findMovieToWatch(final Integer userId, final Integer movieId) { // TODO: potencjalnie Movie nie moze byc zwracane
+	public ResponseEntity<MovieDetailsDTO> findMovieToWatch(final Integer userId, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
@@ -36,7 +37,7 @@ public class FindMovieToWatchRestInvoker {
 		String title;
 		Integer movieId;
 		Integer userId;
-		Map<String, String> comments;
+		List<MovieComment> comments;
 	}
 
 }

@@ -223,10 +223,11 @@ class MoviesModuleIntegrationTest {
 		final ResponseEntity<MovieDetailsDTO> findMovieToWatchResponse = findMovieToWatchRest.findMovieToWatch(userId, addMovieResponse.getBody());
 
 		// then
+		final MovieDetailsDTO movieDetails = findMovieToWatchResponse.getBody();
 		assertThat(findMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(findMovieToWatchResponse.getBody().getComments()).hasSize(1);
-		assertThat(findMovieToWatchResponse.getBody().getComments().get(addCommentToMovieResponse.getBody())).contains(comment);
-		assertThat(findMovieToWatchResponse.getBody().getMovieId()).isEqualTo(addMovieResponse.getBody());
+		assertThat(movieDetails.getComments()).hasSize(1);
+		assertThat(movieDetails.getComments().get(0).getValue()).contains(comment);
+		assertThat(movieDetails.getMovieId()).isEqualTo(addMovieResponse.getBody());
 
 		// when
 		final ResponseEntity<Void> deleteCommentFromMovieToWatchResponse = deleteCommentFromMovieToWatchRest.deleteCommentFromMovieToWatch(

@@ -19,7 +19,7 @@ public class DeleteCommentFromMovieToWatchRestInvoker {
 
 	public ResponseEntity<Void> deleteCommentFromMovieToWatch(final Integer userId,
 															  final Integer movieId,
-															  final DeleteCommentDto deleteCommentDto) { // TODO: httpentity zmienic, w ogole nie korzystam z deletecommendto - moze wtedy moge zmienic w kontrolerze zeby requestbody byl obiekt a nie suchy string?
+															  final DeleteCommentDto deleteCommentDto) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		final HttpEntity<String> requestEntity = new HttpEntity<>(deleteCommentDto.getCommentId(), headers);

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class AddCommentToMovieController {
 	public ResponseEntity<?> addCommentToMovie(@RequestHeader("userId") final Integer userId,
 											   @PathVariable final Integer movieId,
 											   @RequestBody final String comment) {
-		final UUID id = moviesService.addCommentToMovie(new UserId(userId), new MovieId(movieId), comment);
+		final UUID id = moviesService.addCommentToMovie(new AddCommentToMovie(new UserId(userId), new MovieId(movieId), comment));
 		return ResponseEntity.status(201).body(id.toString());
 	}
 

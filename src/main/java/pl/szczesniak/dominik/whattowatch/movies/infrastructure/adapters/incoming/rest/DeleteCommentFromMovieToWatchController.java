@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteCommentFromMovie;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.UUID;
@@ -23,7 +24,11 @@ public class DeleteCommentFromMovieToWatchController {
 	public ResponseEntity<?> deleteCommentFromMovieToWatch(@RequestHeader("userId") final Integer userId,
 														   @PathVariable final Integer movieId,
 														   @RequestBody final String commentId) {
-		moviesService.deleteCommentFromMovie(new UserId(userId), new MovieId(movieId), UUID.fromString(commentId.trim()));
+		moviesService.deleteCommentFromMovie(new DeleteCommentFromMovie(
+				new UserId(userId),
+				new MovieId(movieId),
+				UUID.fromString(commentId.trim()))
+		);
 		return ResponseEntity.status(204).build();
 	}
 
