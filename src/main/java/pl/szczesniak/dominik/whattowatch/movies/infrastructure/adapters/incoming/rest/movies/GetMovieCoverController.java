@@ -28,11 +28,9 @@ public class GetMovieCoverController {
 	public ResponseEntity<?> getMovieCover(@RequestHeader("userId") final Integer userId, @PathVariable final Integer movieId) {
 		final MovieCoverDTO movieCover = moviesService.getCoverForMovie(new MovieId(movieId), new UserId(userId));
 		final InputStream imageData = movieCover.getCoverContent();
-
 		final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
 				.filename(movieCover.getFilename())
 				.build();
-
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentDisposition(contentDisposition);
 
