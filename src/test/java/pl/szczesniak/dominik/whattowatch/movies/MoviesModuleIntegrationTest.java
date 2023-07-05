@@ -14,6 +14,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.UserProvider;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddMovieToWatchRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddMovieToWatchRestInvoker.AddMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.DeleteMovieToWatchCoverRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindMoviesToWatchRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindMoviesToWatchRestInvoker.MovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies.FindWatchedMoviesRestInvoker;
@@ -67,6 +68,9 @@ class MoviesModuleIntegrationTest {
 
 	@Autowired
 	private GetMovieToWatchCoverRestInvoker getMovieToWatchCoverRest;
+
+	@Autowired
+	private DeleteMovieToWatchCoverRestInvoker deleteMovieToWatchCoverRest;
 
 	private Integer userId;
 
@@ -200,7 +204,7 @@ class MoviesModuleIntegrationTest {
 	}
 
 	@Test
-	void should_save_cover_and_read_it() throws IOException {
+	void should_save_cover_and_delete_it() throws IOException {
 		// given
 		final MovieTitle movieTitle = createAnyMovieTitle();
 
@@ -220,23 +224,36 @@ class MoviesModuleIntegrationTest {
 		final byte[] content = Files.readAllBytes(coverFile.toPath());
 
 		final MultipartFile multipartFile = new MockMultipartFile(filename, originalFilename, contentType, content);
-		final ResponseEntity<?> responseEntity = setMovieToWatchCoverRest.setCover(userId, addMovieResponse.getBody(), multipartFile);
+		final ResponseEntity<?> setMovieToWatchResponse = setMovieToWatchCoverRest.setCover(userId, addMovieResponse.getBody(), multipartFile);
 
 		// then
-		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(setMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		// when
-		ResponseEntity<byte[]> movieToWatchCover = getMovieToWatchCoverRest.getMovieToWatchCover(userId, addMovieResponse.getBody());
+		final ResponseEntity<byte[]> getMovietoWatchCoverResponse = getMovieToWatchCoverRest.getMovieToWatchCover(userId, addMovieResponse.getBody());
 
 		// then
-		final HttpHeaders headers = movieToWatchCover.getHeaders();
+		final HttpHeaders headers = getMovietoWatchCoverResponse.getHeaders();
 		final String contentTypeHeader = headers.getFirst(HttpHeaders.CONTENT_TYPE);
 		final String contentDispositionHeader = headers.getFirst(HttpHeaders.CONTENT_DISPOSITION);
 
-		assertThat(movieToWatchCover.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(movieToWatchCover.getBody()).containsExactly(multipartFile.getInputStream().readAllBytes());
+		assertThat(getMovietoWatchCoverResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(getMovietoWatchCoverResponse.getBody()).containsExactly(multipartFile.getInputStream().readAllBytes());
 		assertThat(contentTypeHeader).isEqualTo(contentType);
 		assertThat(contentDispositionHeader).isEqualTo("attachment; filename=\"" + filename + "\"");
+
+		// when
+		final ResponseEntity<Void> deleteMovieToWatchCoverResponse = deleteMovieToWatchCoverRest.deleteMovieToWatchCover(userId, addMovieResponse.getBody());
+
+		// then
+		assertThat(deleteMovieToWatchCoverResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+		// when
+		final ResponseEntity<byte[]> getMovietoWatchCoverResponseAfterDeleting = getMovieToWatchCoverRest
+				.getMovieToWatchCover(userId, addMovieResponse.getBody());
+
+		// then
+		assertThat(getMovietoWatchCoverResponseAfterDeleting.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 
 	private static void assertMovieWasAdded(final ResponseEntity<Integer> addMovieResponse) {
