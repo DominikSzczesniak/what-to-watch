@@ -17,14 +17,14 @@ import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.DeleteMovieToWatchCoverRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindMoviesToWatchRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindMoviesToWatchRestInvoker.MovieDto;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies.FindWatchedMoviesRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies.FindWatchedMoviesRestInvoker.WatchedMovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.GetMovieToWatchCoverRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies.MoveMovieToWatchToWatchedListInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.RemoveMovieToWatchFromListRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.SetMovieToWatchCoverRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.UpdateMovieToWatchRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.UpdateMovieToWatchRestInvoker.UpdateMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies.FindWatchedMoviesRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies.FindWatchedMoviesRestInvoker.WatchedMovieDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies.MoveMovieToWatchToWatchedListInvoker;
 
 import java.io.File;
 import java.io.IOException;

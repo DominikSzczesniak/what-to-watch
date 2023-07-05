@@ -17,7 +17,11 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.
 public class SetMovieCoverSample {
 
 	@Builder
-	private static SetMovieCover build(final UserId userId, final MovieId movieId, final String coverFilename, final String coverContentType, final InputStream coverContent) {
+	private static SetMovieCover build(final UserId userId,
+									   final MovieId movieId,
+									   final String coverFilename,
+									   final String coverContentType,
+									   final InputStream coverContent) {
 		return new SetMovieCover(
 				ofNullable(userId).orElse(createAnyUserId()),
 				ofNullable(movieId).orElse(createAnyMovieId()),
