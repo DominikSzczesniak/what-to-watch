@@ -168,6 +168,117 @@
 					"response": []
 				},
 				{
+					"name": "get movie",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/movies/1/watched",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"movies",
+								"1",
+								"watched"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add comment to movie",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"comment from dominik\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/movies/1/comments",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"movies",
+								"1",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete comment from movie",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"comment from dominik\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/movies/1/comments",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"movies",
+								"1",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "update movie title",
 					"request": {
 						"method": "PUT",
@@ -213,7 +324,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"dominik\",\r\n    \"password\": \"asd\"\r\n}",
+							"raw": "{\r\n    \"username\": \"patryk\",\r\n    \"password\": \"asd\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -259,6 +370,14 @@
 								"login"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "check if username is taken",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}
