@@ -61,7 +61,7 @@ public class Movie {
 		return new WatchedMovie(new MovieId(movieId), userId, title);
 	}
 
-	public void update(final MovieTitle title) {
+	public void updateMovieTitle(final MovieTitle title) {
 		this.title = title;
 	}
 

@@ -63,7 +63,7 @@ public class MoviesService {
 
 	public void updateMovie(final UpdateMovie command) {
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
-		movie.update(command.getTitle());
+		movie.updateMovieTitle(command.getTitle());
 		repository.update(movie);
 	}
 
