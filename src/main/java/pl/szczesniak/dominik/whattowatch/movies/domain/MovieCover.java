@@ -23,17 +23,14 @@ class MovieCover {
 
 	private UUID coverId;
 
-	MovieCover(@NonNull final String filename, @NonNull final String coverContentType) {
+	MovieCover(@NonNull final String filename, @NonNull final String coverContentType, @NonNull final UUID coverId) {
 		this.filename = filename;
 		this.coverContentType = coverContentType;
+		this.coverId = coverId;
 	}
 
 	public StoredFileId getCoverId() {
 		return new StoredFileId(coverId);
-	}
-
-	void setCoverId(final StoredFileId coverId) {
-		this.coverId = coverId.getValue();
 	}
 
 }

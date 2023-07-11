@@ -81,9 +81,8 @@ public class MoviesService {
 		final StoredFileId storedFileId = filesStorage.store(command.getCoverContent());
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		movie.updateCover(
-				new MovieCover(command.getCoverFilename(), command.getCoverContentType())
+				new MovieCover(command.getCoverFilename(), command.getCoverContentType(), storedFileId.getValue())
 		);
-		movie.getCover().get().setCoverId(storedFileId);
 		repository.update(movie);
 	}
 

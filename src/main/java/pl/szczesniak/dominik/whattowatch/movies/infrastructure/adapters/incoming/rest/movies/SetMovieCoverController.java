@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
+import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,6 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
-import java.io.IOException;
-
 @RequiredArgsConstructor
 @RestController
 public class SetMovieCoverController {
@@ -23,22 +22,21 @@ public class SetMovieCoverController {
 	private final MoviesService moviesService;
 
 	@PutMapping("/api/movies/{movieId}/cover")
-	public ResponseEntity<?> setMovieCover(@RequestHeader("userId") Integer userId, @PathVariable Integer movieId,
-										   @RequestParam("image") MultipartFile image) throws IOException {
-		final SetMovieCover command;
-		try {
-			command = new SetMovieCover(
-					new UserId(userId),
-					new MovieId(movieId),
-					image.getOriginalFilename(),
-					image.getContentType(),
-					image.getInputStream());
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-		}
+	public ResponseEntity<?> setMovieCover(@RequestHeader("userId") final Integer userId, @PathVariable final Integer movieId,
+										   @RequestParam("image") final MultipartFile image) {
+		final Try<SetMovieCover> setMovieCoverTry = Try.of(() -> new SetMovieCover(
+				new UserId(userId),
+				new MovieId(movieId),
+				image.getOriginalFilename(),
+				image.getContentType(),
+				image.getInputStream()
+		));
 
-		moviesService.setMovieCover(command);
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return setMovieCoverTry.map(movieCover -> {
+					moviesService.setMovieCover(movieCover);
+					return ResponseEntity.status(HttpStatus.OK).build();
+				})
+				.getOrElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
 	}
 
 }
