@@ -12,8 +12,9 @@ public class MoviesServiceConfiguration {
 	public MoviesService moviesService(final MoviesRepository moviesRepository,
 									   final UserProvider userProvider,
 									   final WatchedMoviesRepository watchedMoviesRepository,
-									   final FilesStorage filesStorage) {
-		return new MoviesService(moviesRepository, userProvider, watchedMoviesRepository, filesStorage);
+									   final FilesStorage filesStorage,
+									   final TagsQueryService tagsQuery) {
+		return new MoviesService(moviesRepository, userProvider, watchedMoviesRepository, filesStorage, tagsQuery);
 	}
 
 	@Bean

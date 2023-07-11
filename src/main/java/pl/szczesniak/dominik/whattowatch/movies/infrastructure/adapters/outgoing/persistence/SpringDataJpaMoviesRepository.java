@@ -3,10 +3,12 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoin
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MovieTag;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface SpringDataJpaMoviesRepository extends JpaRepository<Movie, Integer> {

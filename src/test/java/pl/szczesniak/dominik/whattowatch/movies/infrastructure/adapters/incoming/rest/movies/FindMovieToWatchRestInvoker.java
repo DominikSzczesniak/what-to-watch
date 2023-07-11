@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddMovieTagToMovieRestInvoker.MovieTagDTO;
 
 import java.util.List;
 
@@ -19,24 +20,25 @@ public class FindMovieToWatchRestInvoker {
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<MovieDetailsDTO> findMovieToWatch(final Integer userId, final Integer movieId) {
+	public ResponseEntity<MovieDetailsDto> findMovieToWatch(final Integer userId, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,
 				new HttpEntity<>(headers),
-				MovieDetailsDTO.class,
+				MovieDetailsDto.class,
 				movieId
 		);
 	}
 
 	@Value
-	public static class MovieDetailsDTO {
+	public static class MovieDetailsDto {
 		String title;
 		Integer movieId;
 		Integer userId;
 		List<MovieCommentDto> comments;
+		List<MovieTagDto> tags;
 	}
 
 	@Value
@@ -44,6 +46,12 @@ public class FindMovieToWatchRestInvoker {
 		String commentId;
 		Integer movieId;
 		String value;
+	}
+
+	@Value
+	public static class MovieTagDto {
+		String tagId;
+		String tagLabel;
 	}
 
 }

@@ -6,12 +6,14 @@ import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing
 public class TestMoviesToWatchServiceConfiguration {
 
 	static MoviesService moviesToWatchService(final UserProvider userProvider) {
+		final InMemoryMoviesRepository inMemoryMoviesRepository = new InMemoryMoviesRepository();
 		return new MoviesServiceConfiguration()
 				.moviesService(
-						new InMemoryMoviesRepository(),
+						inMemoryMoviesRepository,
 						userProvider,
 						new InMemoryWatchedMoviesRepository(),
-						new InMemoryFilesStorage()
+						new InMemoryFilesStorage(),
+						inMemoryMoviesRepository
 				);
 	}
 
