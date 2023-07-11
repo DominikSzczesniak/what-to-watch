@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.users;
+package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

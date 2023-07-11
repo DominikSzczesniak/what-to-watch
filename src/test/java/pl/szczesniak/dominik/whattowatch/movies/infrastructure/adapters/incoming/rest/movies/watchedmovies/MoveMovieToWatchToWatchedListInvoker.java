@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.watchedmovies;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -10,22 +10,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RemoveMovieToWatchFromListRestInvoker {
+public class MoveMovieToWatchToWatchedListInvoker {
 
-	private static final String URL = "/api/movies/{movieId}";
+	private static final String URL = "/api/movies/{movieId}/watched";
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<Void> removeMovie(final Integer userId, final Integer movieId) {
+	public ResponseEntity<Void> findMoviesToWatch(final Integer userId, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
 				URL,
-				HttpMethod.DELETE,
+				HttpMethod.POST,
 				new HttpEntity<>(headers),
 				void.class,
 				movieId
-		);
+				);
 	}
 
 }

@@ -4,21 +4,21 @@ import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import java.util.UUID;
 
 @Embeddable
 @Getter
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MovieId {
+public class StoredFileId {
 
-	private int value;
+	@NonNull UUID value;
 
-	public MovieId(final int value) {
-		checkArgument(value > 0, "UserId value must be higher than 0");
+	public StoredFileId(@NonNull final UUID value) {
 		this.value = value;
 	}
 

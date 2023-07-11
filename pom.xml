@@ -20,9 +20,12 @@
 
         <guava.version>31.1-jre</guava.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
+        <vavr.version>0.10.4</vavr.version>
+        <lombok.version>1.18.26</lombok.version>
+
+        <postgresql.version>42.5.4</postgresql.version>
 
         <mockito-core.version>5.2.0</mockito-core.version>
-        <lombok.version>1.18.26</lombok.version>
         <assertj-core.version>3.24.2</assertj-core.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
     </properties>
@@ -100,8 +103,15 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.5.4</version>
+            <version>${postgresql.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>${vavr.version}</version>
+        </dependency>
+
 
     </dependencies>
 
