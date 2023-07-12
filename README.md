@@ -17,7 +17,7 @@ also tv shows).
 - It is my second project.
 - The purpose of the project is to learn new technologies, mainly Spring Boot.
 - Project architecture focused on ports and adapters.
-- Uses JPA.
+- Application works on Hibernate, tests are ran on H2 database.
 
 
 ## Technologies Used
@@ -34,6 +34,8 @@ also tv shows).
 - Add new movies to the list
 - Update existing movie details.
 - Remove movies from the list.
+- Assigning covers to movies.
+- Saves cover files in "files" folder in project's directory.
 
 
 ## Planned improvements
@@ -45,7 +47,7 @@ Project is still under development. I am currently using it to learn new technol
 
 ## Testing the app:
 Repositories are filled with data at application start.
-In order to test you can just import MoviesAndUsers.json file from httprequests folder to postman. File has all 
+In order to test you can just import the file from httprequests folder to postman. File has all 
 endpoints handled in the app.
 
 ## Information about the data:
