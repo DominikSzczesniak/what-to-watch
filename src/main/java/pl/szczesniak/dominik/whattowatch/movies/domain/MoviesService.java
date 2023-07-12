@@ -2,13 +2,12 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.files.domain.FilesStorage;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.StoredFileId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteCommentFromMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
@@ -18,7 +17,6 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -113,16 +111,8 @@ public class MoviesService {
 
 	public void deleteCommentFromMovie(final DeleteCommentFromMovie command) {
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
-		final Optional<MovieComment> foundComment = findCommentById(movie, command.getCommentId());
-		foundComment.ifPresent(movie::deleteComment);
+		movie.deleteComment(command.getCommentId());
 		repository.update(movie);
-	}
-
-	private static Optional<MovieComment> findCommentById(final Movie movie, final UUID commentId) {
-		return movie.getComments()
-				.stream()
-				.filter(comment -> comment.getCommentId().equals(commentId))
-				.findFirst();
 	}
 
 	private void checkUserExists(final UserId userId) {

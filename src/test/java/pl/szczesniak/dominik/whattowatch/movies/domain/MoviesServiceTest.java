@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -20,6 +21,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -451,8 +453,8 @@ class MoviesServiceTest {
 		tut.addCommentToMovie(AddCommentToMovieSample.builder().userId(user).movieId(movieId).comment(comment).build());
 
 		// then
-		final List<MovieComment> comments = tut.getMovie(movieId, user).getComments();
-		assertThat(comments).extracting(MovieComment::getValue).containsExactly(comment);
+		final Set<MovieComment> comments = tut.getMovie(movieId, user).getComments();
+		assertThat(comments).extracting(MovieComment::getText).containsExactly(comment);
 	}
 
 	@Test
@@ -481,15 +483,16 @@ class MoviesServiceTest {
 		final UUID commentId = tut.addCommentToMovie(AddCommentToMovieSample.builder()
 				.userId(user).movieId(movieId)
 				.build());
+		tut.addCommentToMovie(AddCommentToMovieSample.builder().userId(user).movieId(movieId).build());
 
 		// when
 		tut.deleteCommentFromMovie(DeleteCommentFromMovieSample.builder()
-				.userId(user).movieId(movieId).commentId(commentId)
+				.userId(user).movieId(movieId).commentId(new CommentId(commentId))
 				.build());
 
 		// then
-		final List<MovieComment> comments = tut.getMovie(movieId, user).getComments();
-		assertThat(comments).isEmpty();
+		final Set<MovieComment> comments = tut.getMovie(movieId, user).getComments();
+		assertThat(comments.size()).isEqualTo(1);
 	}
 
 	@Test
@@ -504,7 +507,7 @@ class MoviesServiceTest {
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.deleteCommentFromMovie(DeleteCommentFromMovieSample.builder()
-				.userId(differentUser).movieId(movieId).commentId(commentId)
+				.userId(differentUser).movieId(movieId).commentId(new CommentId(commentId))
 				.build()));
 
 		// then

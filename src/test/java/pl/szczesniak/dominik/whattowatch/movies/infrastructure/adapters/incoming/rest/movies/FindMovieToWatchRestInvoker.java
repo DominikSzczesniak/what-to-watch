@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 
 import java.util.List;
 
@@ -33,11 +32,18 @@ public class FindMovieToWatchRestInvoker {
 	}
 
 	@Value
-	static class MovieDetailsDTO {
+	public static class MovieDetailsDTO {
 		String title;
 		Integer movieId;
 		Integer userId;
-		List<MovieComment> comments;
+		List<MovieCommentDto> comments;
+	}
+
+	@Value
+	public static class MovieCommentDto {
+		String commentId;
+		Integer movieId;
+		String value;
 	}
 
 }

@@ -25,13 +25,13 @@ import static java.util.Objects.requireNonNull;
 public class WatchedMovie {
 
 	@EmbeddedId
-	@AttributeOverride(name = "value", column = @Column(name = "movieid_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "movie_id"))
 	private MovieId movieId;
 
-	@AttributeOverride(name = "value", column = @Column(name = "userid_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
 	private UserId userId;
 
-	@AttributeOverride(name = "value", column = @Column(name = "movietitle_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "movie_title"))
 	private MovieTitle title;
 
 	WatchedMovie(final MovieId movieId, final UserId userId, final MovieTitle title) {

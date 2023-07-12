@@ -1,15 +1,14 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -19,12 +18,12 @@ import java.util.UUID;
 @EqualsAndHashCode(of = {"commentId"})
 public class MovieComment {
 
-	@Id
-	private UUID commentId;
+	@EmbeddedId
+	@AttributeOverride(name = "value", column = @Column(name = "comment_id"))
+	private CommentId commentId;
 
 	private Integer movieId;
 
-	@Column(name = "comment_value")
-	private String value;
+	private String text;
 
 }

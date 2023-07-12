@@ -29,14 +29,14 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@AttributeOverride(name = "value", column = @Column(name = "userid_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
 	@Setter(AccessLevel.PACKAGE)
 	private Integer userId;
 
-	@AttributeOverride(name = "value", column = @Column(name = "username_value", unique = true))
+	@AttributeOverride(name = "value", column = @Column(name = "user_name", unique = true))
 	private Username username;
 
-	@AttributeOverride(name = "value", column = @Column(name = "password_value"))
+	@AttributeOverride(name = "value", column = @Column(name = "password"))
 	private UserPassword userPassword;
 
 	public User(final Username username, final UserPassword userPassword) {

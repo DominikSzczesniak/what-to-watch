@@ -1,5 +1,6 @@
-package pl.szczesniak.dominik.whattowatch.movies;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -17,10 +18,10 @@ public class AddCommentToMovieRestInvoker {
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<String> addCommentToMovie(final Integer userId, final Integer movieId, final AddCommentDto commentDto) {
+	public ResponseEntity<String> addCommentToMovie(final Integer userId, final Integer movieId, final CommentDto commentDto) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
-		final HttpEntity<AddCommentDto> requestEntity = new HttpEntity<>(commentDto, headers);
+		final HttpEntity<CommentDto> requestEntity = new HttpEntity<>(commentDto, headers);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.POST,
@@ -31,10 +32,10 @@ public class AddCommentToMovieRestInvoker {
 	}
 
 	@Data
-	public static class AddCommentDto {
+	@Builder
+	public static class CommentDto {
 
-		private final String comment;
-
+		private String comment;
 
 	}
 

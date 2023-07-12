@@ -4,8 +4,8 @@ import java.util.UUID;
 
 public class CommentIdSample {
 
-	public static UUID createAnyCommentId() {
-		return UUID.randomUUID();
+	public static CommentId createAnyCommentId() {
+		return new CommentId(UUID.randomUUID());
 	}
 
 }

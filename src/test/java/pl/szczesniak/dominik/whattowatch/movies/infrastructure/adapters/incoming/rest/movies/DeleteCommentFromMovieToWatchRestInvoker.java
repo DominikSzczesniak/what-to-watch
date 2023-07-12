@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DeleteCommentFromMovieToWatchRestInvoker {
 
-	private static final String URL = "/api/movies/{movieId}/comments";
+	private static final String URL = "/api/movies/{movieId}/comments/{commentId}";
 
 	private final TestRestTemplate restTemplate;
 
@@ -22,11 +22,10 @@ public class DeleteCommentFromMovieToWatchRestInvoker {
 															  final DeleteCommentDto deleteCommentDto) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
-		final HttpEntity<String> requestEntity = new HttpEntity<>(deleteCommentDto.getCommentId(), headers);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.DELETE,
-				requestEntity,
+				new HttpEntity<>(headers),
 				void.class,
 				movieId,
 				deleteCommentDto.getCommentId()

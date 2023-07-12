@@ -1,5 +1,6 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest;
+package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +24,16 @@ public class AddCommentToMovieController {
 	@PostMapping("/api/movies/{movieId}/comments")
 	public ResponseEntity<?> addCommentToMovie(@RequestHeader("userId") final Integer userId,
 											   @PathVariable final Integer movieId,
-											   @RequestBody final String comment) {
-		final UUID id = moviesService.addCommentToMovie(new AddCommentToMovie(new UserId(userId), new MovieId(movieId), comment));
+											   @RequestBody final CommentDto commentDto) {
+		final UUID id = moviesService.addCommentToMovie(new AddCommentToMovie(new UserId(userId), new MovieId(movieId), commentDto.getComment()));
 		return ResponseEntity.status(201).body(id.toString());
+	}
+
+	@Data
+	private static class CommentDto {
+
+		private String comment;
+
 	}
 
 }
