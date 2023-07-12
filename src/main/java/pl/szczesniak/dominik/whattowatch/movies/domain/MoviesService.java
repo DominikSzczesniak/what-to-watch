@@ -7,7 +7,9 @@ import pl.szczesniak.dominik.whattowatch.files.domain.FilesStorage;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.StoredFileId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteCommentFromMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
@@ -15,6 +17,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class MoviesService {
@@ -57,13 +60,17 @@ public class MoviesService {
 
 	public void updateMovie(final UpdateMovie command) {
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
-		movie.update(command.getTitle());
+		movie.updateMovieTitle(command.getTitle());
 		repository.update(movie);
 	}
 
-	private Movie getMovie(final MovieId movieId, final UserId userId) {
-		return repository.findBy(movieId, userId)
-				.orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
+	public Movie getMovie(final MovieId movieId, final UserId userId) {
+		return repository.findBy(movieId, userId).orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
+	}
+
+
+	private static MovieCover getMovieCover(final Movie movie) {
+		return movie.getCover().orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't have a cover."));
 	}
 
 	public MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId user) {
@@ -95,8 +102,17 @@ public class MoviesService {
 		repository.update(movie);
 	}
 
-	private static MovieCover getMovieCover(final Movie movie) {
-		return movie.getCover().orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't have a cover."));
+	public UUID addCommentToMovie(final AddCommentToMovie command) {
+		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		final UUID commentId = movie.addComment(command.getComment());
+		repository.update(movie);
+		return commentId;
+	}
+
+	public void deleteCommentFromMovie(final DeleteCommentFromMovie command) {
+		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		movie.deleteComment(command.getCommentId());
+		repository.update(movie);
 	}
 
 	private void checkUserExists(final UserId userId) {
