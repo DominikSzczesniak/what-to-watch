@@ -26,7 +26,6 @@ public class FindMovieToWatchController {
 		return new MovieDto(movie.getTitle().getValue(), movieId, userId, movie.getComments().stream()
 				.map(movieComment -> new MovieCommentDto(
 						movieComment.getCommentId().getValue().toString(),
-						movieComment.getMovieId(),
 						movieComment.getText()))
 				.collect(Collectors.toList()));
 	}
@@ -42,7 +41,6 @@ public class FindMovieToWatchController {
 	@Value
 	private static class MovieCommentDto {
 		String commentId;
-		Integer movieId;
 		String value;
 	}
 
