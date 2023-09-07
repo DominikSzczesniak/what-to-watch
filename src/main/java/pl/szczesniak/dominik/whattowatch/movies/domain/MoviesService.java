@@ -128,7 +128,8 @@ public class MoviesService {
 
 	public TagId addTagToMovie(final AddTagToMovie command) {
 		final TagId tagId = command.getTagId().orElse(new TagId(UUID.randomUUID()));
-		final Optional<MovieTag> movieTag = checkMovieTagBelongsToDifferentUser(command.getUserId(), tagId);
+		final Optional<MovieTag> movieTag = getTagByTagId(tagId);
+		checkMovieTagBelongsToUser(movieTag, command.getUserId());
 		final TagLabel tagLabel = movieTag.map(MovieTag::getLabel).orElse(command.getTagLabel());
 
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
@@ -138,12 +139,10 @@ public class MoviesService {
 		return tagId;
 	}
 
-	private Optional<MovieTag> checkMovieTagBelongsToDifferentUser(final UserId userId, final TagId tagId) {
-		final Optional<MovieTag> tagByTagId = getTagByTagId(tagId);
-		if (tagByTagId.isPresent() && !tagByTagId.get().getUserId().equals(userId)) {
+	private void checkMovieTagBelongsToUser(final Optional<MovieTag> movieTag, final UserId userId) {
+		if (movieTag.isPresent() && !movieTag.get().getUserId().equals(userId)) {
 			throw new ObjectDoesNotExistException("MovieTag does not belong to user");
 		}
-		return tagByTagId;
 	}
 
 	public Optional<MovieTag> getTagByTagId(final TagId tagId) {
