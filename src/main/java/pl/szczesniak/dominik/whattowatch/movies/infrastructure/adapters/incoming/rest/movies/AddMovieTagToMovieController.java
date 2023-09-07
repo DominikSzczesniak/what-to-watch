@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MovieTag;
@@ -28,7 +29,7 @@ public class AddMovieTagToMovieController {
 
 	@PostMapping("/api/movies/{movieId}/tags")
 	public ResponseEntity<?> addMovieTagToMovie(@RequestHeader("userId") final Integer userId,
-												@RequestHeader(value = "tagId", required = false) Optional<String> tagId,
+												@RequestParam(value = "tagId", required = false) final Optional<String> tagId,
 												@PathVariable final Integer movieId,
 												@RequestBody(required = false) final MovieTagDto movieTagDto) {
 		final TagId id = new TagId(UUID.fromString(tagId.orElse(String.valueOf(UUID.randomUUID()))));
@@ -47,15 +48,15 @@ public class AddMovieTagToMovieController {
 	}
 
 	private static TagLabel getTagLabel(final Integer userId, final MovieTagDto movieTagDto, final Optional<MovieTag> foundTag) {
-		final TagLabel label;
-		if (foundTag.isPresent() && foundTag.get().getUserId().getValue().equals(userId)) {
-			label = foundTag.get().getLabel();
-		} else if (movieTagDto == null){
-			throw new ObjectDoesNotExistException("MovieTag does not belong to user");
-		} else {
-			label = new TagLabel(movieTagDto.getTagLabel().orElseThrow(() -> new ObjectDoesNotExistException("No allowed tagId or TagLabel provided")));
-		}
-		return label;
+		return foundTag.filter(tag -> tag.getUserId().getValue().equals(userId))
+				.map(MovieTag::getLabel)
+				.orElseGet(() -> {
+					if (movieTagDto == null) {
+						throw new ObjectDoesNotExistException("MovieTag does not belong to user");
+					}
+					return new TagLabel(movieTagDto.getTagLabel().orElseThrow(() ->
+							new ObjectDoesNotExistException("No allowed tagId or TagLabel provided")));
+				});
 	}
 
 	@Data

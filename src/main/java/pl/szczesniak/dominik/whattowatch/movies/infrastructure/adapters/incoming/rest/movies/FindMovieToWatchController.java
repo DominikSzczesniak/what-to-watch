@@ -34,11 +34,8 @@ public class FindMovieToWatchController {
 
 	private static List<MovieTagDto> mapMovieTags(final Movie movie) {
 		return movie.getTags().stream()
-				.map(movieTag -> new MovieTagDto(
-						movieTag.getTagId().getValue().toString(),
-						movieTag.getLabel().getValue(),
-						List.of(movie)))
-				.collect(Collectors.toList());
+				.map(movieTag -> new MovieTagDto(movieTag.getTagId().getValue().toString(), movieTag.getLabel().getValue()))
+				.toList();
 	}
 
 	private static List<MovieCommentDto> mapMovieComments(final Movie movie) {
@@ -68,7 +65,6 @@ public class FindMovieToWatchController {
 	private static class MovieTagDto {
 		String tagId;
 		String tagLabel;
-		List<Movie> movies;
 	}
 
 }

@@ -20,13 +20,28 @@ public class AddMovieTagToMovieRestInvoker {
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<String> addTagToMovie(final MovieTagDTO movieTagDTO, final Integer userId, final Integer movieId) {
+	public ResponseEntity<String> addTagToMovie(final MovieTagDto movieTagDto, final Integer userId, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
-		if (movieTagDTO.getTagId() != null) {
-			headers.set("tagId", movieTagDTO.getTagId());
+		final HttpEntity<MovieTagDto> requestEntity = new HttpEntity<>(movieTagDto, headers);
+
+		return getAddTagToMovieResponse(movieTagDto, movieId, requestEntity);
+	}
+
+	private ResponseEntity<String> getAddTagToMovieResponse(final MovieTagDto movieTagDto,
+															final Integer movieId,
+															final HttpEntity<MovieTagDto> requestEntity) {
+		if (movieTagDto.getTagId().isPresent()) {
+			return restTemplate.exchange(
+					"/api/movies/{movieId}/tags?tagId={tagId}",
+					HttpMethod.POST,
+					requestEntity,
+					String.class,
+					movieId,
+					movieTagDto.getTagId().get()
+			);
 		}
-		final HttpEntity<MovieTagDTO> requestEntity = new HttpEntity<>(movieTagDTO, headers);
+
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.POST,
@@ -38,12 +53,15 @@ public class AddMovieTagToMovieRestInvoker {
 
 	@Data
 	@Builder
-	public static class MovieTagDTO {
+	public static class MovieTagDto {
 
-		private Optional<String> tagLabel;
+		private String tagLabel;
 
 		private String tagId;
 
+		Optional<String> getTagId() {
+			return Optional.ofNullable(tagId);
+		}
 	}
 
 }

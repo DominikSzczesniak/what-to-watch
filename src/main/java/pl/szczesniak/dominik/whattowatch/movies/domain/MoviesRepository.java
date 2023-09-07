@@ -1,9 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabel;
-import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -20,7 +17,5 @@ public interface MoviesRepository {
 	void removeMovie(MovieId movieId, UserId userId);
 
 	Optional<Movie> findBy(MovieId movieId, UserId userId);
-
-	List<Movie> findAllByTagLabel(TagLabel tagLabel, UserId userId);
 
 }

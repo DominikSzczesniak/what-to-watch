@@ -13,7 +13,7 @@ public class MoviesServiceConfiguration {
 									   final UserProvider userProvider,
 									   final WatchedMoviesRepository watchedMoviesRepository,
 									   final FilesStorage filesStorage,
-									   final TagsQueryService tagsQuery) {
+									   final TagsQuery tagsQuery) {
 		return new MoviesService(moviesRepository, userProvider, watchedMoviesRepository, filesStorage, tagsQuery);
 	}
 

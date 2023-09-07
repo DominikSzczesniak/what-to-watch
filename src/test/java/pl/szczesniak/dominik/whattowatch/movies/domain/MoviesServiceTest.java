@@ -37,8 +37,8 @@ import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentSampl
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CoverContentSample.createAnyCoverContent;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CoverContentTypeSample.createAnyContentType;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CoverFilenameSample.createAnyCoverFilename;
-import static pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabelSample.createAnyTagLabel;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabelSample.createAnyTagLabel;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 class MoviesServiceTest {
@@ -593,7 +593,7 @@ class MoviesServiceTest {
 	}
 
 	@Test
-	void should_not_create_additional_movie_tag_when_same_tag_label() {
+	void should_not_create_additional_movie_tag_when_adding_same_tag() {
 		// given
 		final UserId user = userProvider.addUser(createAnyUserId());
 		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
@@ -601,7 +601,8 @@ class MoviesServiceTest {
 
 		// when
 		final TagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movieId).userId(user).build());
-		tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).tagId(tagId).movieId(movieId).userId(user).build());
+		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(tagId).movieId(movieId).userId(user).build());
+
 		final Movie movie = tut.getMovie(movieId, user);
 
 		// then
@@ -609,7 +610,7 @@ class MoviesServiceTest {
 	}
 
 	@Test
-	void should_find_movies_by_tag() {
+	void should_find_movies_by_tag_id() {
 		// given
 		final UserId user = userProvider.addUser(createAnyUserId());
 		final MovieId movie1 = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
@@ -620,29 +621,15 @@ class MoviesServiceTest {
 		final TagLabel tagLabel = createAnyTagLabel();
 
 		// when
-		tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movie1).userId(user).build());
-		tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movie2).userId(user).build());
-		tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movie3).userId(user).build());
-		tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movie4).userId(user).build());
+		final TagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movie1).userId(user).build());
+		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(tagId).movieId(movie2).userId(user).build());
+		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(tagId).movieId(movie3).userId(user).build());
+		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(tagId).movieId(movie4).userId(user).build());
 		tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieWithDifferentTag).userId(user).build());
 
 		// then
 		assertThat(tut.getMoviesToWatch(user)).hasSize(5);
-		assertThat(tut.getMoviesByTagLabel(tagLabel, user)).hasSize(4);
-	}
-
-	@Test
-	void should_return_empty_list_when_no_movies_with_tag() {
-		// given
-		final UserId user = userProvider.addUser(createAnyUserId());
-		tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
-		final TagLabel tagLabel = createAnyTagLabel();
-
-		// when
-		final List<Movie> moviesByTagLabel = tut.getMoviesByTagLabel(tagLabel, user);
-
-		// then
-		assertThat(moviesByTagLabel).hasSize(0);
+		assertThat(tut.getMoviesByTagId(tagId, user)).hasSize(4);
 	}
 
 	@Test

@@ -31,7 +31,7 @@ public class MoviesService {
 	private final UserProvider userProvider;
 	private final WatchedMoviesRepository watchedRepository;
 	private final FilesStorage filesStorage;
-	private final TagsQueryService tagsQuery;
+	private final TagsQuery tagsQuery;
 
 	public MovieId addMovieToList(final AddMovieToList command) {
 		if (!userProvider.exists(command.getUserId())) {
@@ -128,24 +128,22 @@ public class MoviesService {
 
 	public TagId addTagToMovie(final AddTagToMovie command) {
 		final TagId tagId = command.getTagId().orElse(new TagId(UUID.randomUUID()));
-		checkMovieTagBelongsToDifferentUser(command, tagId);
-		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		final Optional<MovieTag> movieTag = checkMovieTagBelongsToDifferentUser(command.getUserId(), tagId);
+		final TagLabel tagLabel = movieTag.map(MovieTag::getLabel).orElse(command.getTagLabel());
 
-		movie.addTag(
-				tagId,
-				command.getTagLabel(),
-				command.getUserId()
-		);
+		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		movie.addTag(tagId,	tagLabel, command.getUserId());
 
 		moviesRepository.update(movie);
 		return tagId;
 	}
 
-	private void checkMovieTagBelongsToDifferentUser(final AddTagToMovie command, final TagId tagId) {
+	private Optional<MovieTag> checkMovieTagBelongsToDifferentUser(final UserId userId, final TagId tagId) {
 		final Optional<MovieTag> tagByTagId = getTagByTagId(tagId);
-		if (tagByTagId.isPresent() && !tagByTagId.get().getUserId().equals(command.getUserId())) {
+		if (tagByTagId.isPresent() && !tagByTagId.get().getUserId().equals(userId)) {
 			throw new ObjectDoesNotExistException("MovieTag does not belong to user");
 		}
+		return tagByTagId;
 	}
 
 	public Optional<MovieTag> getTagByTagId(final TagId tagId) {
@@ -158,8 +156,8 @@ public class MoviesService {
 		moviesRepository.update(movie);
 	}
 
-	public List<Movie> getMoviesByTagLabel(final TagLabel tagLabel, final UserId user) {
-		return moviesRepository.findAllByTagLabel(tagLabel, user);
+	public List<MovieId> getMoviesByTagId(final TagId tagId, final UserId userId) {
+		return tagsQuery.findAllMoviesByTagId(tagId.getValue().toString(), userId.getValue());
 	}
 
 

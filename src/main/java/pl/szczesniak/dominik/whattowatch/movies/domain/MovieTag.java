@@ -20,9 +20,11 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 @Entity
 @Table(name = "tag_table", uniqueConstraints = {
-		@UniqueConstraint(columnNames = {"user_id_label", "tag_label"})
+		@UniqueConstraint(columnNames = {"tag_user_id", "tag_label"})
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,7 +39,7 @@ public class MovieTag {
 	@AttributeOverride(name = "value", column = @Column(name = "tag_label"))
 	private TagLabel label;
 
-	@AttributeOverride(name = "value", column = @Column(name = "user_id_label"))
+	@AttributeOverride(name = "value", column = @Column(name = "tag_user_id"))
 	private UserId userId;
 
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "tags")
@@ -45,9 +47,9 @@ public class MovieTag {
 	private Set<Movie> movies;
 
 	MovieTag(final TagId tagId, final TagLabel label, final UserId userId) {
-		this.tagId = tagId;
-		this.label = label;
-		this.userId = userId;
+		this.tagId = requireNonNull(tagId, "TagId cannot be null");
+		this.label = requireNonNull(label, "TagLabel cannot be null");
+		this.userId = requireNonNull(userId, "UserId cannot be null");
 	}
 
 }

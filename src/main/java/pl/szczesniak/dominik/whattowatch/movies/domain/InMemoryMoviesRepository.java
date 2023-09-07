@@ -2,7 +2,6 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabel;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashMap;
@@ -13,11 +12,10 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class InMemoryMoviesRepository implements MoviesRepository, TagsQueryService {
+public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery {
 
 	private final AtomicInteger nextId = new AtomicInteger(0);
 	private final Map<MovieId, Movie> movies = new HashMap<>();
-
 	private final Map<TagId, MovieTag> tags = new HashMap<>();
 
 	@Override
@@ -60,10 +58,12 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQueryServ
 	}
 
 	@Override
-	public List<Movie> findAllByTagLabel(final TagLabel tagLabel, final UserId userId) {
+	public List<MovieId> findAllMoviesByTagId(final String tagId, final Integer userId) {
 		return movies.values().stream()
 				.filter(movie -> movie.getTags().stream()
-						.anyMatch(movieTag -> movieTag.getLabel().equals(tagLabel)))
+						.anyMatch(movieTag -> movieTag.getTagId().equals(new TagId(UUID.fromString(tagId)))))
+				.filter(movie -> movie.getUserId().getValue().equals(userId))
+				.map(Movie::getMovieId)
 				.collect(Collectors.toList());
 	}
 

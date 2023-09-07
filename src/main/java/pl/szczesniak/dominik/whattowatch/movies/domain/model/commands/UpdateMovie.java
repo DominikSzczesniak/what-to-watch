@@ -13,7 +13,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 @Getter
 @ToString
 @EqualsAndHashCode
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UpdateMovie {
 
 	private final @NonNull MovieId movieId;
