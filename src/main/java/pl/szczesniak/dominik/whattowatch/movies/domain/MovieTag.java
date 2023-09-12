@@ -14,8 +14,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabel;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.Set;
@@ -34,10 +34,10 @@ public class MovieTag {
 
 	@EmbeddedId
 	@AttributeOverride(name = "value", column = @Column(name = "tag_id"))
-	private TagId tagId;
+	private MovieTagId tagId;
 
 	@AttributeOverride(name = "value", column = @Column(name = "tag_label"))
-	private TagLabel label;
+	private MovieTagLabel label;
 
 	@AttributeOverride(name = "value", column = @Column(name = "tag_user_id"))
 	private UserId userId;
@@ -46,7 +46,7 @@ public class MovieTag {
 	@JsonIgnoreProperties("tags")
 	private Set<Movie> movies;
 
-	MovieTag(final TagId tagId, final TagLabel label, final UserId userId) {
+	MovieTag(final MovieTagId tagId, final MovieTagLabel label, final UserId userId) {
 		this.tagId = requireNonNull(tagId, "TagId cannot be null");
 		this.label = requireNonNull(label, "TagLabel cannot be null");
 		this.userId = requireNonNull(userId, "UserId cannot be null");

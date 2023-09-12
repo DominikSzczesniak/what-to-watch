@@ -7,8 +7,8 @@ import pl.szczesniak.dominik.whattowatch.files.domain.FilesStorage;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.StoredFileId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabel;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovie;
@@ -126,10 +126,10 @@ public class MoviesService {
 		}
 	}
 
-	public TagId addTagToMovie(final AddTagToMovie command) {
-		final TagId tagId = command.getTagId().orElse(new TagId(UUID.randomUUID()));
+	public MovieTagId addTagToMovie(final AddTagToMovie command) {
+		final MovieTagId tagId = command.getTagId().orElse(new MovieTagId(UUID.randomUUID()));
 		final Optional<MovieTag> movieTag = checkMovieTagBelongsToUser(command.getUserId(), tagId);
-		final TagLabel tagLabel = movieTag.map(MovieTag::getLabel).orElse(command.getTagLabel());
+		final MovieTagLabel tagLabel = movieTag.map(MovieTag::getLabel).orElse(command.getTagLabel());
 
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		movie.addTag(tagId,	tagLabel, command.getUserId());
@@ -138,7 +138,7 @@ public class MoviesService {
 		return tagId;
 	}
 
-	private Optional<MovieTag> checkMovieTagBelongsToUser(final UserId userId, final TagId tagId) {
+	private Optional<MovieTag> checkMovieTagBelongsToUser(final UserId userId, final MovieTagId tagId) {
 		final Optional<MovieTag> tagByTagId = getTagByTagId(tagId);
 		if (tagByTagId.isPresent() && !tagByTagId.get().getUserId().equals(userId)) {
 			throw new ObjectDoesNotExistException("MovieTag does not belong to user");
@@ -146,7 +146,7 @@ public class MoviesService {
 		return tagByTagId;
 	}
 
-	public Optional<MovieTag> getTagByTagId(final TagId tagId) {
+	public Optional<MovieTag> getTagByTagId(final MovieTagId tagId) {
 		return tagsQuery.findTagByTagId(tagId.getValue().toString());
 	}
 
@@ -156,7 +156,7 @@ public class MoviesService {
 		moviesRepository.update(movie);
 	}
 
-	public List<MovieId> getMoviesByTagId(final TagId tagId, final UserId userId) {
+	public List<MovieId> getMoviesByTagId(final MovieTagId tagId, final UserId userId) {
 		return tagsQuery.findAllMoviesByTagId(tagId.getValue().toString(), userId.getValue());
 	}
 

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabel;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.sql.ResultSet;
@@ -37,8 +37,8 @@ public class JdbcTagsQueryService implements TagsQuery {
 	}
 
 	private static MovieTag getMovieTag(final ResultSet rs) throws SQLException {
-		final TagId foundTagId = new TagId(UUID.fromString(rs.getString("tag_id")));
-		final TagLabel tagLabel = new TagLabel(rs.getString("tag_label"));
+		final MovieTagId foundTagId = new MovieTagId(UUID.fromString(rs.getString("tag_id")));
+		final MovieTagLabel tagLabel = new MovieTagLabel(rs.getString("tag_label"));
 		final UserId user = new UserId(rs.getInt("tag_user_id"));
 
 		return new MovieTag(foundTagId, tagLabel, user);

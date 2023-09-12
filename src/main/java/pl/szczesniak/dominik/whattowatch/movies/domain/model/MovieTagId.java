@@ -15,11 +15,11 @@ import static java.util.Objects.requireNonNull;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class TagId {
+public class MovieTagId {
 
 	private UUID value;
 
-	public TagId(final UUID value) {
+	public MovieTagId(final UUID value) {
 		requireNonNull(value);
 		this.value = value;
 	}

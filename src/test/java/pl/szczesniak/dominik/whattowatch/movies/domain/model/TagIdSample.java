@@ -4,8 +4,8 @@ import java.util.UUID;
 
 public class TagIdSample {
 
-	public static TagId createAnyTagId() {
-		return new TagId(UUID.randomUUID());
+	public static MovieTagId createAnyTagId() {
+		return new MovieTagId(UUID.randomUUID());
 	}
 
 }

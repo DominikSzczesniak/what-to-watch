@@ -1,7 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashMap;
@@ -16,7 +16,7 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery {
 
 	private final AtomicInteger nextId = new AtomicInteger(0);
 	private final Map<MovieId, Movie> movies = new HashMap<>();
-	private final Map<TagId, MovieTag> tags = new HashMap<>();
+	private final Map<MovieTagId, MovieTag> tags = new HashMap<>();
 
 	@Override
 	public void create(final Movie movie) {
@@ -61,7 +61,7 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery {
 	public List<MovieId> findAllMoviesByTagId(final String tagId, final Integer userId) {
 		return movies.values().stream()
 				.filter(movie -> movie.getTags().stream()
-						.anyMatch(movieTag -> movieTag.getTagId().equals(new TagId(UUID.fromString(tagId)))))
+						.anyMatch(movieTag -> movieTag.getTagId().equals(new MovieTagId(UUID.fromString(tagId)))))
 				.filter(movie -> movie.getUserId().getValue().equals(userId))
 				.map(Movie::getMovieId)
 				.collect(Collectors.toList());
@@ -76,7 +76,7 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery {
 
 	@Override
 	public Optional<MovieTag> findTagByTagId(final String tagId) {
-		return Optional.ofNullable(tags.get(new TagId(UUID.fromString(tagId))));
+		return Optional.ofNullable(tags.get(new MovieTagId(UUID.fromString(tagId))));
 	}
 
 }

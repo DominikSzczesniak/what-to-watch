@@ -8,8 +8,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabel;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
@@ -528,7 +528,7 @@ class MoviesServiceTest {
 		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
 
 		// when
-		final TagLabel tagLabel = createAnyTagLabel();
+		final MovieTagLabel tagLabel = createAnyTagLabel();
 		tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movieId).userId(user).build());
 
 		// then
@@ -541,16 +541,16 @@ class MoviesServiceTest {
 		// given
 		final UserId user = userProvider.addUser(createAnyUserId());
 		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
-		final TagLabel firstTagLabel = createAnyTagLabel();
-		final TagLabel secondTagLabel = createAnyTagLabel();
-		final TagLabel thirdTagLabel = createAnyTagLabel();
-		final TagLabel fourthTagLabel = createAnyTagLabel();
+		final MovieTagLabel firstTagLabel = createAnyTagLabel();
+		final MovieTagLabel secondTagLabel = createAnyTagLabel();
+		final MovieTagLabel thirdTagLabel = createAnyTagLabel();
+		final MovieTagLabel fourthTagLabel = createAnyTagLabel();
 
 		// when
-		final TagId firstTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(firstTagLabel).movieId(movieId).userId(user).build());
-		final TagId secondTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(secondTagLabel).movieId(movieId).userId(user).build());
-		final TagId thirdTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(thirdTagLabel).movieId(movieId).userId(user).build());
-		final TagId fourthTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(fourthTagLabel).movieId(movieId).userId(user).build());
+		final MovieTagId firstTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(firstTagLabel).movieId(movieId).userId(user).build());
+		final MovieTagId secondTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(secondTagLabel).movieId(movieId).userId(user).build());
+		final MovieTagId thirdTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(thirdTagLabel).movieId(movieId).userId(user).build());
+		final MovieTagId fourthTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(fourthTagLabel).movieId(movieId).userId(user).build());
 
 		final List<MovieTag> tags = tut.getMovieTagsByUserId(user.getValue());
 
@@ -566,7 +566,7 @@ class MoviesServiceTest {
 		final UserId user = userProvider.addUser(createAnyUserId());
 		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
 
-		final TagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieId).userId(user).build());
+		final MovieTagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieId).userId(user).build());
 		assertThat(tut.getMovie(movieId, user).getTags()).hasSize(1);
 
 		// when
@@ -583,7 +583,7 @@ class MoviesServiceTest {
 		final UserId differentUser = userProvider.addUser(createAnyUserId());
 		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
 
-		final TagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieId).userId(user).build());
+		final MovieTagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieId).userId(user).build());
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.deleteTagFromMovie(new DeleteTagFromMovie(differentUser, movieId, tagId)));
@@ -597,10 +597,10 @@ class MoviesServiceTest {
 		// given
 		final UserId user = userProvider.addUser(createAnyUserId());
 		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
-		final TagLabel tagLabel = createAnyTagLabel();
+		final MovieTagLabel tagLabel = createAnyTagLabel();
 
 		// when
-		final TagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movieId).userId(user).build());
+		final MovieTagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movieId).userId(user).build());
 		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(tagId).movieId(movieId).userId(user).build());
 
 		final Movie movie = tut.getMovie(movieId, user);
@@ -618,10 +618,10 @@ class MoviesServiceTest {
 		final MovieId movie3 = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
 		final MovieId movie4 = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
 		final MovieId movieWithDifferentTag = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
-		final TagLabel tagLabel = createAnyTagLabel();
+		final MovieTagLabel tagLabel = createAnyTagLabel();
 
 		// when
-		final TagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movie1).userId(user).build());
+		final MovieTagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movie1).userId(user).build());
 		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(tagId).movieId(movie2).userId(user).build());
 		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(tagId).movieId(movie3).userId(user).build());
 		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(tagId).movieId(movie4).userId(user).build());
@@ -641,8 +641,8 @@ class MoviesServiceTest {
 		final MovieId differentUsersMovie = tut.addMovieToList(AddMovieToListSample.builder().userId(differentUser).build());
 
 		// when
-		final TagLabel tagLabel = createAnyTagLabel();
-		final TagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movieId).userId(user).build());
+		final MovieTagLabel tagLabel = createAnyTagLabel();
+		final MovieTagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movieId).userId(user).build());
 
 		final Throwable thrown = catchThrowable(() -> tut.addTagToMovie
 				(AddTagToMovieSample.builder().tagId(tagId).movieId(differentUsersMovie).tagLabel(tagLabel).userId(differentUser).build())

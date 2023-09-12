@@ -13,8 +13,8 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.movies.domain.MovieTag;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabel;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovie;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -32,9 +32,9 @@ public class AddMovieTagToMovieController {
 												@RequestParam(value = "tagId", required = false) final Optional<String> tagId,
 												@PathVariable final Integer movieId,
 												@RequestBody(required = false) final MovieTagDto movieTagDto) {
-		final TagId id = new TagId(UUID.fromString(tagId.orElse(String.valueOf(UUID.randomUUID()))));
+		final MovieTagId id = new MovieTagId(UUID.fromString(tagId.orElse(String.valueOf(UUID.randomUUID()))));
 		final Optional<MovieTag> foundTag = moviesService.getTagByTagId(id);
-		final TagLabel label = getTagLabel(userId, movieTagDto, foundTag);
+		final MovieTagLabel label = getTagLabel(userId, movieTagDto, foundTag);
 
 		final AddTagToMovie addTagToMovie = new AddTagToMovie(
 				new UserId(userId),
@@ -42,19 +42,19 @@ public class AddMovieTagToMovieController {
 				label,
 				id);
 
-		final TagId createdTagId = moviesService.addTagToMovie(addTagToMovie);
+		final MovieTagId createdTagId = moviesService.addTagToMovie(addTagToMovie);
 
 		return ResponseEntity.status(201).body(createdTagId.getValue().toString());
 	}
 
-	private static TagLabel getTagLabel(final Integer userId, final MovieTagDto movieTagDto, final Optional<MovieTag> foundTag) {
+	private static MovieTagLabel getTagLabel(final Integer userId, final MovieTagDto movieTagDto, final Optional<MovieTag> foundTag) {
 		return foundTag.filter(tag -> tag.getUserId().getValue().equals(userId))
 				.map(MovieTag::getLabel)
 				.orElseGet(() -> {
 					if (movieTagDto == null) {
 						throw new ObjectDoesNotExistException("MovieTag does not belong to user");
 					}
-					return new TagLabel(movieTagDto.getTagLabel().orElseThrow(() ->
+					return new MovieTagLabel(movieTagDto.getTagLabel().orElseThrow(() ->
 							new ObjectDoesNotExistException("No allowed tagId or TagLabel provided")));
 				});
 	}

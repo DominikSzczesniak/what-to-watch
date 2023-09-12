@@ -23,8 +23,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabel;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashSet;
@@ -102,12 +102,12 @@ public class Movie {
 		return Optional.ofNullable(cover);
 	}
 
-	public TagId addTag(final TagId tagId, final TagLabel tagLabel, final UserId userId) {
+	public MovieTagId addTag(final MovieTagId tagId, final MovieTagLabel tagLabel, final UserId userId) {
 		tags.add(new MovieTag(tagId, tagLabel, userId));
 		return tagId;
 	}
 
-	void deleteTag(final TagId tagId) {
+	void deleteTag(final MovieTagId tagId) {
 		tags.removeIf(movieTag -> movieTag.getTagId().equals(tagId));
 	}
 

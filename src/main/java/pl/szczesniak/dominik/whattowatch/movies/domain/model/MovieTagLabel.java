@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,11 +13,11 @@ import static java.util.Objects.requireNonNull;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class TagLabel {
+public class MovieTagLabel {
 
 	private String value;
 
-	public TagLabel(final String value) {
+	public MovieTagLabel(final String value) {
 		requireNonNull(value);
 		this.value = value;
 	}
