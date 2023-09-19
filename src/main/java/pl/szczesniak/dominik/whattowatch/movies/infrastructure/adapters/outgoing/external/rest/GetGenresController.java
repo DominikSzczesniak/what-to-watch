@@ -3,19 +3,19 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoin
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.external.Genres;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.external.MovieInfoService;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.external.Genre;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.external.TMDBMovieInfoProvider;
 import reactor.core.publisher.Flux;
 
 @RequiredArgsConstructor
 @RestController
 public class GetGenresController {
 
-	private final MovieInfoService movieInfoService;
+	private final TMDBMovieInfoProvider TMDBMovieInfoProvider;
 
 	@GetMapping("/api/genres")
-	public Flux<Genres> getGenres() {
-		return movieInfoService.getGenres();
+	public Flux<Genre> getGenres() {
+		return TMDBMovieInfoProvider.getGenres();
 	}
 
 }
