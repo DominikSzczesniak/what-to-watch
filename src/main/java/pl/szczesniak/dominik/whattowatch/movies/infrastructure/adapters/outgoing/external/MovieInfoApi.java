@@ -2,12 +2,12 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoin
 
 public interface MovieInfoApi {
 
-	MovieInfo getPopularMovies();
+	MovieInfoResponse getPopularMovies();
 
-	Genre getGenres();
+	GenresResponse getGenres();
 
-	MovieInfo getMoviesByGenre(Long genreId);
+	MovieInfoResponse getMoviesByGenre(Long genreId);
 
-	MovieInfo findMovieById(Long movieId);
+//	MovieInfoResponse findMovieById(Long movieId);
 
 }
