@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.external;
+package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
