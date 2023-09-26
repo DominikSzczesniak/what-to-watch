@@ -4,10 +4,10 @@ import java.util.List;
 
 public interface MovieInfoApi {
 
-	MovieInfoTMDBResponse getPopularMovies();
+	TMDBMovieInfoResponse getPopularMovies();
 
-	MovieGenreTMDBResponse getGenres();
+	TMDBMovieGenreResponse getGenres();
 
-	MovieInfoTMDBResponse getMoviesByGenre(List<Long> genreId);
+	TMDBMovieInfoResponse getMoviesByGenre(List<Long> genreId);
 
 }

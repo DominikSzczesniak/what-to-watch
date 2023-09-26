@@ -1,14 +1,13 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
-@RequiredArgsConstructor
-@Service
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class TMDBMovieInfoProvider implements MovieInfoApi {
 
 
@@ -18,32 +17,32 @@ public class TMDBMovieInfoProvider implements MovieInfoApi {
 	private final WebClient webClient;
 
 	@Override
-	public MovieInfoTMDBResponse getPopularMovies() {
+	public TMDBMovieInfoResponse getPopularMovies() {
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path("/movie/popular")
 						.queryParam("api_key", apiKey)
 						.build())
 				.retrieve()
-				.bodyToMono(MovieInfoTMDBResponse.class)
+				.bodyToMono(TMDBMovieInfoResponse.class)
 				.block();
 	}
 
 	@Override
-	public MovieGenreTMDBResponse getGenres() {
+	public TMDBMovieGenreResponse getGenres() {
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path("/genre/movie/list")
 						.queryParam("api_key", apiKey)
 						.build())
 				.retrieve()
-				.bodyToMono(MovieGenreTMDBResponse.class)
+				.bodyToMono(TMDBMovieGenreResponse.class)
 				.block();
 
 	}
 
 	@Override
-	public MovieInfoTMDBResponse getMoviesByGenre(final List<Long> genreId) {
+	public TMDBMovieInfoResponse getMoviesByGenre(final List<Long> genreId) {
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path("/discover/movie")
@@ -51,7 +50,7 @@ public class TMDBMovieInfoProvider implements MovieInfoApi {
 						.queryParam("with_genres", genreId)
 						.build())
 				.retrieve()
-				.bodyToMono(MovieInfoTMDBResponse.class)
+				.bodyToMono(TMDBMovieInfoResponse.class)
 				.block();
 
 	}

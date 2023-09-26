@@ -1,13 +1,13 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing;
 
 import lombok.Data;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 
 import java.util.List;
 
 @Data
-class MovieGenreTMDBResponse {
+class TMDBMovieInfoResponse {
 
-	private List<MovieGenre> genres;
+	private List<MovieInfo> results;
 
 }
