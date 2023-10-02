@@ -16,16 +16,16 @@ import static java.util.Objects.requireNonNull;
 @EqualsAndHashCode(of = {"id"})
 public class MovieInfo {
 
-	private final List<Long> genreIds;
-
 	private final Long id;
+
+	private final List<Long> genreIds;
 
 	private final String overview;
 
 	private final String title;
 
-	public MovieInfo(@JsonProperty("genre_ids") final List<Long> genreIds,
-					 @JsonProperty("id") final Long id,
+	public MovieInfo(@JsonProperty("id") final Long id,
+					 @JsonProperty("genre_ids") final List<Long> genreIds,
 					 @JsonProperty("overview") final String overview,
 					 @JsonProperty("title") final String title) {
 		this.genreIds = requireNonNull(genreIds);

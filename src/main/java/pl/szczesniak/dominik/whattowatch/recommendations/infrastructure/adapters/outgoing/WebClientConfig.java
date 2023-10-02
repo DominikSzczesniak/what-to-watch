@@ -8,8 +8,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-	@Value("${tmdb.base.url}")
-	private String baseUrl;
+	private final String baseUrl;
+
+	public WebClientConfig(@Value("${tmdb.base.url}") String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
 
 	@Bean
 	public WebClient webClient() {
