@@ -1,75 +1,54 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenreResponse;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 
-import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TMDBRestTest {
 
-	private final static String API_KEY = "?api_key=4663542b69490ce1434ece35ebad7665";
-
-	private ObjectMapper objectMapper;
+	private MovieInfoApi tut;
 
 	@BeforeEach
 	void setUp() {
-		objectMapper = new ObjectMapper();
+		tut = new TMDBMovieInfoApi("4663542b69490ce1434ece35ebad7665", "https://api.themoviedb.org/3");
 	}
 
 	@Test
-	void should_get_popular_movies() throws IOException {
-		// given
-		final HttpUriRequest getPopularMoviesRequest = new HttpGet("https://api.themoviedb.org/3/movie/popular" + API_KEY);
-
+	void should_get_popular_movies() {
 		// when
-		final HttpResponse getPopularMoviesResponse = HttpClientBuilder.create().build().execute(getPopularMoviesRequest);
-		final JsonNode responseBody = objectMapper.readTree(getPopularMoviesResponse.getEntity().getContent());
+		final MovieInfoResponse popularMovies = tut.getPopularMovies();
 
 		// then
-		assertThat(getPopularMoviesResponse.getStatusLine().getStatusCode()).isEqualTo(200);
-		assertThat(responseBody).isNotNull();
+		assertThat(popularMovies.getResults()).hasSizeGreaterThan(0);
 	}
 
 	@Test
-	void should_get_movie_genres() throws IOException {
-		// given
-		final HttpUriRequest getMovieGenresRequest = new HttpGet("https://api.themoviedb.org/3/genre/movie/list" + API_KEY);
-
+	void should_get_movie_genres() {
 		// when
-		final HttpResponse getMovieGenresResponse = HttpClientBuilder.create().build().execute(getMovieGenresRequest);
-		final JsonNode responseBody = objectMapper.readTree(getMovieGenresResponse.getEntity().getContent());
+		final MovieGenreResponse genres = tut.getGenres();
 
 		// then
-		assertThat(getMovieGenresResponse.getStatusLine().getStatusCode()).isEqualTo(200);
-		assertThat(responseBody).isNotNull();
+		assertThat(genres.getGenres()).hasSizeGreaterThan(0);
 	}
 
 	@Test
-	void should_find_movies_by_genre_id() throws IOException {
+	void should_find_movies_by_genre_id() {
 		// given
-		final HttpUriRequest getMovieGenresRequest = new HttpGet("https://api.themoviedb.org/3/genre/movie/list" + API_KEY);
-		final HttpResponse getMovieGenresResponse = HttpClientBuilder.create().build().execute(getMovieGenresRequest);
-		final JsonNode responseBody = objectMapper.readTree(getMovieGenresResponse.getEntity().getContent());
+		final MovieGenreResponse genres = tut.getGenres();
+		final MovieGenre genre = genres.getGenres().get(0);
 
 		// when
-		final String genreId = responseBody.get("genres").get(0).get("id").asText();
-		final String url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&api_key=4663542b69490ce1434ece35ebad7665&with_genres=";
-		final String getMoviesByGenreIdUrl = url + genreId;
-		final HttpUriRequest getMoviesByGenreIdRequest = new HttpGet(getMoviesByGenreIdUrl);
-		final HttpResponse getMoviesByGenreIdResponse = HttpClientBuilder.create().build().execute(getMoviesByGenreIdRequest);
-		final JsonNode moviesByIdResponse = objectMapper.readTree(getMoviesByGenreIdResponse.getEntity().getContent());
+		MovieInfoResponse moviesByGenre = tut.getMoviesByGenre(List.of(genre.getId()));
 
 		// then
-		assertThat(getMoviesByGenreIdResponse.getStatusLine().getStatusCode()).isEqualTo(200);
-		assertThat(moviesByIdResponse).isNotNull();
+		assertThat(moviesByGenre.getResults()).isNotNull();
+		assertThat(moviesByGenre.getResults()).hasSizeGreaterThan(0);
 	}
 
 }

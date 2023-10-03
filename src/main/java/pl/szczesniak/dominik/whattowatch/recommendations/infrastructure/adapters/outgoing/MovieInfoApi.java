@@ -1,13 +1,16 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing;
 
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenreResponse;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
+
 import java.util.List;
 
 public interface MovieInfoApi {
 
-	TMDBMovieInfoResponse getPopularMovies();
+	MovieInfoResponse getPopularMovies();
 
-	TMDBMovieGenreResponse getGenres();
+	MovieGenreResponse getGenres();
 
-	TMDBMovieInfoResponse getMoviesByGenre(List<Long> genreId);
+	MovieInfoResponse getMoviesByGenre(List<Long> genreId);
 
 }
