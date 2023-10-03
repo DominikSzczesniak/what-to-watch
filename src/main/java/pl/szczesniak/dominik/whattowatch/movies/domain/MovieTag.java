@@ -23,7 +23,7 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 @Entity
-@Table(name = "tag_table", uniqueConstraints = {
+@Table(name = "tags", uniqueConstraints = {
 		@UniqueConstraint(columnNames = {"tag_user_id", "tag_label"})
 })
 @Getter

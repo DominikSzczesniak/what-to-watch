@@ -488,7 +488,7 @@ class MoviesModuleIntegrationTest {
 				MovieTagDto.builder().tagLabel(createAnyTagLabel().getValue()).build(), differentUser, differentUsersMovieResponse.getBody());
 
 		// when
-		final ResponseEntity<List<MovieId>> findAllMoviesByTagIdResponse =
+		final ResponseEntity<List<MovieId>> findAllMoviesByTagIdResponse = // TODO: fix
 				findAllMovieIdsByMovieTagIdRest.getMoviesByTagId(userId, addTagToMovieOneResponse.getBody());
 
 		// then

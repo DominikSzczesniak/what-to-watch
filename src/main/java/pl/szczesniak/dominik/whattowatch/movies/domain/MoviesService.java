@@ -156,7 +156,7 @@ public class MoviesService {
 		moviesRepository.update(movie);
 	}
 
-	public List<MovieId> getMoviesByTagId(final MovieTagId tagId, final UserId userId) {
+	public List<Movie> getMoviesByTagId(final MovieTagId tagId, final UserId userId) {
 		return tagsQuery.findAllMoviesByTagId(tagId.getValue().toString(), userId.getValue());
 	}
 

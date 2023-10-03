@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.sql.ResultSet;
@@ -25,13 +26,13 @@ public class JdbcTagsQueryService implements TagsQuery {
 
 	@Override
 	public List<MovieTag> findByUserId(final Integer userId) {
-		final String sqlQuery = "SELECT tag_id, tag_label, tag_user_id FROM tag_table WHERE tag_user_id = ?";
+		final String sqlQuery = "SELECT tag_id, tag_label, tag_user_id FROM tags WHERE tag_user_id = ?";
 		return jdbcTemplate.query(sqlQuery, new Object[]{userId}, (rs, rowNum) -> getMovieTag(rs));
 	}
 
 	@Override
 	public Optional<MovieTag> findTagByTagId(final String tagId) {
-		final String sqlQuery = "SELECT tag_id, tag_label, tag_user_id FROM tag_table WHERE tag_id = ?::uuid";
+		final String sqlQuery = "SELECT tag_id, tag_label, tag_user_id FROM tags WHERE tag_id = ?::uuid";
 		final List<MovieTag> result = jdbcTemplate.query(sqlQuery, new Object[]{UUID.fromString(tagId)}, (rs, rowNum) -> getMovieTag(rs));
 		return result.stream().findFirst();
 	}
@@ -45,18 +46,26 @@ public class JdbcTagsQueryService implements TagsQuery {
 	}
 
 	@Override
-	public List<MovieId> findAllMoviesByTagId(final String tagId, final Integer userId) {
+	public List<Movie> findAllMoviesByTagId(final String tagId, final Integer userId) {
 		if (!checkTagIdBelongsToUser(tagId, userId)) {
 			return Collections.emptyList();
 		}
 
-		final String findMoviesByTagIdQuery = "SELECT movies_movie_id FROM movie_tags WHERE tags_tag_id = ?::uuid";
+		final String findMoviesByTagIdQuery =
+				"SELECT movie_id, movie_title, user_id FROM movie m " +
+						"JOIN movie_tags mt on m.movie_id = mt.movies_movie_id " +
+						"WHERE tags_tag_id = ?::uuid";
 		return jdbcTemplate.query(findMoviesByTagIdQuery, new Object[]{UUID.fromString(tagId)}, (rs, rowNum) ->
-				new MovieId(rs.getInt("movies_movie_id")));
+				new Movie(
+						new UserId(rs.getInt("user_id")),
+						new MovieTitle(rs.getString("movie_title"))
+				) {{
+					setMovieId(rs.getInt("movie_id")); // Set the movieId explicitly
+				}});
 	}
 
 	private boolean checkTagIdBelongsToUser(final String tagId, final Integer userId) {
-		final String checkTagIdBelongsToUserQuery = "SELECT COUNT(*) FROM tag_table WHERE tag_id = ?::uuid AND tag_user_id = ?";
+		final String checkTagIdBelongsToUserQuery = "SELECT COUNT(*) FROM tags WHERE tag_id = ?::uuid AND tag_user_id = ?";
 		Integer numberOfResultRows = jdbcTemplate.queryForObject(
 				checkTagIdBelongsToUserQuery,
 				new Object[]{UUID.fromString(tagId), userId},
