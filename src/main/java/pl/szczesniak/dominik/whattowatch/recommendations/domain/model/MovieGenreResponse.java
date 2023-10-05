@@ -2,11 +2,11 @@ package pl.szczesniak.dominik.whattowatch.recommendations.domain.model;
 
 import lombok.Value;
 
-import java.util.List;
+import java.util.Map;
 
 @Value
 public class MovieGenreResponse {
 
-	List<MovieGenre> genres;
+	Map<Long, MovieGenre> genres;
 
 }
