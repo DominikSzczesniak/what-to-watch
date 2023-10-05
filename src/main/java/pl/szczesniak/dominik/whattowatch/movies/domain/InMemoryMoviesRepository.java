@@ -58,10 +58,11 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery {
 	}
 
 	@Override
-	public List<Movie> findAllMoviesByTagId(final String tagId, final Integer userId) {
+	public List<Movie> findAllMoviesByTagIds(final List<MovieTagId> tags, final Integer userId) {
 		return movies.values().stream()
-				.filter(movie -> movie.getTags().stream()
-						.anyMatch(movieTag -> movieTag.getTagId().equals(new MovieTagId(UUID.fromString(tagId)))))
+				.filter(movie -> tags.stream().allMatch(tag ->
+						movie.getTags().stream().anyMatch(movieTag -> tag.equals(movieTag.getTagId()))
+				))
 				.filter(movie -> movie.getUserId().getValue().equals(userId))
 				.collect(Collectors.toList());
 	}

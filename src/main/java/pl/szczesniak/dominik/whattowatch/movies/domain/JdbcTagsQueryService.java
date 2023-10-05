@@ -46,22 +46,23 @@ public class JdbcTagsQueryService implements TagsQuery {
 	}
 
 	@Override
-	public List<Movie> findAllMoviesByTagId(final String tagId, final Integer userId) {
-		if (!checkTagIdBelongsToUser(tagId, userId)) {
-			return Collections.emptyList();
-		}
-
-		final String findMoviesByTagIdQuery =
-				"SELECT movie_id, movie_title, user_id FROM movie m " +
-						"JOIN movie_tags mt on m.movie_id = mt.movies_movie_id " +
-						"WHERE tags_tag_id = ?::uuid";
-		return jdbcTemplate.query(findMoviesByTagIdQuery, new Object[]{UUID.fromString(tagId)}, (rs, rowNum) ->
-				new Movie(
-						new UserId(rs.getInt("user_id")),
-						new MovieTitle(rs.getString("movie_title"))
-				) {{
-					setMovieId(rs.getInt("movie_id")); // Set the movieId explicitly
-				}});
+	public List<Movie> findAllMoviesByTagIds(final List<MovieTagId> tags, final Integer userId) {
+//		if (!checkTagIdBelongsToUser(tags, userId)) {
+//			return Collections.emptyList();
+//		}
+//
+//		final String findMoviesByTagIdQuery =
+//				"SELECT movie_id, movie_title, user_id FROM movie m " +
+//						"JOIN movie_tags mt on m.movie_id = mt.movies_movie_id " +
+//						"WHERE tags_tag_id = ?::uuid";
+//		return jdbcTemplate.query(findMoviesByTagIdQuery, new Object[]{UUID.fromString(tags)}, (rs, rowNum) ->
+//				new Movie(
+//						new UserId(rs.getInt("user_id")),
+//						new MovieTitle(rs.getString("movie_title"))
+//				) {{
+//					setMovieId(rs.getInt("movie_id")); // Set the movieId explicitly
+//				}});
+		return null;
 	}
 
 	private boolean checkTagIdBelongsToUser(final String tagId, final Integer userId) {

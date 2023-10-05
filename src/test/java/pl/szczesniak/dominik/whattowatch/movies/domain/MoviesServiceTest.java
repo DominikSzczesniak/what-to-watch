@@ -629,7 +629,25 @@ class MoviesServiceTest {
 
 		// then
 		assertThat(tut.getMoviesToWatch(user)).hasSize(5);
-		assertThat(tut.getMoviesByTagId(tagId, user)).hasSize(4);
+		assertThat(tut.getMoviesByTagId(List.of(tagId), user)).hasSize(4);
+	}
+
+	@Test
+	void should_find_movie_with_two_matching_tags() {
+		// given
+		final UserId user = userProvider.addUser(createAnyUserId());
+		final MovieId movie1 = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+		final MovieId movie2 = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+
+		// when
+		final MovieTagId movieTag1 = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(createAnyTagLabel()).movieId(movie1).userId(user).build());
+		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(movieTag1).movieId(movie2).userId(user).build());
+		final MovieTagId movieTag2 = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(createAnyTagLabel()).movieId(movie2).userId(user).build());
+
+		final List<Movie> foundMovies = tut.getMoviesByTagId(List.of(movieTag1, movieTag2), user);
+
+		// then
+		assertThat(foundMovies.size()).isEqualTo(1);
 	}
 
 	@Test
