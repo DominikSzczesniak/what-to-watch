@@ -1,8 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain.model;
 
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
