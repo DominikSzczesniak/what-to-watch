@@ -1,27 +1,25 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.GenreId;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -37,14 +35,16 @@ public class RecommendationConfiguration {
 	@AttributeOverride(name = "value", column = @Column(name = "configuration_id"))
 	private Long configurationId;
 
-	@ElementCollection
-	@AttributeOverride(name = "value", column = @Column(name = "genre_id"))
-	private Set<GenreId> genres;
+	@ElementCollection(targetClass = MovieGenre.class)
+	@Enumerated(EnumType.STRING)
+	@CollectionTable(name = "configuration_genres", joinColumns = @JoinColumn(name = "configuration_id"))
+	@Column(name = "genre")
+	private Set<MovieGenre> genres;
 
 	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
 	private UserId userId;
 
-	RecommendationConfiguration(final Set<GenreId> genres, final UserId userId) {
+	RecommendationConfiguration(final Set<MovieGenre> genres, final UserId userId) {
 		this.genres = genres;
 		this.userId = userId;
 	}

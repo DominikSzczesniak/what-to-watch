@@ -9,8 +9,6 @@ public interface RecommendationConfigurationRepository {
 
 	ConfigurationId create(RecommendationConfiguration configuration);
 
-	ConfigurationId update(RecommendationConfiguration configuration);
-
 	Optional<RecommendationConfiguration> findBy(UserId userId);
 
 }

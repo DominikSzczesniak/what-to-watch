@@ -16,14 +16,9 @@ public class JpaRecommendationConfigurationRepository implements RecommendationC
 	private final SpringDataJpaRecommendationConfigurationRepository springDataJpaRecommendationConfigurationRepository;
 
 	@Override
-	public ConfigurationId create(final RecommendationConfiguration configuration) { // TODO: zobaczyc czy to dziala
+	public ConfigurationId create(final RecommendationConfiguration configuration) {
 		final Optional<RecommendationConfiguration> foundConfig = springDataJpaRecommendationConfigurationRepository.findByUserId(configuration.getUserId());
 		foundConfig.ifPresent(springDataJpaRecommendationConfigurationRepository::delete);
-		return new ConfigurationId(springDataJpaRecommendationConfigurationRepository.save(configuration).getConfigurationId());
-	}
-
-	@Override
-	public ConfigurationId update(final RecommendationConfiguration configuration) {
 		return new ConfigurationId(springDataJpaRecommendationConfigurationRepository.save(configuration).getConfigurationId());
 	}
 
