@@ -629,7 +629,7 @@ class MoviesServiceTest {
 
 		// then
 		assertThat(tut.getMoviesToWatch(user)).hasSize(5);
-		assertThat(tut.getMoviesByTagId(List.of(tagId), user)).hasSize(4);
+		assertThat(tut.getMoviesByTags(List.of(tagId), user)).hasSize(4);
 	}
 
 	@Test
@@ -644,7 +644,7 @@ class MoviesServiceTest {
 		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(movieTag1).movieId(movie2).userId(user).build());
 		final MovieTagId movieTag2 = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(createAnyTagLabel()).movieId(movie2).userId(user).build());
 
-		final List<Movie> foundMovies = tut.getMoviesByTagId(List.of(movieTag1, movieTag2), user);
+		final List<Movie> foundMovies = tut.getMoviesByTags(List.of(movieTag1, movieTag2), user);
 
 		// then
 		assertThat(foundMovies.size()).isEqualTo(1);

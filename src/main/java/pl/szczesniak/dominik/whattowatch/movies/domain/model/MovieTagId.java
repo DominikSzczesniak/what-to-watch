@@ -17,11 +17,11 @@ import static java.util.Objects.requireNonNull;
 @EqualsAndHashCode
 public class MovieTagId {
 
-	private UUID value;
+	private String value;
 
 	public MovieTagId(final UUID value) {
 		requireNonNull(value);
-		this.value = value;
+		this.value = value.toString();
 	}
 
 }

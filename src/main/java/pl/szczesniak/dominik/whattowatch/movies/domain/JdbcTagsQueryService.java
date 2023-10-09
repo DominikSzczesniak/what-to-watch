@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class JdbcTagsQueryService implements TagsQuery {
 
@@ -45,9 +45,17 @@ public class JdbcTagsQueryService implements TagsQuery {
 		return new MovieTag(foundTagId, tagLabel, user);
 	}
 
-	@Override
-	public List<Movie> findAllMoviesByTagIds(final List<MovieTagId> tags, final Integer userId) {
-//		if (!checkTagIdBelongsToUser(tags, userId)) {
+	private boolean checkTagIdBelongsToUser(final String tagId, final Integer userId) {
+		final String checkTagIdBelongsToUserQuery = "SELECT COUNT(*) FROM tags WHERE tag_id = ?::uuid AND tag_user_id = ?";
+		Integer numberOfResultRows = jdbcTemplate.queryForObject(
+				checkTagIdBelongsToUserQuery,
+				new Object[]{UUID.fromString(tagId), userId},
+				Integer.class);
+
+		return Objects.requireNonNullElse(numberOfResultRows, 0) > 0;
+	}
+
+	//		if (!checkTagIdBelongsToUser(tags, userId)) {
 //			return Collections.emptyList();
 //		}
 //
@@ -62,17 +70,6 @@ public class JdbcTagsQueryService implements TagsQuery {
 //				) {{
 //					setMovieId(rs.getInt("movie_id")); // Set the movieId explicitly
 //				}});
-		return null;
-	}
-
-	private boolean checkTagIdBelongsToUser(final String tagId, final Integer userId) {
-		final String checkTagIdBelongsToUserQuery = "SELECT COUNT(*) FROM tags WHERE tag_id = ?::uuid AND tag_user_id = ?";
-		Integer numberOfResultRows = jdbcTemplate.queryForObject(
-				checkTagIdBelongsToUserQuery,
-				new Object[]{UUID.fromString(tagId), userId},
-				Integer.class);
-
-		return Objects.requireNonNullElse(numberOfResultRows, 0) > 0;
-	}
+//		return null;
 
 }

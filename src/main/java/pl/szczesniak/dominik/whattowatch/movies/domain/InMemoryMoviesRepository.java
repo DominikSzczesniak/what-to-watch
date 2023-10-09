@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -58,14 +59,15 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery {
 	}
 
 	@Override
-	public List<Movie> findAllMoviesByTagIds(final List<MovieTagId> tags, final Integer userId) {
+	public List<Movie> findAllMoviesByTagIds(final List<MovieTagId> tags, final UserId userId) {
 		return movies.values().stream()
 				.filter(movie -> tags.stream().allMatch(tag ->
 						movie.getTags().stream().anyMatch(movieTag -> tag.equals(movieTag.getTagId()))
 				))
-				.filter(movie -> movie.getUserId().getValue().equals(userId))
+				.filter(movie -> movie.getUserId().equals(userId))
 				.collect(Collectors.toList());
 	}
+
 
 	@Override
 	public List<MovieTag> findByUserId(final Integer userId) {

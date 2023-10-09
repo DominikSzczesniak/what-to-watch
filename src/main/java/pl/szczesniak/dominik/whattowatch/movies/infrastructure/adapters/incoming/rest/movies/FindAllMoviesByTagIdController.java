@@ -27,7 +27,7 @@ public class FindAllMoviesByTagIdController {
 		final List<MovieTagId> list = tags.getTags().stream()
 				.map(tag -> new MovieTagId(UUID.fromString(tag)))
 				.collect(Collectors.toList());
-		final List<Movie> foundMovies = moviesService.getMoviesByTagId(list, new UserId(userId));
+		final List<Movie> foundMovies = moviesService.getMoviesByTags(list, new UserId(userId));
 		return ResponseEntity.status(200).body(foundMovies);
 	}
 

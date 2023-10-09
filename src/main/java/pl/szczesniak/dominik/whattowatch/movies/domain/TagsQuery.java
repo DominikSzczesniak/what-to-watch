@@ -11,6 +11,4 @@ public interface TagsQuery {
 
 	Optional<MovieTag> findTagByTagId(String tagId);
 
-	List<Movie> findAllMoviesByTagIds(List<MovieTagId> tags, Integer userId);
-
 }
