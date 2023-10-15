@@ -16,6 +16,8 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -33,6 +35,7 @@ public class RecommendationConfiguration {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@AttributeOverride(name = "value", column = @Column(name = "configuration_id"))
+	@Setter(AccessLevel.PACKAGE)
 	private Long configurationId;
 
 	@ElementCollection(targetClass = MovieGenre.class)
@@ -44,7 +47,7 @@ public class RecommendationConfiguration {
 	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
 	private UserId userId;
 
-	RecommendationConfiguration(final Set<MovieGenre> genres, final UserId userId) {
+	RecommendationConfiguration(@NonNull final Set<MovieGenre> genres, @NonNull final UserId userId) {
 		this.genres = genres;
 		this.userId = userId;
 	}
