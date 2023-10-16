@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -14,11 +14,11 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 @RestController
 public class AddMovieController {
 
-	private final MoviesService moviesService;
+	private final MoviesFacade moviesFacade;
 
 	@PostMapping("/api/movies")
 	public Integer addMovie(@RequestBody final CreateMovieDto movieDto) {
-		return moviesService.addMovieToList(AddMovieToList.builder(new MovieTitle(movieDto.getTitle()), new UserId(movieDto.userId)).build()).getValue();
+		return moviesFacade.addMovieToList(AddMovieToList.builder(new MovieTitle(movieDto.getTitle()), new UserId(movieDto.userId)).build()).getValue();
 	}
 
 	@Data
