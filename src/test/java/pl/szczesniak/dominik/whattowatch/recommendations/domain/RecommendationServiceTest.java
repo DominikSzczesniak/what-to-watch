@@ -71,7 +71,7 @@ class RecommendationServiceTest {
 				MovieInfoSample.builder().genres(List.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE, MovieGenre.ANIMATION)).build(),
 				MovieInfoSample.builder().genres(List.of(MovieGenre.ACTION, MovieGenre.ADVENTURE, MovieGenre.COMEDY, MovieGenre.CRIME)).build()
 		));
-		when(movieInfoApi.getMoviesByGenre(List.of(28L, 10770L))).thenReturn(movieInfoResponse);
+		when(movieInfoApi.getMoviesByGenre(List.of(28L, 10770L))).thenReturn(movieInfoResponse); // any + verify moze api in memory
 
 		// when
 		final RecommendedMovies recommendedMovies = tut.recommendMoviesByConfiguration(user);
