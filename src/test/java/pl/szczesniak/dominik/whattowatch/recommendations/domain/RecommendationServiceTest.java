@@ -32,19 +32,19 @@ class RecommendationServiceTest {
 	void setUp() {
 		configManager = new RecommendationConfigurationManager(new InMemoryRecommendationConfigurationRepository());
 		movieInfoApi = mock(MovieInfoApi.class);
-		tut = new RecommendationService(configManager, movieInfoApi);
+		tut = new RecommendationService(configManager, new InMemoryMovieInfoApiRepository());
 	}
 
 	@Test
 	void should_recommend_popular_movies() {
 		// given
-		when(movieInfoApi.getPopularMovies()).thenReturn(new MovieInfoResponse(Collections.emptyList()));
+//		when(movieInfoApi.getPopularMovies()).thenReturn(new MovieInfoResponse(Collections.emptyList()));
 
 		// when
 		final MovieInfoResponse movieInfoResponse = tut.recommendPopularMovies();
 
 		// then
-		assertThat(movieInfoResponse.getResults()).hasSize(0);
+		assertThat(movieInfoResponse.getResults()).hasSizeGreaterThan(0);
 	}
 
 	@Test
@@ -60,29 +60,29 @@ class RecommendationServiceTest {
 	}
 
 	@Test
-	void should_recommend_two_movies() { // TODO: fix, sometimes passess, sometimes npe, sometimes false
+	void should_recommend_two_movies_based_on_user_configuration() {
 		// given
-		final UserId user = new UserId(1);
-		configManager.create(user, Set.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE));
-		when(movieInfoApi.getGenres()).thenReturn(genresMap());
-		final MovieInfoResponse movieInfoResponse = new MovieInfoResponse(List.of(
-				MovieInfoSample.builder().genres(List.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE)).build(),
-				MovieInfoSample.builder().genres(List.of(MovieGenre.ACTION, MovieGenre.CRIME)).build(),
-				MovieInfoSample.builder().genres(List.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE, MovieGenre.ANIMATION)).build(),
-				MovieInfoSample.builder().genres(List.of(MovieGenre.ACTION, MovieGenre.ADVENTURE, MovieGenre.COMEDY, MovieGenre.CRIME)).build()
-		));
-		when(movieInfoApi.getMoviesByGenre(List.of(28L, 10770L))).thenReturn(movieInfoResponse); // any + verify moze api in memory
+		final UserId user1 = new UserId(1);
+		final UserId user2 = new UserId(2);
+		configManager.create(user1, Set.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE));
+		configManager.create(user2, Set.of(MovieGenre.ADVENTURE));
 
 		// when
-		final RecommendedMovies recommendedMovies = tut.recommendMoviesByConfiguration(user);
+		final RecommendedMovies recommendedMoviesUser1 = tut.recommendMoviesByConfiguration(user1);
+		final RecommendedMovies recommendedMoviesUser2 = tut.recommendMoviesByConfiguration(user2);
 
 		// then
-		assertThat(recommendedMovies.getMovies()).hasSize(2);
-
-		final boolean genresMatch = recommendedMovies.getMovies().stream()
+		assertThat(recommendedMoviesUser1.getMovies()).hasSize(2);
+		final boolean genresMatchUser1 = recommendedMoviesUser1.getMovies().stream()
 				.map(MovieInfo::getGenres)
 				.allMatch(genres -> genres.contains(MovieGenre.ACTION) && genres.contains(MovieGenre.TV_MOVIE));
-		assertThat(genresMatch).isTrue();
+		assertThat(genresMatchUser1).isTrue();
+
+		assertThat(recommendedMoviesUser2.getMovies()).hasSize(2);
+		final boolean genresMatchUser2 = recommendedMoviesUser2.getMovies().stream()
+				.map(MovieInfo::getGenres)
+				.allMatch(genres -> genres.contains(MovieGenre.ADVENTURE));
+		assertThat(genresMatchUser2).isTrue();
 	}
 
 	@Test

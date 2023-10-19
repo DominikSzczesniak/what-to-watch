@@ -16,9 +16,9 @@ public class MovieInfo {
 
 	private final List<MovieGenre> genres;
 
-	private final String title;
-
 	private final String overview;
+
+	private final String title;
 
 	public MovieInfo(@NonNull final List<MovieGenre> genres, @NonNull final String overview, @NonNull final String title) {
 		this.genres = requireNonNull(genres);
