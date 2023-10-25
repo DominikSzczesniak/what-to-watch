@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import pl.szczesniak.dominik.whattowatch.movies.domain.UserProvider;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddCommentToMovieRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddCommentToMovieRestInvoker.CommentDto;
@@ -23,7 +23,8 @@ import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.DeleteCommentFromMovieToWatchRestInvoker.DeleteCommentDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.DeleteMovieTagFromMovieRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.DeleteMovieToWatchCoverRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMovieIdsByMovieTagIdRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMovieIdsByMovieTagIdsRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMovieIdsByMovieTagIdsRestInvoker.TagsIdsDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMovieTagsRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMovieTagsRestInvoker.FoundMovieTagDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMoviesToWatchRestInvoker;
@@ -43,6 +44,7 @@ import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,6 +55,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentSample.createAnyComment;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabelSample.createAnyTagLabel;
+import static pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMovieIdsByMovieTagIdsRestInvoker.MovieDetailsByTagDto;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -107,7 +110,7 @@ class MoviesModuleIntegrationTest {
 	private FindAllMovieTagsRestInvoker findMovieTagsRest;
 
 	@Autowired
-	private FindAllMovieIdsByMovieTagIdRestInvoker findAllMovieIdsByMovieTagIdRest;
+	private FindAllMovieIdsByMovieTagIdsRestInvoker findAllMovieIdsByMovieTagIdRest;
 
 	private Integer userId;
 
@@ -459,7 +462,7 @@ class MoviesModuleIntegrationTest {
 	}
 
 	@Test
-	void should_find_all_user_movies_with_tag_id() {
+	void should_find_all_user_movies_with_tag_id() throws JsonProcessingException {
 		// given
 		final Integer differentUser = createAnyUserId().getValue();
 
@@ -488,8 +491,8 @@ class MoviesModuleIntegrationTest {
 				MovieTagDto.builder().tagLabel(createAnyTagLabel().getValue()).build(), differentUser, differentUsersMovieResponse.getBody());
 
 		// when
-		final ResponseEntity<List<MovieId>> findAllMoviesByTagIdResponse = // TODO: fix
-				findAllMovieIdsByMovieTagIdRest.getMoviesByTagId(userId, addTagToMovieOneResponse.getBody());
+		ResponseEntity<List<MovieDetailsByTagDto>> findAllMoviesByTagIdResponse =
+				findAllMovieIdsByMovieTagIdRest.getMoviesByTagId(userId, new TagsIdsDto(Arrays.asList(addTagToMovieOneResponse.getBody())));
 
 		// then
 		assertThat(findAllMoviesByTagIdResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
