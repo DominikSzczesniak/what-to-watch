@@ -3,7 +3,6 @@ package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenreResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.MovieInfoApi;
@@ -14,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,6 +23,7 @@ public class RecommendationService {
 
 	private final RecommendationConfigurationManager configurationManager;
 	private final MovieInfoApi movieInfoApi;
+	private final RecommendedMoviesRepository repository;
 
 	public MovieInfoResponse recommendPopularMovies() {
 		return movieInfoApi.getPopularMovies();
@@ -30,18 +31,29 @@ public class RecommendationService {
 
 	public RecommendedMovies recommendMoviesByConfiguration(final UserId userId) {
 		final RecommendationConfiguration configuration = configurationManager.findBy(userId);
+		final List<MovieInfo> moviesByGenre = getMovieInfos(configuration);
+		final Optional<RecommendedMovies> latestRecommendedMovies = repository.findLatestRecommendedMovies(userId);
 
-		final List<Long> userGenres = mapGenresToIds(configuration.getGenres());
-		final MovieInfoResponse moviesByGenre = movieInfoApi.getMoviesByGenre(userGenres);
-		final List<MovieInfo> allMovies = moviesByGenre.getResults();
+		final List<MovieInfo> moviesToRecommend = latestRecommendedMovies
+				.map(recommendedMovies -> getMoviesToRecommend(configuration.getGenres(), moviesByGenre, recommendedMovies.getMovies()))
+				.orElseGet(() -> getMoviesToRecommend(configuration.getGenres(), moviesByGenre, new ArrayList<>()));
 
-		final Set<MovieGenre> genres = configuration.getGenres();
-		return getRecommendedMovies(genres, allMovies);
+		final RecommendedMovies recommendation = new RecommendedMovies(moviesToRecommend, userId);
+		repository.create(recommendation);
+
+		return recommendation;
 	}
 
-	private static RecommendedMovies getRecommendedMovies(Set<MovieGenre> genres, final List<MovieInfo> allMovies) {
-		final Map<MovieInfo, Long> sharedGenresCountMap = new HashMap<>();
+	private List<MovieInfo> getMovieInfos(final RecommendationConfiguration configuration) {
+		final List<Long> userGenres = mapGenresToIds(configuration.getGenres());
+		final MovieInfoResponse moviesByGenre = movieInfoApi.getMoviesByGenre(userGenres);
+		return moviesByGenre.getResults();
+	}
 
+	private static List<MovieInfo> getMoviesToRecommend(final Set<MovieGenre> genres,
+														final List<MovieInfo> allMovies,
+														final List<MovieInfo> latestRecommendedMovies) {
+		final Map<MovieInfo, Long> sharedGenresCountMap = new HashMap<>();
 		for (MovieInfo movie : allMovies) {
 			long sharedGenresCount = movie.getGenres().stream()
 					.filter(genres::contains)
@@ -54,7 +66,9 @@ public class RecommendationService {
 				.map(Map.Entry::getKey)
 				.collect(Collectors.toList());
 
-		return new RecommendedMovies(sortedMovies.subList(0, Math.min(sortedMovies.size(), 2)));
+		sortedMovies.removeAll(latestRecommendedMovies);
+
+		return sortedMovies.subList(0, Math.min(sortedMovies.size(), 2));
 	}
 
 	private List<Long> mapGenresToIds(final Set<MovieGenre> genres) {

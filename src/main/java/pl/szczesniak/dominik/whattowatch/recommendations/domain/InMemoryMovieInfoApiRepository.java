@@ -67,7 +67,7 @@ public class InMemoryMovieInfoApiRepository implements MovieInfoApi {
 	}
 
 	private void addMovieInfos() {
-		movies.put(3, new MovieInfo(List.of(MovieGenre.ROMANCE, MovieGenre.CRIME), generateRandomString(), generateRandomString()));
+		movies.put(3, new MovieInfo(List.of(MovieGenre.CRIME), generateRandomString(), generateRandomString()));
 		movies.put(1, new MovieInfo(List.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE), generateRandomString(), generateRandomString()));
 		movies.put(4, new MovieInfo(List.of(MovieGenre.COMEDY), generateRandomString(), generateRandomString()));
 		movies.put(5, new MovieInfo(List.of(MovieGenre.FAMILY), generateRandomString(), generateRandomString()));
@@ -90,14 +90,14 @@ public class InMemoryMovieInfoApiRepository implements MovieInfoApi {
 		movies.put(21, new MovieInfo(List.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE), generateRandomString(), generateRandomString()));
 		movies.put(22, new MovieInfo(List.of(MovieGenre.COMEDY), generateRandomString(), generateRandomString()));
 		movies.put(23, new MovieInfo(List.of(MovieGenre.DOCUMENTARY, MovieGenre.MUSIC), generateRandomString(), generateRandomString()));
-		movies.put(24, new MovieInfo(List.of(MovieGenre.ROMANCE, MovieGenre.DRAMA), generateRandomString(), generateRandomString()));
+		movies.put(24, new MovieInfo(List.of(MovieGenre.DRAMA), generateRandomString(), generateRandomString()));
 		movies.put(25, new MovieInfo(List.of(MovieGenre.HORROR, MovieGenre.THRILLER), generateRandomString(), generateRandomString()));
 		movies.put(26, new MovieInfo(List.of(MovieGenre.SCIENCE_FICTION, MovieGenre.ACTION), generateRandomString(), generateRandomString()));
 		movies.put(27, new MovieInfo(List.of(MovieGenre.ADVENTURE, MovieGenre.COMEDY), generateRandomString(), generateRandomString()));
 		movies.put(28, new MovieInfo(List.of(MovieGenre.FANTASY, MovieGenre.FAMILY), generateRandomString(), generateRandomString()));
 		movies.put(29, new MovieInfo(List.of(MovieGenre.THRILLER, MovieGenre.CRIME), generateRandomString(), generateRandomString()));
 		movies.put(30, new MovieInfo(List.of(MovieGenre.DRAMA), generateRandomString(), generateRandomString()));
-		movies.put(31, new MovieInfo(List.of(MovieGenre.ROMANCE, MovieGenre.COMEDY), generateRandomString(), generateRandomString()));
+		movies.put(31, new MovieInfo(List.of(MovieGenre.COMEDY), generateRandomString(), generateRandomString()));
 		movies.put(32, new MovieInfo(List.of(MovieGenre.HISTORY, MovieGenre.WAR), generateRandomString(), generateRandomString()));
 		movies.put(33, new MovieInfo(List.of(MovieGenre.HORROR, MovieGenre.MYSTERY), generateRandomString(), generateRandomString()));
 		movies.put(34, new MovieInfo(List.of(MovieGenre.SCIENCE_FICTION, MovieGenre.FANTASY), generateRandomString(), generateRandomString()));

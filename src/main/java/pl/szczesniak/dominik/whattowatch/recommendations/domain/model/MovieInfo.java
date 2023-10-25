@@ -1,7 +1,14 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain.model;
 
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 
@@ -9,16 +16,24 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
+@Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class MovieInfo {
 
-	private final List<MovieGenre> genres;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer movieInfoId;
 
-	private final String overview;
+	@ElementCollection
+	private List<MovieGenre> genres;
 
-	private final String title;
+	private String overview;
+
+	private String title;
 
 	public MovieInfo(@NonNull final List<MovieGenre> genres, @NonNull final String overview, @NonNull final String title) {
 		this.genres = requireNonNull(genres);
