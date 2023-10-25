@@ -12,6 +12,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static pl.szczesniak.dominik.whattowatch.recommendations.domain.TestRecommendationServiceConfiguration.recommendationService;
 
 class RecommendationServiceTest {
 
@@ -21,7 +22,7 @@ class RecommendationServiceTest {
 	@BeforeEach
 	void setUp() {
 		configManager = new RecommendationConfigurationManager(new InMemoryRecommendationConfigurationRepository());
-		tut = new RecommendationService(configManager, new InMemoryMovieInfoApiRepository(), new InMemoryRecommendedMoviesRepository());
+		tut = recommendationService(configManager);
 	}
 
 	@Test

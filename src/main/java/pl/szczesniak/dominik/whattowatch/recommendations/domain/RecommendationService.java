@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
@@ -17,7 +16,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
 @RequiredArgsConstructor
 public class RecommendationService {
 
