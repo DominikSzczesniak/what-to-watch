@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,14 +18,13 @@ import static java.util.Objects.requireNonNull;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class MovieInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer movieInfoId;
+	private Integer id;
 
 	@ElementCollection
 	private List<MovieGenre> genres;

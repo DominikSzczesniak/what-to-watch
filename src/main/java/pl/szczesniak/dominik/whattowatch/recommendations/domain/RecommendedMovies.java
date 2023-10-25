@@ -36,7 +36,7 @@ public class RecommendedMovies {
 	private RecommendedMoviesId id;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "movieInfoId")
+	@JoinColumn(name = "id")
 	private List<MovieInfo> movies;
 
 	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
