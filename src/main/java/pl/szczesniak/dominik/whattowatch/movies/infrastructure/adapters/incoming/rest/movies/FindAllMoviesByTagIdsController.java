@@ -25,7 +25,7 @@ public class FindAllMoviesByTagIdsController {
 
 	@GetMapping("/api/movies/tags/filter")
 	public ResponseEntity<List<MovieDetailsByTagDto>> findAllMoviesByTagId(@RequestHeader final Integer userId,
-																		   @RequestBody final TagsIdsDto tags) {
+																		   @RequestBody final TagIdsDto tags) {
 		final List<MovieTagId> tagIds = tags.getTags().stream()
 				.map(tag -> new MovieTagId(UUID.fromString(tag)))
 				.collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class FindAllMoviesByTagIdsController {
 	}
 
 	@Data
-	private static class TagsIdsDto {
+	private static class TagIdsDto {
 
 		private List<String> tags;
 

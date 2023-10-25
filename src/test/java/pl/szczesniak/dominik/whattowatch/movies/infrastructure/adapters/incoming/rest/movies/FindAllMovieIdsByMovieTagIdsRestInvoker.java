@@ -21,22 +21,21 @@ public class FindAllMovieIdsByMovieTagIdsRestInvoker {
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<List<MovieDetailsByTagDto>> getMoviesByTagId(final Integer userId, final TagsIdsDto tags) {
+	public ResponseEntity<List<MovieDetailsByTagDto>> getMoviesByTagIds(final Integer userId, final TagIdsDto tags) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
-		final ParameterizedTypeReference<List<MovieDetailsByTagDto>> responseType = new ParameterizedTypeReference<>() {};
 
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,
 				new HttpEntity<>(headers),
-				responseType,
+				new ParameterizedTypeReference<>() {},
 				tags
 		);
 	}
 
 	@Data
-	public static class TagsIdsDto {
+	public static class TagIdsDto {
 
 		private final List<String> tags;
 
@@ -54,7 +53,6 @@ public class FindAllMovieIdsByMovieTagIdsRestInvoker {
 	@Value
 	public static class MovieCommentDto {
 		String commentId;
-		Integer movieId;
 		String value;
 	}
 
