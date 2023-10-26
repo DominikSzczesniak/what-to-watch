@@ -24,13 +24,13 @@ public class FindAllMovieIdsByMovieTagIdsRestInvoker {
 	public ResponseEntity<List<MovieDetailsByTagDto>> getMoviesByTagIds(final Integer userId, final TagIdsDto tags) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
+		final HttpEntity<TagIdsDto> requestEntity = new HttpEntity<>(tags, headers);
 
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,
-				new HttpEntity<>(headers),
-				new ParameterizedTypeReference<>() {},
-				tags
+				requestEntity,
+				new ParameterizedTypeReference<>() {}
 		);
 	}
 
