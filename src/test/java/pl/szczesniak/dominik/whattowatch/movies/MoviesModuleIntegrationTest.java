@@ -391,6 +391,7 @@ class MoviesModuleIntegrationTest {
 		// then
 		assertThat(findMovieTagsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(findMovieTagsResponse.getBody()).hasSize(1);
+		assertThat(findMovieTagsResponse.getBody().get(0).getTagLabel()).isEqualTo(tagLabel);
 
 		// when
 		final ResponseEntity<Void> deleteMovieTagFromMovieResponse = deleteMovieTagFromMovieRest.deleteTagFromMovie(

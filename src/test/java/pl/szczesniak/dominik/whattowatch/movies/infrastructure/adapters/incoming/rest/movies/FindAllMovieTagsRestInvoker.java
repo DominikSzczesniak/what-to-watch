@@ -1,10 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -30,19 +27,16 @@ public class FindAllMovieTagsRestInvoker {
 				URL,
 				HttpMethod.GET,
 				new HttpEntity<>(headers),
-				new ParameterizedTypeReference<>() {}
+				new ParameterizedTypeReference<>() {
+				}
 		);
 	}
 
-	@Getter
-	@ToString
-	@EqualsAndHashCode
-	@Builder
+	@Value
 	public static class FoundMovieTagDto {
-
-		private final String label;
-		private final Integer userId;
-
+		String tagId;
+		String tagLabel;
+		Integer userId;
 	}
 
 }
