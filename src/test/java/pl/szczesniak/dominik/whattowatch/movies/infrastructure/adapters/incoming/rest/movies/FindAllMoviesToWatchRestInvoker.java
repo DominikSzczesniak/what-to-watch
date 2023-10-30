@@ -1,10 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -23,27 +20,50 @@ public class FindAllMoviesToWatchRestInvoker {
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<List<MovieDto>> findAllMoviesToWatch(final Integer userId) {
+	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(final Integer userId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,
 				new HttpEntity<>(headers),
-				new ParameterizedTypeReference<>() {}
+				new ParameterizedTypeReference<>() {
+				}
 		);
 	}
 
-	@Getter
-	@ToString
-	@EqualsAndHashCode
-	@Builder
-	public static class MovieDto {
+	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(final Integer userId, final String tags) {
+		final HttpHeaders headers = new HttpHeaders();
+		headers.set("userId", String.valueOf(userId));
+		final String urlWithParams = URL + "?tags=" + tags;
+		return restTemplate.exchange(
+				urlWithParams,
+				HttpMethod.GET,
+				new HttpEntity<>(headers),
+				new ParameterizedTypeReference<>() {
+				}
+		);
+	}
 
-		private final String title;
-		private final Integer movieId;
-		private final Integer userId;
+	@Value
+	public static class MovieDetailsDto {
+		String title;
+		Integer movieId;
+		Integer userId;
+		List<MovieCommentDto> comments;
+		List<MovieTagDto> tags;
+	}
 
+	@Value
+	public static class MovieCommentDto {
+		String commentId;
+		String value;
+	}
+
+	@Value
+	public static class MovieTagDto {
+		String tagId;
+		String tagLabel;
 	}
 
 }
