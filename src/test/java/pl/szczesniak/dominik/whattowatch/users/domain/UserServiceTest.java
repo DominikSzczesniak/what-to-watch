@@ -9,6 +9,8 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUserS
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static pl.szczesniak.dominik.whattowatch.users.domain.TestUserServiceConfiguration.userService;
@@ -136,4 +138,17 @@ class UserServiceTest {
 		assertThat(differentPassword).isInstanceOf(InvalidCredentialsException.class);
 	}
 
+	@Test
+	void should_find_all_users() {
+		// given
+		tut.createUser(CreateUserSample.builder().build());
+		tut.createUser(CreateUserSample.builder().build());
+		tut.createUser(CreateUserSample.builder().build());
+
+		// when
+		final List<UserId> allUsers = tut.findAllUsers();
+
+		// then
+		assertThat(allUsers).hasSize(3);
+	}
 }

@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
@@ -28,6 +29,7 @@ public class RecommendationService {
 		return movieInfoApi.getPopularMovies();
 	}
 
+	@Transactional
 	public RecommendedMovies recommendMoviesByConfiguration(final UserId userId) {
 		final RecommendationConfiguration configuration = configurationManager.findBy(userId);
 		final List<MovieInfo> moviesByGenre = getMovieInfos(configuration);

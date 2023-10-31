@@ -4,6 +4,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,6 +31,11 @@ public class InMemoryUserRepository implements UserRepository {
 	@Override
 	public Optional<User> findBy(final String username) {
 		return users.values().stream().filter(user -> user.getUsername().getValue().equals(username)).findFirst();
+	}
+
+	@Override
+	public List<UserId> findAllUsers() {
+		return users.keySet().stream().toList();
 	}
 
 	private boolean usernameIsTaken(final String username) {

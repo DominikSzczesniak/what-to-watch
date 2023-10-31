@@ -31,7 +31,6 @@ public class RecommendedMovies {
 
 	@Setter(AccessLevel.PACKAGE)
 	@EmbeddedId
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	@AttributeOverride(name = "value", column = @Column(name = "recommended_movies_id"))
 	private RecommendedMoviesId id;
 

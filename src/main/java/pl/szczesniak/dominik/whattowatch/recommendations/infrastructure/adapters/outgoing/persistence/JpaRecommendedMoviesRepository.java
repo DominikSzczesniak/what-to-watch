@@ -17,12 +17,14 @@ public class JpaRecommendedMoviesRepository implements RecommendedMoviesReposito
 
 	@Override
 	public RecommendedMoviesId create(final RecommendedMovies recommendedMovies) {
-		return new RecommendedMoviesId(springDataJpaRecommendedMoviesRepository.save(recommendedMovies).getId().getValue());
+		final RecommendedMovies recommendation = springDataJpaRecommendedMoviesRepository.save(recommendedMovies);
+		return recommendation.getId();
 	}
 
-	@Override
+	@Override // TODO:
 	public Optional<RecommendedMovies> findLatestRecommendedMovies(final UserId userId) {
-		return Optional.ofNullable(springDataJpaRecommendedMoviesRepository.findTopByUserIdOrderByDateDesc(userId));
+		return Optional.ofNullable(springDataJpaRecommendedMoviesRepository.findAll().get(0));
+//		return Optional.ofNullable(springDataJpaRecommendedMoviesRepository.findTopByUserIdOrderByDateDesc(userId));
 	}
 
 }

@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 @EqualsAndHashCode
 public class RecommendedMoviesId {
 
-	private Long value;
+	Long value;
 
 	public RecommendedMoviesId(final Long value) {
 		checkArgument(value > 0, "UserId value must be higher than 0");
