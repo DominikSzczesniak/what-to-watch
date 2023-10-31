@@ -40,7 +40,7 @@ class RecommendationServiceTest {
 		final UserId user = new UserId(1);
 
 		// when
-		Throwable thrown = catchThrowable(() -> tut.recommendMoviesByConfiguration(user));
+		final Throwable thrown = catchThrowable(() -> tut.recommendMoviesByConfiguration(user));
 
 		// then
 		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
@@ -101,4 +101,33 @@ class RecommendationServiceTest {
 		assertThat(recommendedMovies1.getMovies()).isNotEqualTo(recommendedMovies2.getMovies());
 		assertThat(recommendedMovies1.getMovies()).isEqualTo(recommendedMovies3.getMovies());
 	}
+
+	@Test
+	void should_find_latest_recommended_movies() {
+		// given
+		final UserId user = new UserId(1);
+		configManager.create(user, Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE));
+
+		// when
+		final RecommendedMovies recommendedMovies = tut.recommendMoviesByConfiguration(user);
+
+		final RecommendedMovies latestRecommendedMovies = tut.findLatestRecommendedMovies(user);
+
+		// then
+		assertThat(latestRecommendedMovies).isEqualTo(recommendedMovies);
+	}
+
+	@Test
+	void should_throw_exception_when_no_recommended_movies_found() {
+		// given
+		final UserId user = new UserId(1);
+		configManager.create(user, Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE));
+
+		// when
+		final Throwable thrown = catchThrowable(() -> tut.findLatestRecommendedMovies(user));
+
+		// then
+		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
+	}
+
 }

@@ -24,7 +24,7 @@ public class MovieInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer id;
+	private Integer movieInfoId;
 
 	@ElementCollection
 	private List<MovieGenre> genres;

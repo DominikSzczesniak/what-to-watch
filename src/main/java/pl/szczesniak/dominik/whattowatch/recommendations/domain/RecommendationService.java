@@ -1,6 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import lombok.RequiredArgsConstructor;
+import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
@@ -32,14 +33,19 @@ public class RecommendationService {
 		final List<MovieInfo> moviesByGenre = getMovieInfos(configuration);
 		final Optional<RecommendedMovies> latestRecommendedMovies = repository.findLatestRecommendedMovies(userId);
 
-		final List<MovieInfo> moviesToRecommend = latestRecommendedMovies
-				.map(recommendedMovies -> getMoviesToRecommend(configuration.getGenres(), moviesByGenre, recommendedMovies.getMovies()))
+		final List<MovieInfo> moviesToRecommend = latestRecommendedMovies.map(
+				recommendedMovies -> getMoviesToRecommend(configuration.getGenres(), moviesByGenre, recommendedMovies.getMovies()))
 				.orElseGet(() -> getMoviesToRecommend(configuration.getGenres(), moviesByGenre, new ArrayList<>()));
 
 		final RecommendedMovies recommendation = new RecommendedMovies(moviesToRecommend, userId);
 		repository.create(recommendation);
 
 		return recommendation;
+	}
+
+	public RecommendedMovies findLatestRecommendedMovies(final UserId userId) {
+		return repository.findLatestRecommendedMovies(userId)
+				.orElseThrow(() -> new ObjectDoesNotExistException("No movies to recommend for user with id:" + userId.getValue()));
 	}
 
 	private List<MovieInfo> getMovieInfos(final RecommendationConfiguration configuration) {
