@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,11 +25,13 @@ public class MovieInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@EqualsAndHashCode.Exclude
 	private Integer movieInfoId;
 
 	@ElementCollection
 	private List<MovieGenre> genres;
 
+	@Column(length = 1024)
 	private String overview;
 
 	private String title;

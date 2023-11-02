@@ -18,9 +18,9 @@ public class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRep
 	public RecommendedMoviesId create(final RecommendedMovies recommendedMovies) {
 		final int id = nextId.incrementAndGet();
 		final Long idAsLong = (long) id;
-		recommendedMovies.setId(new RecommendedMoviesId(idAsLong));
+		recommendedMovies.setId(idAsLong);
 		movies.put(new RecommendedMoviesId(idAsLong), recommendedMovies);
-		return recommendedMovies.getId();
+		return new RecommendedMoviesId(recommendedMovies.getId());
 	}
 
 	@Override

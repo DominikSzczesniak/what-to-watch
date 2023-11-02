@@ -26,7 +26,7 @@ public class RecommendationScheduler {
 		}
 	}
 
-	@Scheduled(fixedRate = 10000) // TODO: fix
+	@Scheduled(fixedRate = 10000) // TODO: fix, zrobic ze sie rekomenduja tylko jak null
 	void recommendMoviesEveryHour() {
 		final List<UserId> userIDs = userService.findAllUsers();
 		log.info("ruszyl skedzuler");

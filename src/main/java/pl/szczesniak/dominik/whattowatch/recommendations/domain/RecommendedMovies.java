@@ -3,10 +3,10 @@ package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.LocalDateTime;
@@ -29,10 +28,11 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"})
 public class RecommendedMovies {
 
+	@Id
 	@Setter(AccessLevel.PACKAGE)
-	@EmbeddedId
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@AttributeOverride(name = "value", column = @Column(name = "recommended_movies_id"))
-	private RecommendedMoviesId id;
+	private Long id;
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id")
@@ -48,4 +48,5 @@ public class RecommendedMovies {
 		this.date = LocalDateTime.now();
 		this.userId = userId;
 	}
+
 }
