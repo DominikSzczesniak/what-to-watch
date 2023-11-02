@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
-import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 @RestController
 public class FindMovieToWatchController {
 
-	private final MoviesService moviesService;
+	private final MoviesFacade moviesFacade;
 
 	@GetMapping("/api/movies/{movieId}")
 	public MovieDetailsDto findMovieToWatch(@RequestHeader("userId") final Integer userId, @PathVariable Integer movieId) {
-		final Movie movie = moviesService.getMovie(new MovieId(movieId), new UserId(userId));
+		final Movie movie = moviesFacade.getMovie(new MovieId(movieId), new UserId(userId));
 		return new MovieDetailsDto(
 				movie.getTitle().getValue(),
 				movieId,

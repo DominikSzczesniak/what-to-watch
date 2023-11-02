@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -19,7 +19,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 @RestController
 public class SetMovieCoverController {
 
-	private final MoviesService moviesService;
+	private final MoviesFacade moviesFacade;
 
 	@PutMapping("/api/movies/{movieId}/cover")
 	public ResponseEntity<?> setMovieCover(@RequestHeader("userId") final Integer userId, @PathVariable final Integer movieId,
@@ -33,7 +33,7 @@ public class SetMovieCoverController {
 		));
 
 		return setMovieCoverTry.map(movieCover -> {
-					moviesService.setMovieCover(movieCover);
+					moviesFacade.setMovieCover(movieCover);
 					return ResponseEntity.status(HttpStatus.OK).build();
 				})
 				.getOrElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());

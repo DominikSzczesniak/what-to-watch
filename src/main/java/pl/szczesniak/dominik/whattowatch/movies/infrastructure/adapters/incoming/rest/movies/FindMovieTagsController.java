@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MovieTag;
-import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 @RestController
 public class FindMovieTagsController {
 
-	private final MoviesService moviesService;
+	private final MoviesFacade moviesFacade;
 
 	@GetMapping("/api/movies/tags")
 	public List<MovieTagDto> findTagByUserId(@RequestHeader final Integer userId) {
-		List<MovieTag> movieTagsByUserId = moviesService.getMovieTagsByUserId(userId);
+		List<MovieTag> movieTagsByUserId = moviesFacade.getMovieTagsByUserId(userId);
 		return movieTagsByUserId.stream()
 				.map(movieTag -> new MovieTagDto(
-						movieTag.getTagId().getValue().toString(),
+						movieTag.getTagId().getValue(),
 						movieTag.getLabel().getValue(),
 						movieTag.getUserId().getValue()))
 				.collect(Collectors.toList());

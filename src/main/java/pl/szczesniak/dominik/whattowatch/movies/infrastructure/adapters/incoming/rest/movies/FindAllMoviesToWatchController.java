@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
-import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RestController
 public class FindAllMoviesToWatchController {
 
-	private final MoviesService moviesService;
+	private final MoviesFacade moviesFacade;
 
 	@GetMapping("/api/movies")
 	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(@RequestHeader("userId") final Integer userId,
@@ -34,13 +34,13 @@ public class FindAllMoviesToWatchController {
 	private List<Movie> findMovies(final Integer userId, final String tags) {
 		final List<Movie> foundMovies;
 		if (tags == null) {
-			foundMovies = moviesService.getMoviesToWatch(new UserId(userId));
+			foundMovies = moviesFacade.getMoviesToWatch(new UserId(userId));
 		} else {
 			final String[] tagValues = tags.split(",");
 			final List<MovieTagId> tagIds = Arrays.stream(tagValues)
 					.map(tag -> new MovieTagId(UUID.fromString(tag)))
 					.collect(Collectors.toList());
-			foundMovies = moviesService.getMoviesByTags(tagIds, new UserId(userId));
+			foundMovies = moviesFacade.getMoviesByTags(tagIds, new UserId(userId));
 		}
 		return foundMovies;
 	}

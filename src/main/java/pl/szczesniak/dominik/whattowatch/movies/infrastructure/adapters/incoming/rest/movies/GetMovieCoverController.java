@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesService;
+import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -22,11 +22,11 @@ import java.io.InputStream;
 @RestController
 public class GetMovieCoverController {
 
-	private final MoviesService moviesService;
+	private final MoviesFacade moviesFacade;
 
 	@GetMapping("/api/movies/{movieId}/cover")
 	public ResponseEntity<?> getMovieCover(@RequestHeader("userId") final Integer userId, @PathVariable final Integer movieId) {
-		final MovieCoverDTO movieCover = moviesService.getCoverForMovie(new MovieId(movieId), new UserId(userId));
+		final MovieCoverDTO movieCover = moviesFacade.getCoverForMovie(new MovieId(movieId), new UserId(userId));
 		final InputStream imageData = movieCover.getCoverContent();
 		final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
 				.filename(movieCover.getFilename())
