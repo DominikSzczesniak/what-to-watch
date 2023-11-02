@@ -11,7 +11,8 @@ public class TestMoviesToWatchFacadeConfiguration {
 				.moviesService(
 						new MoviesListService(repository, userProvider, new InMemoryWatchedMoviesRepository()),
 						new MoviesCoverService(repository, userProvider, new InMemoryFilesStorage()),
-						new MoviesCommentsService(repository)
+						new MoviesCommentsService(repository),
+						new MoviesTagsService(repository, repository)
 				);
 	}
 

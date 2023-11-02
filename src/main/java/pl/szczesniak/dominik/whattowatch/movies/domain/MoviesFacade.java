@@ -4,15 +4,19 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteCommentFromMovie;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -23,6 +27,8 @@ public class MoviesFacade {
 	private final MoviesCoverService movieListService;
 
 	private final MoviesCommentsService moviesCommentsService;
+
+	private final MoviesTagsService moviesTagsService;
 
 	public MovieId addMovieToList(final AddMovieToList command) {
 		return moviesListService.addMovieToList(command);
@@ -70,6 +76,26 @@ public class MoviesFacade {
 
 	public void deleteCommentFromMovie(final DeleteCommentFromMovie command) {
 		moviesCommentsService.deleteCommentFromMovie(command);
+	}
+
+	public MovieTagId addTagToMovie(final AddTagToMovie command) {
+		return moviesTagsService.addTagToMovie(command);
+	}
+
+	public Optional<MovieTag> getTagByTagId(final MovieTagId tagId) {
+		return moviesTagsService.getTagByTagId(tagId);
+	}
+
+	public void deleteTagFromMovie(final DeleteTagFromMovie command) {
+		moviesTagsService.deleteTagFromMovie(command);
+	}
+
+	public List<Movie> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
+		return moviesTagsService.getMoviesByTags(tags, userId);
+	}
+
+	public List<MovieTag> getMovieTagsByUserId(final Integer userId) {
+		return moviesTagsService.getMovieTagsByUserId(userId);
 	}
 
 }

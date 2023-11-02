@@ -10,8 +10,9 @@ public class MoviesFacadeConfiguration {
 	@Bean
 	public MoviesFacade moviesService(final MoviesListService moviesListService,
 									  final MoviesCoverService movieListService,
-									  final MoviesCommentsService moviesCommentsService) {
-		return new MoviesFacade(moviesListService, movieListService, moviesCommentsService);
+									  final MoviesCommentsService moviesCommentsService,
+									  final MoviesTagsService moviesTagsService) {
+		return new MoviesFacade(moviesListService, movieListService, moviesCommentsService, moviesTagsService);
 	}
 
 	@Bean
