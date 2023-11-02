@@ -4,10 +4,13 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -19,6 +22,8 @@ import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -55,10 +60,16 @@ public class Movie {
 	@JoinColumn(name = "movieId")
 	private Set<MovieComment> comments;
 
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable
+	@ToString.Exclude
+	private Set<MovieTag> tags;
+
 	Movie(final UserId userId, final MovieTitle title) {
 		this.userId = requireNonNull(userId, "UserId cannot be null");
 		this.title = requireNonNull(title, "MovieTitle cannot be null");
 		comments = new HashSet<>();
+		tags = new HashSet<>();
 	}
 
 	WatchedMovie markAsWatched() {
@@ -91,4 +102,16 @@ public class Movie {
 		return Optional.ofNullable(cover);
 	}
 
+	public MovieTagId addTag(final MovieTagId tagId, final MovieTagLabel tagLabel, final UserId userId) {
+		tags.add(new MovieTag(tagId, tagLabel, userId));
+		return tagId;
+	}
+
+	void deleteTag(final MovieTagId tagId) {
+		tags.removeIf(movieTag -> movieTag.getTagId().equals(tagId));
+	}
+
+	public Set<MovieTag> getTags() {
+		return tags;
+	}
 }

@@ -14,13 +14,13 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class FindAllMoviesToWatchRestInvoker {
+public class FindAllMovieTagsRestInvoker {
 
-	private static final String URL = "/api/movies";
+	private static final String URL = "/api/movies/tags";
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(final Integer userId) {
+	public ResponseEntity<List<FoundMovieTagDto>> getMovieTagsByUserId(final Integer userId) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
@@ -32,38 +32,11 @@ public class FindAllMoviesToWatchRestInvoker {
 		);
 	}
 
-	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(final Integer userId, final String tags) {
-		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", String.valueOf(userId));
-		final String urlWithParams = URL + "?tags=" + tags;
-		return restTemplate.exchange(
-				urlWithParams,
-				HttpMethod.GET,
-				new HttpEntity<>(headers),
-				new ParameterizedTypeReference<>() {
-				}
-		);
-	}
-
 	@Value
-	public static class MovieDetailsDto {
-		String title;
-		Integer movieId;
-		Integer userId;
-		List<MovieCommentDto> comments;
-		List<MovieTagDto> tags;
-	}
-
-	@Value
-	public static class MovieCommentDto {
-		String commentId;
-		String value;
-	}
-
-	@Value
-	public static class MovieTagDto {
+	public static class FoundMovieTagDto {
 		String tagId;
 		String tagLabel;
+		Integer userId;
 	}
 
 }

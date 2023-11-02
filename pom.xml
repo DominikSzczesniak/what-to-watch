@@ -112,7 +112,6 @@
             <version>${vavr.version}</version>
         </dependency>
 
-
     </dependencies>
 
     <build>

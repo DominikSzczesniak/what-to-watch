@@ -21,27 +21,50 @@ public class FindMovieToWatchController {
 	private final MoviesService moviesService;
 
 	@GetMapping("/api/movies/{movieId}")
-	public MovieDto findMovieToWatch(@RequestHeader("userId") final Integer userId, @PathVariable Integer movieId) {
+	public MovieDetailsDto findMovieToWatch(@RequestHeader("userId") final Integer userId, @PathVariable Integer movieId) {
 		final Movie movie = moviesService.getMovie(new MovieId(movieId), new UserId(userId));
-		return new MovieDto(movie.getTitle().getValue(), movieId, userId, movie.getComments().stream()
+		return new MovieDetailsDto(
+				movie.getTitle().getValue(),
+				movieId,
+				userId,
+				mapMovieComments(movie),
+				mapMovieTags(movie)
+		);
+	}
+
+	private static List<MovieTagDto> mapMovieTags(final Movie movie) {
+		return movie.getTags().stream()
+				.map(movieTag -> new MovieTagDto(movieTag.getTagId().getValue().toString(), movieTag.getLabel().getValue()))
+				.toList();
+	}
+
+	private static List<MovieCommentDto> mapMovieComments(final Movie movie) {
+		return movie.getComments().stream()
 				.map(movieComment -> new MovieCommentDto(
 						movieComment.getCommentId().getValue().toString(),
 						movieComment.getText()))
-				.collect(Collectors.toList()));
+				.collect(Collectors.toList());
 	}
 
 	@Value
-	private static class MovieDto {
+	private static class MovieDetailsDto {
 		String title;
 		Integer movieId;
 		Integer userId;
 		List<MovieCommentDto> comments;
+		List<MovieTagDto> tags;
 	}
 
 	@Value
 	private static class MovieCommentDto {
 		String commentId;
 		String value;
+	}
+
+	@Value
+	private static class MovieTagDto {
+		String tagId;
+		String tagLabel;
 	}
 
 }

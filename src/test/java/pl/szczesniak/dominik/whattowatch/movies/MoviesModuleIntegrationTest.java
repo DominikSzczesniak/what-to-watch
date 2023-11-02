@@ -14,16 +14,19 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.UserProvider;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddCommentToMovieRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddCommentToMovieRestInvoker.CommentDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddMovieTagToMovieRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddMovieTagToMovieRestInvoker.MovieTagDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddMovieToWatchRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddMovieToWatchRestInvoker.AddMovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.DeleteCommentFromMovieToWatchRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.DeleteCommentFromMovieToWatchRestInvoker.DeleteCommentDto;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.DeleteMovieTagFromMovieRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.DeleteMovieToWatchCoverRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMovieTagsRestInvoker;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMovieTagsRestInvoker.FoundMovieTagDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMoviesToWatchRestInvoker;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMoviesToWatchRestInvoker.MovieDto;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindMovieToWatchRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindMovieToWatchRestInvoker.MovieCommentDto;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindMovieToWatchRestInvoker.MovieDetailsDTO;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.GetMovieToWatchCoverRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.RemoveMovieToWatchFromListRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.SetMovieToWatchCoverRestInvoker;
@@ -45,6 +48,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentSample.createAnyComment;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.model.TagLabelSample.createAnyTagLabel;
+import static pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.FindAllMoviesToWatchRestInvoker.MovieDetailsDto;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -89,6 +94,15 @@ class MoviesModuleIntegrationTest {
 	@Autowired
 	private DeleteCommentFromMovieToWatchRestInvoker deleteCommentFromMovieToWatchRest;
 
+	@Autowired
+	private AddMovieTagToMovieRestInvoker addMovieTagToMovieRest;
+
+	@Autowired
+	private DeleteMovieTagFromMovieRestInvoker deleteMovieTagFromMovieRest;
+
+	@Autowired
+	private FindAllMovieTagsRestInvoker findMovieTagsRest;
+
 	private Integer userId;
 
 	@BeforeEach
@@ -113,12 +127,12 @@ class MoviesModuleIntegrationTest {
 		assertThat(addMovieResponse.getBody()).isGreaterThan(0);
 
 		// when
-		final ResponseEntity<List<MovieDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
+		final ResponseEntity<List<MovieDetailsDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(findMoviesResponse.getBody())
-				.extracting(MovieDto::getTitle, MovieDto::getUserId, MovieDto::getMovieId)
+				.extracting(MovieDetailsDto::getTitle, MovieDetailsDto::getUserId, MovieDetailsDto::getMovieId)
 				.containsExactly(tuple(movieTitle.getValue(), userId, addMovieResponse.getBody()));
 	}
 
@@ -144,7 +158,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(deleteMovieResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
 		// when
-		final ResponseEntity<List<MovieDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
+		final ResponseEntity<List<MovieDetailsDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -175,12 +189,12 @@ class MoviesModuleIntegrationTest {
 		assertThat(updateMovieResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		// when
-		final ResponseEntity<List<MovieDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
+		final ResponseEntity<List<MovieDetailsDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(findMoviesResponse.getBody())
-				.extracting(MovieDto::getTitle, MovieDto::getUserId, MovieDto::getMovieId)
+				.extracting(MovieDetailsDto::getTitle, MovieDetailsDto::getUserId, MovieDetailsDto::getMovieId)
 				.containsExactly(tuple(changedTitle.getValue(), userId, movieId));
 	}
 
@@ -206,7 +220,7 @@ class MoviesModuleIntegrationTest {
 		// then
 		assertThat(moveMovieToWatchedListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-		final ResponseEntity<List<MovieDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
+		final ResponseEntity<List<MovieDetailsDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -248,10 +262,10 @@ class MoviesModuleIntegrationTest {
 		assertThat(addCommentToMovieResponse.getBody()).isNotNull();
 
 		// when
-		final ResponseEntity<MovieDetailsDTO> findMovieToWatchResponse = findMovieToWatchRest.findMovieToWatch(userId, addMovieResponse.getBody());
+		final ResponseEntity<FindMovieToWatchRestInvoker.MovieDetailsDto> findMovieToWatchResponse = findMovieToWatchRest.findMovieToWatch(userId, addMovieResponse.getBody());
 
 		// then
-		final MovieDetailsDTO movieDetails = findMovieToWatchResponse.getBody();
+		final FindMovieToWatchRestInvoker.MovieDetailsDto movieDetails = findMovieToWatchResponse.getBody();
 		assertThat(findMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(movieDetails.getComments()).hasSize(1);
 		assertThat(movieDetails.getComments().get(0)).extracting(MovieCommentDto::getValue).isEqualTo(comment);
@@ -268,7 +282,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(deleteCommentFromMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
 		// when
-		final ResponseEntity<MovieDetailsDTO> findMovieToWatchResponseAfterDeletingComment = findMovieToWatchRest.findMovieToWatch(
+		final ResponseEntity<FindMovieToWatchRestInvoker.MovieDetailsDto> findMovieToWatchResponseAfterDeletingComment = findMovieToWatchRest.findMovieToWatch(
 				userId,
 				addMovieResponse.getBody()
 		);
@@ -305,15 +319,15 @@ class MoviesModuleIntegrationTest {
 		assertThat(setMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		// when
-		final ResponseEntity<byte[]> getMovietoWatchCoverResponse = getMovieToWatchCoverRest.getMovieToWatchCover(userId, addMovieResponse.getBody());
+		final ResponseEntity<byte[]> getMovieToWatchCoverResponse = getMovieToWatchCoverRest.getMovieToWatchCover(userId, addMovieResponse.getBody());
 
 		// then
-		final HttpHeaders headers = getMovietoWatchCoverResponse.getHeaders();
+		final HttpHeaders headers = getMovieToWatchCoverResponse.getHeaders();
 		final String contentTypeHeader = headers.getFirst(HttpHeaders.CONTENT_TYPE);
 		final String contentDispositionHeader = headers.getFirst(HttpHeaders.CONTENT_DISPOSITION);
 
-		assertThat(getMovietoWatchCoverResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(getMovietoWatchCoverResponse.getBody()).containsExactly(multipartFile.getInputStream().readAllBytes());
+		assertThat(getMovieToWatchCoverResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(getMovieToWatchCoverResponse.getBody()).containsExactly(multipartFile.getInputStream().readAllBytes());
 		assertThat(contentTypeHeader).isEqualTo(contentType);
 		assertThat(contentDispositionHeader).isEqualTo("attachment; filename=\"" + filename + "\"");
 
@@ -331,6 +345,153 @@ class MoviesModuleIntegrationTest {
 		assertThat(getMovietoWatchCoverResponseAfterDeleting.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 
+
+	@Test
+	void should_add_tag_to_a_movie_then_find_tags_and_delete_tag_from_movie() {
+		// given
+		final MovieTitle movieTitle = createAnyMovieTitle();
+
+		final ResponseEntity<Integer> addMovieResponse = addMovieRest.addMovie(
+				AddMovieDto.builder().title(movieTitle.getValue()).userId(userId).build(),
+				Integer.class
+		);
+
+		// then
+		assertMovieWasAdded(addMovieResponse);
+
+		// when
+		final String tagLabel = createAnyTagLabel().getValue();
+		final ResponseEntity<String> addMovieTagToMovieResponse = addMovieTagToMovieRest.addTagToMovie(
+				MovieTagDto.builder().tagLabel(tagLabel).build(), userId, addMovieResponse.getBody());
+
+		// then
+		assertThat(addMovieTagToMovieResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+		// when
+		final ResponseEntity<FindMovieToWatchRestInvoker.MovieDetailsDto> findMovieToWatchResponse = findMovieToWatchRest.findMovieToWatch(userId, addMovieResponse.getBody());
+
+		// then
+		final FindMovieToWatchRestInvoker.MovieDetailsDto movieDetails = findMovieToWatchResponse.getBody();
+		assertThat(findMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(movieDetails.getTags()).hasSize(1);
+		assertThat(movieDetails.getTags().get(0)).extracting(FindMovieToWatchRestInvoker.MovieTagDto::getTagLabel).isEqualTo(tagLabel);
+		assertThat(movieDetails.getMovieId()).isEqualTo(addMovieResponse.getBody());
+
+		// when
+		final ResponseEntity<List<FoundMovieTagDto>> findMovieTagsResponse = findMovieTagsRest.getMovieTagsByUserId(userId);
+
+		// then
+		assertThat(findMovieTagsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(findMovieTagsResponse.getBody()).hasSize(1);
+		assertThat(findMovieTagsResponse.getBody().get(0).getTagLabel()).isEqualTo(tagLabel);
+
+		// when
+		final ResponseEntity<Void> deleteMovieTagFromMovieResponse = deleteMovieTagFromMovieRest.deleteTagFromMovie(
+				addMovieTagToMovieResponse.getBody(),
+				userId,
+				addMovieResponse.getBody()
+		);
+
+		// then
+		assertThat(deleteMovieTagFromMovieResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+		// when
+		final ResponseEntity<FindMovieToWatchRestInvoker.MovieDetailsDto> findMovieToWatchResponseAfterDeletingTag =
+				findMovieToWatchRest.findMovieToWatch(userId, addMovieResponse.getBody());
+
+		// then
+		final FindMovieToWatchRestInvoker.MovieDetailsDto movieDetailsAfterDeletingTag = findMovieToWatchResponseAfterDeletingTag.getBody();
+		assertThat(findMovieToWatchResponseAfterDeletingTag.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(movieDetailsAfterDeletingTag.getTags()).hasSize(0);
+		assertThat(movieDetailsAfterDeletingTag.getMovieId()).isEqualTo(addMovieResponse.getBody());
+	}
+
+	@Test
+	void user_should_not_be_able_to_add_not_his_movie_tag_to_his_movie() {
+		// given
+		final Integer differentUser = createAnyUserId().getValue();
+		final MovieTitle movieTitle = createAnyMovieTitle();
+
+		final ResponseEntity<Integer> addMovieResponse = addMovieRest.addMovie(
+				AddMovieDto.builder().title(movieTitle.getValue()).userId(userId).build(),
+				Integer.class
+		);
+
+		final ResponseEntity<Integer> differentMovieAddMovieResponse = addMovieRest.addMovie(
+				AddMovieDto.builder().userId(differentUser).build(),
+				Integer.class
+		);
+
+		// then
+		assertMovieWasAdded(addMovieResponse);
+
+		// when
+		final String tagLabel = createAnyTagLabel().getValue();
+		final ResponseEntity<String> addMovieTagToMovieResponse = addMovieTagToMovieRest.addTagToMovie(
+				MovieTagDto.builder().tagLabel(tagLabel).build(), userId, addMovieResponse.getBody());
+
+
+		final ResponseEntity<String> addingSameTagLabelToMovieByDifferentUserResponse = addMovieTagToMovieRest.addTagToMovie(
+				MovieTagDto.builder().tagLabel(tagLabel).build(), differentUser, differentMovieAddMovieResponse.getBody()
+		);
+
+		// then
+		assertThat(addMovieTagToMovieResponse.getBody()).isNotEqualTo(addingSameTagLabelToMovieByDifferentUserResponse.getBody());
+
+		// when
+		final ResponseEntity<String> addingUnauthorizedUserMovieTagToMovie = addMovieTagToMovieRest.addTagToMovie(
+				MovieTagDto.builder().tagId(addMovieTagToMovieResponse.getBody()).build(), differentUser, differentMovieAddMovieResponse.getBody()
+		);
+
+		// then
+		assertThat(addingUnauthorizedUserMovieTagToMovie.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+		// when
+		ResponseEntity<FindMovieToWatchRestInvoker.MovieDetailsDto> secondUsersMovieToWatchResponse = findMovieToWatchRest.findMovieToWatch(differentUser, differentMovieAddMovieResponse.getBody());
+
+		// then
+		assertThat(secondUsersMovieToWatchResponse.getBody().getTags()).hasSize(1);
+	}
+
+	@Test
+	void should_find_all_user_movies_with_tag_id() {
+		// given
+		final ResponseEntity<Integer> addMovieResponse1 = addMovieRest.addMovie(
+				AddMovieDto.builder().userId(userId).build(),
+				Integer.class
+		);
+
+		final ResponseEntity<Integer> addMovieResponse2 = addMovieRest.addMovie(
+				AddMovieDto.builder().userId(userId).build(),
+				Integer.class
+		);
+
+		final ResponseEntity<String> addTagToMovieOneResponse1 = addMovieTagToMovieRest.addTagToMovie(
+				MovieTagDto.builder().tagLabel(createAnyTagLabel().getValue()).build(), userId, addMovieResponse1.getBody());
+		final ResponseEntity<String> addTagToMovieOneResponse2 = addMovieTagToMovieRest.addTagToMovie(
+				MovieTagDto.builder().tagLabel(createAnyTagLabel().getValue()).build(), userId, addMovieResponse1.getBody()
+		);
+
+		addMovieTagToMovieRest.addTagToMovie(
+				MovieTagDto.builder().tagId(addTagToMovieOneResponse1.getBody()).build(), userId, addMovieResponse2.getBody());
+
+		// when
+		final ResponseEntity<List<MovieDetailsDto>> findAllMoviesByTwoTagsResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(
+				userId,
+				addTagToMovieOneResponse1.getBody() + "," + addTagToMovieOneResponse2.getBody()
+		);
+
+		final ResponseEntity<List<MovieDetailsDto>> findAllMoviesByOneTagResponse =
+				findAllMoviesToWatchRest.findAllMoviesToWatch(userId, addTagToMovieOneResponse1.getBody());
+
+		// then
+		assertThat(findAllMoviesByTwoTagsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(findAllMoviesByTwoTagsResponse.getBody()).hasSize(1);
+
+		assertThat(findAllMoviesByOneTagResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(findAllMoviesByOneTagResponse.getBody()).hasSize(2);
+	}
+
 	private static void assertMovieWasAdded(final ResponseEntity<Integer> addMovieResponse) {
 		assertThat(addMovieResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(addMovieResponse.getBody()).isNotNull();
@@ -338,3 +499,4 @@ class MoviesModuleIntegrationTest {
 	}
 
 }
+

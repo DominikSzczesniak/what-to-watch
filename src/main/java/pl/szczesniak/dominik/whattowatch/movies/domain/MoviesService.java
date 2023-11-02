@@ -7,9 +7,13 @@ import pl.szczesniak.dominik.whattowatch.files.domain.FilesStorage;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.StoredFileId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteCommentFromMovie;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
@@ -17,32 +21,34 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class MoviesService {
 
-	private final MoviesRepository repository;
+	private final MoviesRepository moviesRepository;
 	private final UserProvider userProvider;
 	private final WatchedMoviesRepository watchedRepository;
 	private final FilesStorage filesStorage;
+	private final TagsQuery tagsQuery;
 
 	public MovieId addMovieToList(final AddMovieToList command) {
 		if (!userProvider.exists(command.getUserId())) {
 			throw new ObjectDoesNotExistException("User doesn't exist. Didn't add movie to any list");
 		}
 		final Movie movie = new Movie(command.getUserId(), command.getMovieTitle());
-		repository.create(movie);
+		moviesRepository.create(movie);
 		return movie.getMovieId();
 	}
 
 	public void removeMovieFromList(final MovieId movieId, final UserId userId) {
-		repository.removeMovie(movieId, userId);
+		moviesRepository.removeMovie(movieId, userId);
 	}
 
 	public List<Movie> getMoviesToWatch(final UserId userId) {
 		checkUserExists(userId);
-		return repository.findAll(userId);
+		return moviesRepository.findAll(userId);
 	}
 
 	public List<WatchedMovie> getWatchedMovies(final UserId userId) {
@@ -55,19 +61,18 @@ public class MoviesService {
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		final WatchedMovie watchedMovie = movie.markAsWatched();
 		watchedRepository.add(watchedMovie);
-		repository.removeMovie(command.getMovieId(), command.getUserId());
+		moviesRepository.removeMovie(command.getMovieId(), command.getUserId());
 	}
 
 	public void updateMovie(final UpdateMovie command) {
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		movie.updateMovieTitle(command.getTitle());
-		repository.update(movie);
+		moviesRepository.update(movie);
 	}
 
 	public Movie getMovie(final MovieId movieId, final UserId userId) {
-		return repository.findBy(movieId, userId).orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
+		return moviesRepository.findBy(movieId, userId).orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
-
 
 	private static MovieCover getMovieCover(final Movie movie) {
 		return movie.getCover().orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't have a cover."));
@@ -90,7 +95,7 @@ public class MoviesService {
 		movie.updateCover(
 				new MovieCover(command.getCoverFilename(), command.getCoverContentType(), storedFileId.getValue())
 		);
-		repository.update(movie);
+		moviesRepository.update(movie);
 	}
 
 	public void deleteCover(final MovieId movieId, final UserId userId) {
@@ -99,26 +104,65 @@ public class MoviesService {
 		final MovieCover movieCover = getMovieCover(movie);
 		filesStorage.deleteFile(movieCover.getCoverId());
 		movie.updateCover(null);
-		repository.update(movie);
+		moviesRepository.update(movie);
 	}
 
 	public UUID addCommentToMovie(final AddCommentToMovie command) {
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		final UUID commentId = movie.addComment(command.getComment());
-		repository.update(movie);
+		moviesRepository.update(movie);
 		return commentId;
 	}
 
 	public void deleteCommentFromMovie(final DeleteCommentFromMovie command) {
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		movie.deleteComment(command.getCommentId());
-		repository.update(movie);
+		moviesRepository.update(movie);
 	}
 
 	private void checkUserExists(final UserId userId) {
 		if (!userProvider.exists(userId)) {
 			throw new ObjectDoesNotExistException("User with userId: " + userId + " doesn't exist. Action aborted");
 		}
+	}
+
+	public MovieTagId addTagToMovie(final AddTagToMovie command) {
+		final MovieTagId tagId = command.getTagId().orElse(new MovieTagId(UUID.randomUUID()));
+		final Optional<MovieTag> movieTag = checkMovieTagBelongsToUser(command.getUserId(), tagId);
+		final MovieTagLabel tagLabel = movieTag.map(MovieTag::getLabel).orElse(command.getTagLabel());
+
+		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		movie.addTag(tagId,	tagLabel, command.getUserId());
+
+		moviesRepository.update(movie);
+		return tagId;
+	}
+
+	private Optional<MovieTag> checkMovieTagBelongsToUser(final UserId userId, final MovieTagId tagId) {
+		final Optional<MovieTag> tagByTagId = getTagByTagId(tagId);
+		if (tagByTagId.isPresent() && !tagByTagId.get().getUserId().equals(userId)) {
+			throw new ObjectDoesNotExistException("MovieTag does not belong to user");
+		}
+		return tagByTagId;
+	}
+
+	public Optional<MovieTag> getTagByTagId(final MovieTagId tagId) {
+		return tagsQuery.findTagByTagId(tagId.getValue().toString());
+	}
+
+	public void deleteTagFromMovie(final DeleteTagFromMovie command) {
+		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
+		movie.deleteTag(command.getTagId());
+		moviesRepository.update(movie);
+	}
+
+	public List<Movie> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
+		return moviesRepository.findAllMoviesByTagIds(tags, userId);
+	}
+
+
+	public List<MovieTag> getMovieTagsByUserId(final Integer userId) {
+		return tagsQuery.findByUserId(userId);
 	}
 
 }
