@@ -26,7 +26,7 @@ public class MovieInfo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@EqualsAndHashCode.Exclude
-	private Integer movieInfoId;
+	private Integer movieInfoId; // todo:
 
 	@ElementCollection
 	private List<MovieGenre> genres;

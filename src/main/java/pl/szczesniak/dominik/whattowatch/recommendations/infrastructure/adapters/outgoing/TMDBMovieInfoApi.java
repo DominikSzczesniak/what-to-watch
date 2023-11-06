@@ -132,9 +132,7 @@ public class TMDBMovieInfoApi implements MovieInfoApi {
 	@Data
 	private static class MovieInfoDto {
 		private String title;
-
 		private String overview;
-
 		private List<Long> genre_ids;
 	}
 
@@ -146,7 +144,6 @@ public class TMDBMovieInfoApi implements MovieInfoApi {
 	@Data
 	private static class MovieGenreDto {
 		private Long id;
-
 		private String name;
 	}
 

@@ -23,16 +23,22 @@ public class CreateRecommendationConfigurationController {
 	private final RecommendationConfigurationManager recommendationConfigurationManager;
 
 	@PutMapping("/api/recommendations/configuration")
-	public ResponseEntity<?> addCommentToMovie(@RequestHeader("userId") final Integer userId,
-											   @RequestBody final RecommendationConfigurationDto recommendationConfigurationDto) {
-		final Set<MovieGenre> genres = new HashSet<>();
-		final List<String> genres1 = recommendationConfigurationDto.getGenres();
-		for (String genre : genres1) {
-			final MovieGenre movieGenre = MovieGenre.valueOf(genre);
-			genres.add(movieGenre);
+	public ResponseEntity<?> createRecommendationConfiguration(@RequestHeader("userId") final Integer userId,
+															   @RequestBody final RecommendationConfigurationDto recommendationConfigurationDto) {
+		final Set<MovieGenre> movieGenres = new HashSet<>();
+
+		final List<String> genres = recommendationConfigurationDto.getGenres();
+		for (String genre : genres) {
+			try {
+				final MovieGenre movieGenre = MovieGenre.valueOf(genre);
+				movieGenres.add(movieGenre);
+			} catch (IllegalArgumentException e) {
+				return ResponseEntity.status(400).body("Invalid genre: " + genre);
+			}
 		}
-		final ConfigurationId configurationId = recommendationConfigurationManager.create(new UserId(userId), genres);
-		return ResponseEntity.status(200).body(configurationId);
+
+		final ConfigurationId configurationId = recommendationConfigurationManager.create(new UserId(userId), movieGenres);
+		return ResponseEntity.status(201).body(configurationId);
 	}
 
 	@Data

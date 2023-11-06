@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenreResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.MovieInfoApi;
@@ -32,12 +33,12 @@ public class RecommendationService {
 	@Transactional
 	public RecommendedMovies recommendMoviesByConfiguration(final UserId userId) {
 		final RecommendationConfiguration configuration = configurationManager.findBy(userId);
-		final List<MovieInfo> moviesByGenre = getMovieInfos(configuration);
+		final List<MovieInfo> moviesByConfig = getMovieInfosByConfig(configuration);
 		final Optional<RecommendedMovies> latestRecommendedMovies = repository.findLatestRecommendedMovies(userId);
 
 		final List<MovieInfo> moviesToRecommend = latestRecommendedMovies.map(
-				recommendedMovies -> getMoviesToRecommend(configuration.getGenres(), moviesByGenre, recommendedMovies.getMovies()))
-				.orElseGet(() -> getMoviesToRecommend(configuration.getGenres(), moviesByGenre, new ArrayList<>()));
+				recommendedMovies -> getMoviesToRecommend(configuration.getGenres(), moviesByConfig, recommendedMovies.getMovies()))
+				.orElseGet(() -> getMoviesToRecommend(configuration.getGenres(), moviesByConfig, new ArrayList<>()));
 
 		final RecommendedMovies recommendation = new RecommendedMovies(moviesToRecommend, userId);
 		repository.create(recommendation);
@@ -50,7 +51,11 @@ public class RecommendationService {
 				.orElseThrow(() -> new ObjectDoesNotExistException("No movies to recommend for user with id:" + userId.getValue()));
 	}
 
-	private List<MovieInfo> getMovieInfos(final RecommendationConfiguration configuration) {
+	Optional<RecommendedMovies> findLatestRecommendedMoviesScheduler(final UserId userId) { // todo: zapytac
+		return repository.findLatestRecommendedMovies(userId);
+	}
+
+	private List<MovieInfo> getMovieInfosByConfig(final RecommendationConfiguration configuration) {
 		final List<Long> userGenres = mapGenresToIds(configuration.getGenres());
 		final MovieInfoResponse moviesByGenre = movieInfoApi.getMoviesByGenre(userGenres);
 		return moviesByGenre.getResults();
@@ -90,6 +95,10 @@ public class RecommendationService {
 		}
 
 		return genreIds;
+	}
+
+	public MovieGenreResponse getMovieGenres() {
+		return movieInfoApi.getGenres();
 	}
 
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -26,14 +27,20 @@ public class RecommendationScheduler {
 		}
 	}
 
-	@Scheduled(fixedRate = 10000) // TODO: fix, zrobic ze sie rekomenduja tylko jak null
+//	@Scheduled(fixedRate = 3600000)
+@Scheduled(fixedRate = 10000)
 	void recommendMoviesEveryHour() {
 		final List<UserId> userIDs = userService.findAllUsers();
 		log.info("ruszyl skedzuler");
 
 		for (UserId userId : userIDs) {
-			log.info("zlapal blad");
-			recommendationService.recommendMoviesByConfiguration(userId);
+			try {
+				if (recommendationService.findLatestRecommendedMoviesScheduler(userId).isEmpty()) {
+					recommendationService.recommendMoviesByConfiguration(userId);
+				}
+			} catch (ObjectDoesNotExistException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 	}
 

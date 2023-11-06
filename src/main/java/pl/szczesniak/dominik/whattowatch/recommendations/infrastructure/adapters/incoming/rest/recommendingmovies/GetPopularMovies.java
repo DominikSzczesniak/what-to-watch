@@ -8,31 +8,30 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationService;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendedMovies;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @RestController
-public class GetLatestRecommendedMovies {
+@RequiredArgsConstructor
+public class GetPopularMovies {
 
 	private final RecommendationService service;
 
-	@GetMapping("/api/recommendations")
-	public ResponseEntity<List<MovieInfoDto>> getLatestRecommendedMovies(@RequestHeader("userId") final Integer userId) {
-		final List<MovieInfo> movies = service.findLatestRecommendedMovies(new UserId(userId)).getMovies();
+	@GetMapping("/api/recommendations/popular")
+	public ResponseEntity<List<MovieInfoDto>> getPopularMovies(@RequestHeader("userId") final Integer userId) {
+		final List<MovieInfo> movies = service.recommendPopularMovies().getResults();
 
-		final List<MovieInfoDto> movieDtos = mapToMovieInfoDto(movies);
+		final List<MovieInfoDto> popularMoviesDto = mapToMovieInfoDto(movies);
 
-		return ResponseEntity.status(200).body(movieDtos);
+		return ResponseEntity.status(200).body(popularMoviesDto);
 	}
 
 	private static List<MovieInfoDto> mapToMovieInfoDto(final List<MovieInfo> movies) {
-		final List<MovieInfoDto> movieDtos = new ArrayList<>(); // todo duplikacja
+		final List<MovieInfoDto> movieDtos = new ArrayList<>();
 		for (MovieInfo movieInfo : movies) {
 			final List<String> genres = movieInfo.getGenres().stream()
 					.map(Enum::name)
