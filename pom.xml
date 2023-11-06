@@ -25,7 +25,6 @@
 
         <postgresql.version>42.5.4</postgresql.version>
 
-        <mockito-core.version>5.2.0</mockito-core.version>
         <assertj-core.version>3.24.2</assertj-core.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <httpclient.version>4.5.13</httpclient.version>
@@ -69,14 +68,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito-core.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
