@@ -27,8 +27,8 @@ public class RecommendationScheduler {
 		}
 	}
 
-//	@Scheduled(fixedRate = 3600000)
-@Scheduled(fixedRate = 10000)
+	//	@Scheduled(fixedRate = 3600000)
+	@Scheduled(fixedRate = 10000)
 	void recommendMoviesEveryHour() {
 		final List<UserId> userIDs = userService.findAllUsers();
 		log.info("ruszyl skedzuler");

@@ -37,7 +37,7 @@ public class RecommendationService {
 		final Optional<RecommendedMovies> latestRecommendedMovies = repository.findLatestRecommendedMovies(userId);
 
 		final List<MovieInfo> moviesToRecommend = latestRecommendedMovies.map(
-				recommendedMovies -> getMoviesToRecommend(configuration.getGenres(), moviesByConfig, recommendedMovies.getMovies()))
+						recommendedMovies -> getMoviesToRecommend(configuration.getGenres(), moviesByConfig, recommendedMovies.getMovies()))
 				.orElseGet(() -> getMoviesToRecommend(configuration.getGenres(), moviesByConfig, new ArrayList<>()));
 
 		final RecommendedMovies recommendation = new RecommendedMovies(moviesToRecommend, userId);

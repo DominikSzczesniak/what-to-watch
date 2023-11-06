@@ -4,12 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationService;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,7 @@ public class GetPopularMovies {
 	private final RecommendationService service;
 
 	@GetMapping("/api/recommendations/popular")
-	public ResponseEntity<List<MovieInfoDto>> getPopularMovies(@RequestHeader("userId") final Integer userId) {
+	public ResponseEntity<List<MovieInfoDto>> getPopularMovies() {
 		final List<MovieInfo> movies = service.recommendPopularMovies().getResults();
 
 		final List<MovieInfoDto> popularMoviesDto = mapToMovieInfoDto(movies);
