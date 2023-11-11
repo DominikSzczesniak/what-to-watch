@@ -52,4 +52,8 @@ public class RecommendationConfiguration {
 		this.userId = userId;
 	}
 
+	void update(final Set<MovieGenre> genres) {
+		this.genres = genres;
+	}
+
 }

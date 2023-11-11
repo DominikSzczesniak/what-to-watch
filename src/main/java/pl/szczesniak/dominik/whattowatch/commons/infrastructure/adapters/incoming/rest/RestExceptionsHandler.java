@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.commons.infrastructure.spring;
+package pl.szczesniak.dominik.whattowatch.commons.infrastructure.adapters.incoming.rest;
 
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +14,12 @@ public class RestExceptionsHandler {
 	@ExceptionHandler(ObjectDoesNotExistException.class)
 	public ResponseEntity<Object> handleObjectDoesNotExistException(final ObjectDoesNotExistException e) {
 		final ErrorResponse response = new ErrorResponse(LocalDateTime.now(), e.getMessage(), 404, "ObjectDoesNotExistException");
+		return ResponseEntity.status(404).body(response);
+	}
+
+	@ExceptionHandler(BadRequestException.class)
+	public ResponseEntity<Object> handleBadRequestException(final BadRequestException e) {
+		final ErrorResponse response = new ErrorResponse(LocalDateTime.now(), e.getMessage(), 404, "BadRequestException");
 		return ResponseEntity.status(404).body(response);
 	}
 

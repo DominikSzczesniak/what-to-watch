@@ -6,6 +6,7 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateConfigurationSample;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.Set;
@@ -51,8 +52,14 @@ class RecommendationServiceTest {
 		// given
 		final UserId user1 = new UserId(1);
 		final UserId user2 = new UserId(2);
-		configManager.create(user1, Set.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE));
-		configManager.create(user2, Set.of(MovieGenre.ADVENTURE));
+		configManager.create(CreateConfigurationSample.builder()
+				.userId(user1)
+				.genreNames(Set.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE))
+				.build());
+		configManager.create(CreateConfigurationSample.builder()
+				.userId(user2)
+				.genreNames(Set.of(MovieGenre.ADVENTURE))
+				.build());
 
 		// when
 		final RecommendedMovies recommendedMoviesUser1 = tut.recommendMoviesByConfiguration(user1);
@@ -76,7 +83,10 @@ class RecommendationServiceTest {
 	void should_recommend_one_movie_when_only_one_found_from_database() {
 		// given
 		final UserId user = new UserId(1);
-		configManager.create(user, Set.of(MovieGenre.ROMANCE));
+		configManager.create(CreateConfigurationSample.builder()
+				.userId(user)
+				.genreNames(Set.of(MovieGenre.ROMANCE))
+				.build());
 
 		// when
 		final RecommendedMovies recommendedMovies = tut.recommendMoviesByConfiguration(user);
@@ -86,14 +96,17 @@ class RecommendationServiceTest {
 	}
 
 	@Test
-	void should_not_recommend_same_movies_twice_in_a_row() throws InterruptedException {
+	void should_not_recommend_same_movies_twice_in_a_row() {
 		// given
 		final UserId user = new UserId(1);
-		configManager.create(user, Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE));
+		configManager.create(CreateConfigurationSample.builder()
+				.userId(user)
+				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
+				.build());
+
 
 		// when
 		final RecommendedMovies recommendedMovies1 = tut.recommendMoviesByConfiguration(user);
-		Thread.sleep(1000);
 		final RecommendedMovies recommendedMovies2 = tut.recommendMoviesByConfiguration(user);
 		final RecommendedMovies recommendedMovies3 = tut.recommendMoviesByConfiguration(user);
 
@@ -106,7 +119,10 @@ class RecommendationServiceTest {
 	void should_find_latest_recommended_movies() {
 		// given
 		final UserId user = new UserId(1);
-		configManager.create(user, Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE));
+		configManager.create(CreateConfigurationSample.builder()
+				.userId(user)
+				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
+				.build());
 
 		// when
 		final RecommendedMovies recommendedMovies = tut.recommendMoviesByConfiguration(user);
@@ -121,7 +137,10 @@ class RecommendationServiceTest {
 	void should_throw_exception_when_no_recommended_movies_found() {
 		// given
 		final UserId user = new UserId(1);
-		configManager.create(user, Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE));
+		configManager.create(CreateConfigurationSample.builder()
+				.userId(user)
+				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
+				.build());
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.findLatestRecommendedMovies(user));

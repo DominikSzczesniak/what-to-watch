@@ -14,7 +14,7 @@ public class InMemoryRecommendationConfigurationRepository implements Recommenda
 	private final Map<UserId, RecommendationConfiguration> configurations = new HashMap<>();
 
 	@Override
-	public ConfigurationId create(final RecommendationConfiguration configuration) {
+	public ConfigurationId save(final RecommendationConfiguration configuration) {
 		final int id = nextId.incrementAndGet();
 		final Long idAsLong = (long) id;
 		configuration.setConfigurationId(idAsLong);

@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface RecommendationConfigurationRepository {
 
-	ConfigurationId create(RecommendationConfiguration configuration);
+	ConfigurationId save(RecommendationConfiguration configuration);
 
 	Optional<RecommendationConfiguration> findBy(UserId userId);
 

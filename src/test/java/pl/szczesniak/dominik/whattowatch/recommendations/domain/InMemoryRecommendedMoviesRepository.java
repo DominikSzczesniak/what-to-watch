@@ -31,7 +31,7 @@ public class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRep
 		for (RecommendedMovies recommendedMovies : movies.values()) {
 			if (recommendedMovies.getUserId().equals(userId)) {
 				final LocalDateTime recommendedDate = recommendedMovies.getDate();
-				if (recommendedDate.isAfter(latestDate)) {
+				if (recommendedDate.isAfter(latestDate) || recommendedDate.isEqual(latestDate)) {
 					latestDate = recommendedDate;
 					latestRecommendedMovies = recommendedMovies;
 				}

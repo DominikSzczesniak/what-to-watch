@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Class responsible for connecting to TMDB api and fetching information from there.
+ */
+
 @Component
 public class TMDBMovieInfoApi implements MovieInfoApi {
 

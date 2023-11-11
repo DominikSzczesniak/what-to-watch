@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenreResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
@@ -21,7 +20,8 @@ class TMDBRestTest {
 		tut = new TMDBMovieInfoApi("4663542b69490ce1434ece35ebad7665", "https://api.themoviedb.org/3");
 	}
 
-	@Test
+	//	@Test
+	// Only for manual testing - I don't want to break building an app with maven when TMDB fails.
 	void should_get_popular_movies() {
 		// when
 		final MovieInfoResponse popularMovies = tut.getPopularMovies();
@@ -30,7 +30,7 @@ class TMDBRestTest {
 		assertThat(popularMovies.getResults()).hasSizeGreaterThan(0);
 	}
 
-	@Test
+	//	@Test
 	void should_get_movie_genres() {
 		// when
 		final MovieGenreResponse genres = tut.getGenres();
@@ -39,7 +39,7 @@ class TMDBRestTest {
 		assertThat(genres.getGenres()).hasSizeGreaterThan(0);
 	}
 
-	@Test
+	//	@Test
 	void should_find_movies_by_genre_id() {
 		// given
 		final Map<Long, MovieGenre> genres = tut.getGenres().getGenres();
