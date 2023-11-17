@@ -82,7 +82,7 @@ public class TMDBMovieInfoApi implements MovieInfoApi {
 
 	@Override
 	public MovieInfoResponse getMoviesByGenre(final List<Long> genreId) {
-		final String finalGenres = prepareGenres(genreId);
+		final String finalGenres = prepareGenresForRequest(genreId);
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path("/discover/movie")
@@ -95,7 +95,7 @@ public class TMDBMovieInfoApi implements MovieInfoApi {
 				.block();
 	}
 
-	private static String prepareGenres(final List<Long> genreId) {
+	private static String prepareGenresForRequest(final List<Long> genreId) {
 		String genres = "";
 		for (Long id : genreId) {
 			genres += id + "|";

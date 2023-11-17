@@ -20,23 +20,50 @@ import java.util.stream.Collectors;
 import static java.util.Comparator.comparingLong;
 
 /**
- * RecommendationService handles the recommendation of movies based on user's configurations and previous recommendations.
- * It uses a set of components, including a RecommendationConfigurationManager for user-specific configurations,
- * a MovieInfoApi for retrieving movie information from external API, and a RecommendedMoviesRepository for data storage.
- * <p>
  * Public Methods:
- * - recommendPopularMovies(): Recommends popular movies using the MovieInfoApi.
- * - recommendMoviesByConfiguration(UserId userId): Recommends movies based on the user's configuration, taking into account
- * genres and previous recommendations.
- * - findLatestRecommendedMovies(): Retrieves the latest recommended movies for a user.
- * - getMovieGenres(): Retrieves a list of available movie genres.
- * <p>
+ * recommendPopularMovies():
+ * - Calls movieInfoApi.getPopularMovies() to retrieve information about 20 most popular movies.
+ * - Returns a MovieInfoResponse object containing details about fetched movies (title, overview, movie genres).
+ * - The method can be invoked by the user through a URL request.
+ *
+ * recommendMoviesByConfiguration(UserId userId):
+ * - Retrieves the user's recommendation configuration using RecommendationConfigurationManager.
+ * - Calls getMovieInfosByConfig() to fetch MovieInfos (title, overview, movie genres) based on the user's configuration.
+ * - Retrieves the user's latest recommended movies from the repository.
+ * - Calls getRecommendedMoviesBySharedGenres() that takes user genres, movies found by genres and latest recommended movies as parameters.
+ * Filters and sorts movies based on most shared genres. Returns list of movie infos to recommend.
+ * - Creates a RecommendedMovies object with the movies to recommend and the user ID as well as the date that movies were prepared.
+ * - Saves the recommendation in the RecommendedMoviesRepository.
+ * - Returns the generated RecommendedMovies object.
+ * - This method is called only by RecommendationScheduler in 2 scenarios:
+ * for every user every hour, to prepare recommendation if user has not had any preivous recommendations but has config;
+ * for every user every Wednesday at 2:30 to prepare recommendation if user has config
+ *
+ * findLatestRecommendedMovies(UserId userId):
+ * - Retrieves the latest recommended movies for a user from the repository.
+ * - Throws an ObjectDoesNotExistException if no recommendations are found.
+ * - The method can be invoked by the user through a URL request.
+ *
+ * getMovieGenres():
+ * - Returns a list of available movie genres.
+ * - The method can be invoked by the user through a URL request.
+ *
  * Private Methods:
- * - getMovieInfosByConfig(RecommendationConfiguration configuration): Retrieves movies information from external api
- * based on the user's configuration.
- * - mapGenreNamesToIds(): Maps movie genres to their corresponding IDs based on the MovieInfoApi interface.
- * - getRecommendedMoviesBySharedGenres(): Filters and sorts movies based on the amount of shared genres, excluding those already recommended.
- * Returns 2 movies with most shared genres.
+ * getMovieInfosByConfig(RecommendationConfiguration configuration):
+ * - Maps user genres to API genre IDs using mapGenreNamesToApiIds().
+ * - Calls movieInfoApi.getMoviesByGenre() to fetch movie information based on user genres.
+ * - Returns a list of MovieInfo objects.
+ *
+ * mapGenreNamesToApiIds(Set<MovieGenre> genres):
+ * - Maps movie genres to their corresponding API IDs based on the MovieInfoApi interface.
+ * - Filters genres that are not present in the API.
+ * - Returns a list of API genre IDs.
+ *
+ * getRecommendedMoviesBySharedGenres(Set<MovieGenre> configGenres, List<MovieInfo> moviesByConfig, List<MovieInfo> latestRecommendedMovies):
+ * - Calculates the count of shared genres for each movie.
+ * - Sorts movies based on the count of shared genres in descending order.
+ * - Removes movies that have already been recommended to the user.
+ * - Returns a sublist of recommended movies (up to 2 movies).
  */
 
 @RequiredArgsConstructor
@@ -78,12 +105,12 @@ public class RecommendationService {
 	}
 
 	private List<MovieInfo> getMovieInfosByConfig(final RecommendationConfiguration configuration) {
-		final List<Long> userGenres = mapGenreNamesToIds(configuration.getGenres());
-		final MovieInfoResponse moviesByGenre = movieInfoApi.getMoviesByGenre(userGenres);
+		final List<Long> userGenresIds = mapGenreNamesToApiIds(configuration.getGenres());
+		final MovieInfoResponse moviesByGenre = movieInfoApi.getMoviesByGenre(userGenresIds);
 		return moviesByGenre.getResults();
 	}
 
-	private List<Long> mapGenreNamesToIds(final Set<MovieGenre> genres) {
+	private List<Long> mapGenreNamesToApiIds(final Set<MovieGenre> genres) {
 		final Map<Long, MovieGenre> genreMapFromApi = movieInfoApi.getGenres().getGenres();
 
 		return genres.stream()
@@ -96,13 +123,13 @@ public class RecommendationService {
 				.collect(Collectors.toList());
 	}
 
-	private static List<MovieInfo> getRecommendedMoviesBySharedGenres(final Set<MovieGenre> genres,
-																	  final List<MovieInfo> allMovies,
+	private static List<MovieInfo> getRecommendedMoviesBySharedGenres(final Set<MovieGenre> configGenres,
+																	  final List<MovieInfo> moviesByConfig,
 																	  final List<MovieInfo> latestRecommendedMovies) {
 		final Map<MovieInfo, Long> sharedGenresCountMap = new HashMap<>();
-		for (MovieInfo movie : allMovies) {
+		for (MovieInfo movie : moviesByConfig) {
 			long sharedGenresCount = movie.getGenres().stream()
-					.filter(genres::contains)
+					.filter(configGenres::contains)
 					.count();
 			sharedGenresCountMap.put(movie, sharedGenresCount);
 		}
