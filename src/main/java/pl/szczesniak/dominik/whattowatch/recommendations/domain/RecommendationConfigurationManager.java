@@ -14,7 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Component
-public class RecommendationConfigurationManager { // todo config
+public class RecommendationConfigurationManager { // todo: config
 
 	private final RecommendationConfigurationRepository repository;
 

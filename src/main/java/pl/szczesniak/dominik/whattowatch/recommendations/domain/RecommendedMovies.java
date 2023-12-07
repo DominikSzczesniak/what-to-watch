@@ -33,7 +33,6 @@ public class RecommendedMovies {
 	@Id
 	@Setter(AccessLevel.PACKAGE)
 	@GeneratedValue(strategy = GenerationType.AUTO)
-//	@AttributeOverride(name = "value", column = @Column(name = "recommended_movies_id")) // todo.
 	private Long recommendedMoviesId;
 
 	@OneToMany(cascade = CascadeType.ALL)
