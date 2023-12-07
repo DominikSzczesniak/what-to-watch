@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management Page</title>
+    <link rel="stylesheet" href="UserStyle.css">
+</head>
+
+<body>
+
+<div class="container">
+    <form id="userForm">
+        <div class="heading-container">
+            <label>Login</label>
+        </div>
+
+        <div class="form-group">
+            <input type="text" id="username" name="username" placeholder="username" required>
+        </div>
+
+        <div class="form-group">
+            <input type="password" id="password" name="password" placeholder="password" required>
+        </div>
+
+        <div class="form-group">
+            <button type="button" onclick="loginUser()">Login</button>
+            <button type="button" onclick="createUser()">Create User</button>
+        </div>
+
+        <p id="response" class="error"></p>
+    </form>
+</div>
+
+<script src="UserScript.js"></script>
+</body>
+
+</html>
