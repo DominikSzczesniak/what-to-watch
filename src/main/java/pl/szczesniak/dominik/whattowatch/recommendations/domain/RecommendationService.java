@@ -1,6 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import jakarta.transaction.Transactional;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
@@ -9,6 +10,10 @@ import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoR
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.MovieInfoApi;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,54 +24,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingLong;
 
-/**
- * Public Methods:
- * recommendPopularMovies():
- * - Calls movieInfoApi.getPopularMovies() to retrieve information about 20 most popular movies.
- * - Returns a MovieInfoResponse object containing details about fetched movies (title, overview, movie genres).
- * - The method can be invoked by the user through a URL request.
- *
- * recommendMoviesByConfiguration(UserId userId):
- * - Retrieves the user's recommendation configuration using RecommendationConfigurationManager.
- * - Calls getMovieInfosByConfig() to fetch MovieInfos (title, overview, movie genres) based on the user's configuration.
- * - Retrieves the user's latest recommended movies from the repository.
- * - Calls getRecommendedMoviesBySharedGenres() that takes user genres, movies found by genres and latest recommended movies as parameters.
- * Filters and sorts movies based on most shared genres. Returns list of movie infos to recommend.
- * - Creates a RecommendedMovies object with the movies to recommend and the user ID as well as the date that movies were prepared.
- * - Saves the recommendation in the RecommendedMoviesRepository.
- * - Returns the generated RecommendedMovies object.
- * - This method is called only by RecommendationScheduler in 2 scenarios:
- * for every user every hour, to prepare recommendation if user has not had any preivous recommendations but has config;
- * for every user every Wednesday at 2:30 to prepare recommendation if user has config
- *
- * findLatestRecommendedMovies(UserId userId):
- * - Retrieves the latest recommended movies for a user from the repository.
- * - Throws an ObjectDoesNotExistException if no recommendations are found.
- * - The method can be invoked by the user through a URL request.
- *
- * getMovieGenres():
- * - Returns a list of available movie genres.
- * - The method can be invoked by the user through a URL request.
- *
- * Private Methods:
- * getMovieInfosByConfig(RecommendationConfiguration configuration):
- * - Maps user genres to API genre IDs using mapGenreNamesToApiIds().
- * - Calls movieInfoApi.getMoviesByGenre() to fetch movie information based on user genres.
- * - Returns a list of MovieInfo objects.
- *
- * mapGenreNamesToApiIds(Set<MovieGenre> genres):
- * - Maps movie genres to their corresponding API IDs based on the MovieInfoApi interface.
- * - Filters genres that are not present in the API.
- * - Returns a list of API genre IDs.
- *
- * getRecommendedMoviesBySharedGenres(Set<MovieGenre> configGenres, List<MovieInfo> moviesByConfig, List<MovieInfo> latestRecommendedMovies):
- * - Calculates the count of shared genres for each movie.
- * - Sorts movies based on the count of shared genres in descending order.
- * - Removes movies that have already been recommended to the user.
- * - Returns a sublist of recommended movies (up to 2 movies).
- */
-
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class RecommendationService {
 
 	private final RecommendationConfigurationManager configurationManager;
@@ -102,6 +60,14 @@ public class RecommendationService {
 
 	public List<MovieGenre> getMovieGenres() {
 		return Arrays.stream(MovieGenre.values()).toList();
+	}
+
+	public boolean hasRecommendedMoviesForCurrentInterval(final UserId userId) {
+		final LocalDateTime now = LocalDateTime.now();
+		final LocalDateTime intervalStart = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.WEDNESDAY)).with(LocalTime.parse("00:00:00"));
+		final LocalDateTime intervalEnd = now.with(TemporalAdjusters.next(DayOfWeek.TUESDAY)).with(LocalTime.parse("23:59:59"));
+
+		return repository.existsByUserIdAndRecommendationDateBetween(userId, intervalStart, intervalEnd);
 	}
 
 	private List<MovieInfo> getMovieInfosByConfig(final RecommendationConfiguration configuration) {

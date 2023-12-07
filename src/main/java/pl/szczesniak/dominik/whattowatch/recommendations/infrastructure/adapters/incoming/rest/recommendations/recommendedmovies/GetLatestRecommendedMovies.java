@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationService;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendedMovies;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.recommendedmovies.MovieInfoDto.mapToMovieInfoDto;
@@ -22,9 +23,13 @@ public class GetLatestRecommendedMovies {
 
 	@GetMapping("/api/recommendations")
 	public ResponseEntity<RecommendedMoviesDto> getLatestRecommendedMovies(@RequestHeader("userId") final Integer userId) {
-		final List<MovieInfo> movies = service.findLatestRecommendedMovies(new UserId(userId)).getMovies();
+		final RecommendedMovies recommendedMovies = service.findLatestRecommendedMovies(new UserId(userId));
 
-		final RecommendedMoviesDto recommendedMoviesDto = new RecommendedMoviesDto(mapToMovieInfoDto(movies));
+		final RecommendedMoviesDto recommendedMoviesDto = new RecommendedMoviesDto(
+				mapToMovieInfoDto(recommendedMovies.getMovies()),
+				recommendedMovies.getCreationDate(),
+				recommendedMovies.getEndInterval()
+		);
 
 		return ResponseEntity.status(200).body(recommendedMoviesDto);
 	}
@@ -34,6 +39,8 @@ public class GetLatestRecommendedMovies {
 	private static class RecommendedMoviesDto {
 
 		List<MovieInfoDto> movieInfos;
+		LocalDateTime creationDate;
+		LocalDateTime endInterval;
 
 	}
 

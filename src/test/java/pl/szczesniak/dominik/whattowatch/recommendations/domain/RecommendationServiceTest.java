@@ -6,7 +6,7 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateConfigurationSample;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfigurationSample;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.Set;
@@ -14,11 +14,14 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static pl.szczesniak.dominik.whattowatch.recommendations.domain.TestRecommendationServiceConfiguration.recommendationService;
+import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 class RecommendationServiceTest {
 
 	private RecommendationService tut;
 	private RecommendationConfigurationManager configManager;
+
+	private static final int EXPECTED_RECOMMENDED_MOVIES_COUNT = 2;
 
 	@BeforeEach
 	void setUp() {
@@ -38,7 +41,7 @@ class RecommendationServiceTest {
 	@Test
 	void should_throw_exception_when_no_recommendation_configuration_found() {
 		// given
-		final UserId user = new UserId(1);
+		final UserId user = createAnyUserId();
 
 		// when
 		final Throwable thrown = catchThrowable(() -> tut.recommendMoviesByConfiguration(user));
@@ -50,13 +53,13 @@ class RecommendationServiceTest {
 	@Test
 	void should_recommend_two_movies_based_on_user_configuration() {
 		// given
-		final UserId user1 = new UserId(1);
-		final UserId user2 = new UserId(2);
-		configManager.create(CreateConfigurationSample.builder()
+		final UserId user1 = createAnyUserId();
+		final UserId user2 = createAnyUserId();
+		configManager.create(CreateRecommendationConfigurationSample.builder()
 				.userId(user1)
 				.genreNames(Set.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE))
 				.build());
-		configManager.create(CreateConfigurationSample.builder()
+		configManager.create(CreateRecommendationConfigurationSample.builder()
 				.userId(user2)
 				.genreNames(Set.of(MovieGenre.ADVENTURE))
 				.build());
@@ -66,13 +69,13 @@ class RecommendationServiceTest {
 		final RecommendedMovies recommendedMoviesUser2 = tut.recommendMoviesByConfiguration(user2);
 
 		// then
-		assertThat(recommendedMoviesUser1.getMovies()).hasSize(2);
+		assertThat(recommendedMoviesUser1.getMovies()).hasSize(EXPECTED_RECOMMENDED_MOVIES_COUNT);
 		final boolean genresMatchUser1 = recommendedMoviesUser1.getMovies().stream()
 				.map(MovieInfo::getGenres)
 				.allMatch(genres -> genres.contains(MovieGenre.ACTION) && genres.contains(MovieGenre.TV_MOVIE));
 		assertThat(genresMatchUser1).isTrue();
 
-		assertThat(recommendedMoviesUser2.getMovies()).hasSize(2);
+		assertThat(recommendedMoviesUser2.getMovies()).hasSize(EXPECTED_RECOMMENDED_MOVIES_COUNT);
 		final boolean genresMatchUser2 = recommendedMoviesUser2.getMovies().stream()
 				.map(MovieInfo::getGenres)
 				.allMatch(genres -> genres.contains(MovieGenre.ADVENTURE));
@@ -80,10 +83,10 @@ class RecommendationServiceTest {
 	}
 
 	@Test
-	void should_recommend_one_movie_when_only_one_found_from_database() {
+	void should_recommend_one_movie_when_only_one_found_in_database() {
 		// given
-		final UserId user = new UserId(1);
-		configManager.create(CreateConfigurationSample.builder()
+		final UserId user = createAnyUserId();
+		configManager.create(CreateRecommendationConfigurationSample.builder()
 				.userId(user)
 				.genreNames(Set.of(MovieGenre.ROMANCE))
 				.build());
@@ -98,12 +101,11 @@ class RecommendationServiceTest {
 	@Test
 	void should_not_recommend_same_movies_twice_in_a_row() {
 		// given
-		final UserId user = new UserId(1);
-		configManager.create(CreateConfigurationSample.builder()
+		final UserId user = createAnyUserId();
+		configManager.create(CreateRecommendationConfigurationSample.builder()
 				.userId(user)
 				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
 				.build());
-
 
 		// when
 		final RecommendedMovies recommendedMovies1 = tut.recommendMoviesByConfiguration(user);
@@ -111,15 +113,15 @@ class RecommendationServiceTest {
 		final RecommendedMovies recommendedMovies3 = tut.recommendMoviesByConfiguration(user);
 
 		// then
-		assertThat(recommendedMovies1.getMovies()).isNotEqualTo(recommendedMovies2.getMovies());
-		assertThat(recommendedMovies1.getMovies()).isEqualTo(recommendedMovies3.getMovies());
+		assertThat(recommendedMovies2.getMovies()).doesNotContainAnyElementsOf(recommendedMovies1.getMovies());
+		assertThat(recommendedMovies3.getMovies()).doesNotContainAnyElementsOf(recommendedMovies2.getMovies());
 	}
 
 	@Test
 	void should_find_latest_recommended_movies() {
 		// given
-		final UserId user = new UserId(1);
-		configManager.create(CreateConfigurationSample.builder()
+		final UserId user = createAnyUserId();
+		configManager.create(CreateRecommendationConfigurationSample.builder()
 				.userId(user)
 				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
 				.build());
@@ -136,8 +138,8 @@ class RecommendationServiceTest {
 	@Test
 	void should_throw_exception_when_no_recommended_movies_found() {
 		// given
-		final UserId user = new UserId(1);
-		configManager.create(CreateConfigurationSample.builder()
+		final UserId user = createAnyUserId();
+		configManager.create(CreateRecommendationConfigurationSample.builder()
 				.userId(user)
 				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
 				.build());
@@ -149,4 +151,37 @@ class RecommendationServiceTest {
 		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
 	}
 
+	@Test
+	void should_find_recommended_movies_for_current_interval() {
+		// given
+		final UserId user = createAnyUserId();
+		configManager.create(CreateRecommendationConfigurationSample.builder()
+				.userId(user)
+				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
+				.build());
+
+		tut.recommendMoviesByConfiguration(user);
+
+		// when
+		boolean hasRecommendedMoviesForCurrentInterval = tut.hasRecommendedMoviesForCurrentInterval(user);
+
+		// then
+		assertThat(hasRecommendedMoviesForCurrentInterval).isTrue();
+	}
+
+	@Test
+	void should_not_find_recommended_movies_for_current_interval() {
+		// given
+		final UserId user = createAnyUserId();
+		configManager.create(CreateRecommendationConfigurationSample.builder()
+				.userId(user)
+				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
+				.build());
+
+		// when
+		boolean hasRecommendedMoviesForCurrentInterval = tut.hasRecommendedMoviesForCurrentInterval(user);
+
+		// then
+		assertThat(hasRecommendedMoviesForCurrentInterval).isFalse();
+	}
 }

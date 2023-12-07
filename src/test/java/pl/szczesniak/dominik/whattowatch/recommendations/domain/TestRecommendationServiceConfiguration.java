@@ -1,6 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
-public class TestRecommendationServiceConfiguration {
+class TestRecommendationServiceConfiguration {
 
 	static RecommendationService recommendationService(final RecommendationConfigurationManager configManager) {
 		return new RecommendationService(

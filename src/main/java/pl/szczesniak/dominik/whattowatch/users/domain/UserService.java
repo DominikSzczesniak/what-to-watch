@@ -7,8 +7,6 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 public class UserService {
 
@@ -32,10 +30,6 @@ public class UserService {
 
 	public boolean isUsernameTaken(final Username username) {
 		return repository.findBy(username.getValue()).isPresent();
-	}
-
-	public List<UserId> findAllUsers() {
-		return repository.findAllUsers();
 	}
 
 }

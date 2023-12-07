@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -54,6 +55,10 @@ public class RecommendationConfiguration {
 
 	void update(final Set<MovieGenre> genres) {
 		this.genres = genres;
+	}
+
+	public ConfigurationId getConfigurationId() {
+		return new ConfigurationId(configurationId);
 	}
 
 }

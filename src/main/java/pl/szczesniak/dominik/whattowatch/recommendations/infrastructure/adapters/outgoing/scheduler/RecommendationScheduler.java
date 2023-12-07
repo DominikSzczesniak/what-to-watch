@@ -8,16 +8,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 class RecommendationScheduler {
 
-	private final RecommendationSchedulerHandler recommendationSchedulerHandler;
-
-	@Scheduled(cron = "${recommendation.weekly.scheduler}")
-	void recommendMoviesWeekly() {
-		recommendationSchedulerHandler.recommendMoviesWeekly();
-	}
+	private final RecommendationDecisionHandler recommendationDecisionHandler;
 
 	@Scheduled(fixedRateString = "${recommendation.every.hour.scheduler}")
-	void recommendMoviesEveryHour() {
-		recommendationSchedulerHandler.recommendMoviesEveryHour();
+	void recommendMovies() {
+		recommendationDecisionHandler.recommendMovies();
 	}
 
 }

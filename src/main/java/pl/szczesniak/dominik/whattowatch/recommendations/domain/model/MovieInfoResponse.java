@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain.model;
 
+import lombok.NonNull;
 import lombok.Value;
 
 import java.util.List;
@@ -7,6 +8,6 @@ import java.util.List;
 @Value
 public class MovieInfoResponse {
 
-	List<MovieInfo> results;
+	@NonNull List<MovieInfo> results;
 
 }

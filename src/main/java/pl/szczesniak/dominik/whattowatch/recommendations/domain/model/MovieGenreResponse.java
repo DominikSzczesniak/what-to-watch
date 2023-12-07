@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain.model;
 
+import lombok.NonNull;
 import lombok.Value;
 
 import java.util.Map;
@@ -7,6 +8,6 @@ import java.util.Map;
 @Value
 public class MovieGenreResponse {
 
-	Map<Long, MovieGenre> genres;
+	@NonNull Map<Long, MovieGenre> genres;
 
 }

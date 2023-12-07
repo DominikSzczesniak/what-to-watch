@@ -13,6 +13,8 @@ class MovieInfoDto {
 	String title;
 	String overview;
 	List<String> genresNames;
+	Integer externalId;
+	String externalApi;
 
 	static List<MovieInfoDto> mapToMovieInfoDto(final List<MovieInfo> movies) {
 		final List<MovieInfoDto> movieDtos = new ArrayList<>();
@@ -20,7 +22,12 @@ class MovieInfoDto {
 			final List<String> genres = movieInfo.getGenres().stream()
 					.map(Enum::name)
 					.collect(Collectors.toList());
-			movieDtos.add(new MovieInfoDto(movieInfo.getTitle(), movieInfo.getOverview(), genres));
+			movieDtos.add(new MovieInfoDto(
+					movieInfo.getTitle(),
+					movieInfo.getOverview(),
+					genres,
+					movieInfo.getExternalId(),
+					movieInfo.getExternalApi().toString()));
 		}
 		return movieDtos;
 	}

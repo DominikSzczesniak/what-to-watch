@@ -8,8 +8,8 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import java.util.Optional;
 
 @Repository
-public interface SpringDataJpaRecommendationConfigurationRepository extends JpaRepository<RecommendationConfiguration, UserId> {
+interface SpringDataJpaRecommendationConfigurationRepository extends JpaRepository<RecommendationConfiguration, UserId> {
 
-	Optional<RecommendationConfiguration> findByUserId(final UserId userId);
+	Optional<RecommendationConfiguration> findByUserId(UserId userId);
 
 }

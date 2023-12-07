@@ -13,7 +13,7 @@ import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.configurations.GetMovieGenresInvoker;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.configurations.UpdateRecommendationConfigurationInvoker;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.recommendedmovies.GetLatestRecommendedMoviesInvoker;
-import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.scheduler.RecommendationSchedulerHandler;
+import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.scheduler.RecommendationDecisionHandler;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUserSample;
 
@@ -30,7 +30,7 @@ import static pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.a
 class RecommendationsModuleIntegrationTest {
 
 	@Autowired
-	private RecommendationSchedulerHandler recommendationSchedulerHandler;
+	private RecommendationDecisionHandler recommendationDecisionHandler;
 
 	@Autowired
 	private UserService userService;
@@ -87,7 +87,7 @@ class RecommendationsModuleIntegrationTest {
 		assertThat(recommendationConfiguration.getBody().getUserId()).isEqualTo(userId);
 
 		// when
-		recommendationSchedulerHandler.recommendMoviesEveryHour();
+		recommendationDecisionHandler.recommendMovies();
 		final ResponseEntity<RecommendedMoviesDto> latestRecommendedMoviesResponse = getLatestRecommendedMoviesRest.getLatestRecommendedMovies(userId);
 
 		// then
@@ -111,7 +111,9 @@ class RecommendationsModuleIntegrationTest {
 
 		// when
 		final ResponseEntity<Void> updateRecommendationConfigurationResponse = updateRecommendationConfigurationRest
-				.updateRecommendationConfiguration(userId, UpdateRecommendationConfigurationDto.builder().genres(updatedGenreNames).build());
+				.updateRecommendationConfiguration(userId, UpdateRecommendationConfigurationDto.builder()
+						.genres(updatedGenreNames)
+						.build());
 
 		// then
 		assertThat(updateRecommendationConfigurationResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -125,7 +127,7 @@ class RecommendationsModuleIntegrationTest {
 		assertThat(getRecommendationConfigurationResponse.getBody().getGenreNames()).isEqualTo(updatedGenreNames);
 
 		// when
-		recommendationSchedulerHandler.recommendMoviesWeekly();
+		recommendationDecisionHandler.recommendMovies();
 		final ResponseEntity<RecommendedMoviesDto> getLatestRecommendedMoviesResponse =
 				getLatestRecommendedMoviesRest.getLatestRecommendedMovies(userId);
 

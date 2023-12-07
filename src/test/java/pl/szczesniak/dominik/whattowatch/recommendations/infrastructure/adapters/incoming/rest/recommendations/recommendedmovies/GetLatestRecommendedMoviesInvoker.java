@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -35,6 +36,8 @@ public class GetLatestRecommendedMoviesInvoker {
 	public static class RecommendedMoviesDto {
 
 		List<MovieInfoDto> movieInfos;
+		LocalDateTime creationDate;
+		LocalDateTime endInterval;
 
 	}
 
@@ -44,6 +47,8 @@ public class GetLatestRecommendedMoviesInvoker {
 		String title;
 		String overview;
 		List<String> genresNames;
+		Integer externalId;
+		String externalApi;
 
 	}
 

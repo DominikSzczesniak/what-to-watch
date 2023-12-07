@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenreResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoApis;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 
 import java.util.ArrayList;
@@ -15,17 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Class responsible for connecting to TMDB api and fetching information from there.
- */
-
 @Component
-public class TMDBMovieInfoApi implements MovieInfoApi {
+class TMDBMovieInfoApi implements MovieInfoApi {
 
 	private final Map<Long, MovieGenre> assignedGenreIds;
 
 	private final String apiKey;
-
 	private final WebClient webClient;
 
 	TMDBMovieInfoApi(@Value("${tmdb.api.key}") final String apiKey, @Value("${tmdb.base.url}") final String baseUrl) {
@@ -119,8 +115,9 @@ public class TMDBMovieInfoApi implements MovieInfoApi {
 					.map(movieInfoDto -> new MovieInfo(
 							movieInfoDto.getGenre_ids().stream().map(assignedGenreIds::get).collect(Collectors.toList()),
 							movieInfoDto.getOverview(),
-							movieInfoDto.getTitle()
-					))
+							movieInfoDto.getTitle(),
+							movieInfoDto.getId(),
+							MovieInfoApis.TMDB))
 					.collect(Collectors.toList());
 		}
 
@@ -137,6 +134,7 @@ public class TMDBMovieInfoApi implements MovieInfoApi {
 		private String title;
 		private String overview;
 		private List<Long> genre_ids;
+		private Integer id;
 	}
 
 	@Data

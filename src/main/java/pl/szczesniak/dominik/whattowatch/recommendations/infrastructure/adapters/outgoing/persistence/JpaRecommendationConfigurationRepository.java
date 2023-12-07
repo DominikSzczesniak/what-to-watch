@@ -7,23 +7,35 @@ import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationCo
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class JpaRecommendationConfigurationRepository implements RecommendationConfigurationRepository {
+class JpaRecommendationConfigurationRepository implements RecommendationConfigurationRepository {
 
 	private final SpringDataJpaRecommendationConfigurationRepository springDataJpaRecommendationConfigurationRepository;
 
 	@Override
-	public ConfigurationId save(final RecommendationConfiguration configuration) {
+	public ConfigurationId create(final RecommendationConfiguration configuration) {
 		final RecommendationConfiguration savedConfig = springDataJpaRecommendationConfigurationRepository.save(configuration);
-		return new ConfigurationId(savedConfig.getConfigurationId());
+		return savedConfig.getConfigurationId();
+	}
+
+	@Override
+	public ConfigurationId update(final RecommendationConfiguration configuration) {
+		final RecommendationConfiguration savedConfig = springDataJpaRecommendationConfigurationRepository.save(configuration);
+		return savedConfig.getConfigurationId();
 	}
 
 	@Override
 	public Optional<RecommendationConfiguration> findBy(final UserId userId) {
 		return springDataJpaRecommendationConfigurationRepository.findByUserId(userId);
+	}
+
+	@Override
+	public List<RecommendationConfiguration> findAll() {
+		return springDataJpaRecommendationConfigurationRepository.findAll();
 	}
 
 }

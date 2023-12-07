@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRepository {
+class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRepository {
 
 	private final AtomicInteger nextId = new AtomicInteger(0);
 	private final Map<RecommendedMoviesId, RecommendedMovies> movies = new HashMap<>();
@@ -18,9 +18,9 @@ public class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRep
 	public RecommendedMoviesId create(final RecommendedMovies recommendedMovies) {
 		final int id = nextId.incrementAndGet();
 		final Long idAsLong = (long) id;
-		recommendedMovies.setId(idAsLong);
+		recommendedMovies.setRecommendedMoviesId(idAsLong);
 		movies.put(new RecommendedMoviesId(idAsLong), recommendedMovies);
-		return new RecommendedMoviesId(recommendedMovies.getId());
+		return new RecommendedMoviesId(recommendedMovies.getRecommendedMoviesId());
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRep
 
 		for (RecommendedMovies recommendedMovies : movies.values()) {
 			if (recommendedMovies.getUserId().equals(userId)) {
-				final LocalDateTime recommendedDate = recommendedMovies.getDate();
+				final LocalDateTime recommendedDate = recommendedMovies.getCreationDate();
 				if (recommendedDate.isAfter(latestDate) || recommendedDate.isEqual(latestDate)) {
 					latestDate = recommendedDate;
 					latestRecommendedMovies = recommendedMovies;
@@ -39,6 +39,17 @@ public class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRep
 		}
 
 		return Optional.ofNullable(latestRecommendedMovies);
+	}
+
+	@Override
+	public boolean existsByUserIdAndRecommendationDateBetween(final UserId userId,
+															  final LocalDateTime intervalStart,
+															  final LocalDateTime intervalEnd) {
+		return movies.values().stream()
+				.anyMatch(recommendedMovies -> recommendedMovies.getUserId().equals(userId) &&
+						recommendedMovies.getCreationDate().isBefore(intervalEnd) &&
+						recommendedMovies.getEndInterval().isAfter(intervalStart)
+				);
 	}
 
 }

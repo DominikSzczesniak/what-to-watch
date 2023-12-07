@@ -4,14 +4,16 @@ import org.apache.commons.lang3.RandomStringUtils;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenreResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoApis;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.MovieInfoApi;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class InMemoryMovieInfoApiRepository implements MovieInfoApi {
+class InMemoryMovieInfoApiRepository implements MovieInfoApi {
 
 	private final Map<Integer, MovieInfo> movies = new HashMap<>();
 
@@ -67,41 +69,42 @@ public class InMemoryMovieInfoApiRepository implements MovieInfoApi {
 	}
 
 	private void addMovieInfos() {
-		movies.put(3, new MovieInfo(List.of(MovieGenre.CRIME), generateRandomString(), generateRandomString()));
-		movies.put(1, new MovieInfo(List.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE), generateRandomString(), generateRandomString()));
-		movies.put(4, new MovieInfo(List.of(MovieGenre.COMEDY), generateRandomString(), generateRandomString()));
-		movies.put(5, new MovieInfo(List.of(MovieGenre.FAMILY), generateRandomString(), generateRandomString()));
-		movies.put(2, new MovieInfo(List.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE), generateRandomString(), generateRandomString()));
-		movies.put(6, new MovieInfo(List.of(MovieGenre.FANTASY), generateRandomString(), generateRandomString()));
-		movies.put(7, new MovieInfo(List.of(MovieGenre.ACTION, MovieGenre.SCIENCE_FICTION), generateRandomString(), generateRandomString()));
-		movies.put(8, new MovieInfo(List.of(MovieGenre.ADVENTURE, MovieGenre.FANTASY), generateRandomString(), generateRandomString()));
-		movies.put(9, new MovieInfo(List.of(MovieGenre.HORROR, MovieGenre.MYSTERY), generateRandomString(), generateRandomString()));
-		movies.put(10, new MovieInfo(List.of(MovieGenre.DRAMA, MovieGenre.ROMANCE), generateRandomString(), generateRandomString()));
-		movies.put(11, new MovieInfo(List.of(MovieGenre.COMEDY, MovieGenre.FAMILY), generateRandomString(), generateRandomString()));
-		movies.put(12, new MovieInfo(List.of(MovieGenre.WESTERN), generateRandomString(), generateRandomString()));
-		movies.put(13, new MovieInfo(List.of(MovieGenre.THRILLER, MovieGenre.CRIME), generateRandomString(), generateRandomString()));
-		movies.put(14, new MovieInfo(List.of(MovieGenre.DOCUMENTARY), generateRandomString(), generateRandomString()));
-		movies.put(15, new MovieInfo(List.of(MovieGenre.ADVENTURE, MovieGenre.HISTORY), generateRandomString(), generateRandomString()));
-		movies.put(16, new MovieInfo(List.of(MovieGenre.SCIENCE_FICTION, MovieGenre.ACTION), generateRandomString(), generateRandomString()));
-		movies.put(17, new MovieInfo(List.of(MovieGenre.HISTORY, MovieGenre.WAR), generateRandomString(), generateRandomString()));
-		movies.put(18, new MovieInfo(List.of(MovieGenre.ANIMATION, MovieGenre.FAMILY), generateRandomString(), generateRandomString()));
-		movies.put(19, new MovieInfo(List.of(MovieGenre.TV_MOVIE, MovieGenre.CRIME), generateRandomString(), generateRandomString()));
-		movies.put(20, new MovieInfo(List.of(MovieGenre.THRILLER, MovieGenre.MYSTERY), generateRandomString(), generateRandomString()));
-		movies.put(21, new MovieInfo(List.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE), generateRandomString(), generateRandomString()));
-		movies.put(22, new MovieInfo(List.of(MovieGenre.COMEDY), generateRandomString(), generateRandomString()));
-		movies.put(23, new MovieInfo(List.of(MovieGenre.DOCUMENTARY, MovieGenre.MUSIC), generateRandomString(), generateRandomString()));
-		movies.put(24, new MovieInfo(List.of(MovieGenre.DRAMA), generateRandomString(), generateRandomString()));
-		movies.put(25, new MovieInfo(List.of(MovieGenre.HORROR, MovieGenre.THRILLER), generateRandomString(), generateRandomString()));
-		movies.put(26, new MovieInfo(List.of(MovieGenre.SCIENCE_FICTION, MovieGenre.ACTION), generateRandomString(), generateRandomString()));
-		movies.put(27, new MovieInfo(List.of(MovieGenre.ADVENTURE, MovieGenre.COMEDY), generateRandomString(), generateRandomString()));
-		movies.put(28, new MovieInfo(List.of(MovieGenre.FANTASY, MovieGenre.FAMILY), generateRandomString(), generateRandomString()));
-		movies.put(29, new MovieInfo(List.of(MovieGenre.THRILLER, MovieGenre.CRIME), generateRandomString(), generateRandomString()));
-		movies.put(30, new MovieInfo(List.of(MovieGenre.DRAMA), generateRandomString(), generateRandomString()));
-		movies.put(31, new MovieInfo(List.of(MovieGenre.COMEDY), generateRandomString(), generateRandomString()));
-		movies.put(32, new MovieInfo(List.of(MovieGenre.HISTORY, MovieGenre.WAR), generateRandomString(), generateRandomString()));
-		movies.put(33, new MovieInfo(List.of(MovieGenre.HORROR, MovieGenre.MYSTERY), generateRandomString(), generateRandomString()));
-		movies.put(34, new MovieInfo(List.of(MovieGenre.SCIENCE_FICTION, MovieGenre.FANTASY), generateRandomString(), generateRandomString()));
-		movies.put(35, new MovieInfo(List.of(MovieGenre.ACTION, MovieGenre.THRILLER), generateRandomString(), generateRandomString()));
+		final AtomicInteger nextId = new AtomicInteger(1);
+		movies.put(1, new MovieInfo(List.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(2, new MovieInfo(List.of(MovieGenre.ACTION, MovieGenre.TV_MOVIE, MovieGenre.WESTERN), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(3, new MovieInfo(List.of(MovieGenre.CRIME), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(4, new MovieInfo(List.of(MovieGenre.COMEDY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(5, new MovieInfo(List.of(MovieGenre.FAMILY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(6, new MovieInfo(List.of(MovieGenre.FANTASY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(7, new MovieInfo(List.of(MovieGenre.ACTION, MovieGenre.SCIENCE_FICTION, MovieGenre.FANTASY), generateRandomString(), generateRandomString(), 7, MovieInfoApis.TMDB));
+		movies.put(8, new MovieInfo(List.of(MovieGenre.ADVENTURE, MovieGenre.FANTASY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(9, new MovieInfo(List.of(MovieGenre.HORROR, MovieGenre.MYSTERY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(10, new MovieInfo(List.of(MovieGenre.DRAMA, MovieGenre.ROMANCE), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(11, new MovieInfo(List.of(MovieGenre.COMEDY, MovieGenre.FAMILY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(12, new MovieInfo(List.of(MovieGenre.WESTERN), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(13, new MovieInfo(List.of(MovieGenre.THRILLER, MovieGenre.CRIME), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(14, new MovieInfo(List.of(MovieGenre.DOCUMENTARY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(15, new MovieInfo(List.of(MovieGenre.ADVENTURE, MovieGenre.HISTORY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(16, new MovieInfo(List.of(MovieGenre.SCIENCE_FICTION, MovieGenre.ACTION), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(17, new MovieInfo(List.of(MovieGenre.HISTORY, MovieGenre.WAR), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(18, new MovieInfo(List.of(MovieGenre.ANIMATION, MovieGenre.FAMILY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(19, new MovieInfo(List.of(MovieGenre.TV_MOVIE, MovieGenre.CRIME, MovieGenre.ACTION), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(20, new MovieInfo(List.of(MovieGenre.THRILLER, MovieGenre.MYSTERY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(21, new MovieInfo(List.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(22, new MovieInfo(List.of(MovieGenre.COMEDY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(23, new MovieInfo(List.of(MovieGenre.DOCUMENTARY, MovieGenre.MUSIC), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(24, new MovieInfo(List.of(MovieGenre.DRAMA), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(25, new MovieInfo(List.of(MovieGenre.HORROR, MovieGenre.THRILLER), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(26, new MovieInfo(List.of(MovieGenre.SCIENCE_FICTION, MovieGenre.ACTION), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(27, new MovieInfo(List.of(MovieGenre.ADVENTURE, MovieGenre.COMEDY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(28, new MovieInfo(List.of(MovieGenre.FANTASY, MovieGenre.FAMILY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(29, new MovieInfo(List.of(MovieGenre.THRILLER, MovieGenre.CRIME), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(30, new MovieInfo(List.of(MovieGenre.DRAMA), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(31, new MovieInfo(List.of(MovieGenre.COMEDY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(32, new MovieInfo(List.of(MovieGenre.HISTORY, MovieGenre.WAR), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(33, new MovieInfo(List.of(MovieGenre.HORROR, MovieGenre.MYSTERY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(34, new MovieInfo(List.of(MovieGenre.SCIENCE_FICTION, MovieGenre.FANTASY), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
+		movies.put(35, new MovieInfo(List.of(MovieGenre.ACTION, MovieGenre.THRILLER), generateRandomString(), generateRandomString(), nextId.incrementAndGet(), MovieInfoApis.TMDB));
 	}
 
 	private static String generateRandomString() {

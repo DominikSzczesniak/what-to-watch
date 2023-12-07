@@ -20,12 +20,11 @@ import static java.util.Objects.requireNonNull;
 @Getter
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"externalId"})
 public class MovieInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@EqualsAndHashCode.Exclude
 	private Integer movieInfoId;
 
 	@ElementCollection
@@ -36,10 +35,20 @@ public class MovieInfo {
 
 	private String title;
 
-	public MovieInfo(@NonNull final List<MovieGenre> genres, @NonNull final String overview, @NonNull final String title) {
+	private Integer externalId;
+
+	private MovieInfoApis externalApi;
+
+	public MovieInfo(@NonNull final List<MovieGenre> genres,
+					 @NonNull final String overview,
+					 @NonNull final String title,
+					 @NonNull final Integer externalId,
+					 @NonNull final MovieInfoApis externalApi) {
 		this.genres = requireNonNull(genres);
 		this.overview = requireNonNull(overview);
 		this.title = requireNonNull(title);
+		this.externalId = externalId;
+		this.externalApi = externalApi;
 	}
 
 }

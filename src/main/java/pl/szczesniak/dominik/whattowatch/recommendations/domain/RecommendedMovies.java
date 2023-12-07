@@ -18,21 +18,23 @@ import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"recommendedMoviesId"})
 public class RecommendedMovies {
 
 	@Id
 	@Setter(AccessLevel.PACKAGE)
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@AttributeOverride(name = "value", column = @Column(name = "recommended_movies_id"))
-	private Long id;
+//	@AttributeOverride(name = "value", column = @Column(name = "recommended_movies_id")) // todo
+	private Long recommendedMoviesId;
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id")
@@ -41,12 +43,24 @@ public class RecommendedMovies {
 	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
 	private UserId userId;
 
-	private LocalDateTime date;
+	private LocalDateTime creationDate;
+
+	private LocalDateTime endInterval;
 
 	RecommendedMovies(final List<MovieInfo> movies, final UserId userId) {
 		this.movies = movies;
-		this.date = LocalDateTime.now();
+		this.creationDate = LocalDateTime.now();
 		this.userId = userId;
+		setEndInterval();
+	}
+
+	private void setEndInterval() {
+		this.endInterval = LocalDateTime.now()
+				.with(TemporalAdjusters.nextOrSame(DayOfWeek.TUESDAY))
+				.withHour(23)
+				.withMinute(59)
+				.withSecond(59)
+				.withNano(999999999);
 	}
 
 }

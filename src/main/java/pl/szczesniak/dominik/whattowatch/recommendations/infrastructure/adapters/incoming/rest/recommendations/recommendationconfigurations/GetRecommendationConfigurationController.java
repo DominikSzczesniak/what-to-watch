@@ -21,10 +21,10 @@ public class GetRecommendationConfigurationController {
 	private final RecommendationConfigurationManager recommendationConfigurationManager;
 
 	@GetMapping("/api/recommendations/configuration")
-	public ResponseEntity<RecommendationConfigurationDto> createRecommendationConfiguration(@RequestHeader("userId") final Integer userId) {
+	public ResponseEntity<RecommendationConfigurationDto> getRecommendationConfiguration(@RequestHeader("userId") final Integer userId) {
 		final RecommendationConfiguration config = recommendationConfigurationManager.findBy(new UserId(userId));
 		final RecommendationConfigurationDto configDto = new RecommendationConfigurationDto(
-				config.getConfigurationId(),
+				config.getConfigurationId().getValue(),
 				mapGenres(config.getGenres()),
 				config.getUserId().getValue()
 		);
