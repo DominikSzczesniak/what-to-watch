@@ -60,15 +60,15 @@ class RecommendationServiceTest {
 				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
 				.build());
 
-		// when
 		final RecommendedMoviesId previouslyRecommendedMoviesId = tut.recommendMoviesByConfiguration(user);
-		final RecommendedMoviesId recommendedMoviesId = tut.recommendMoviesByConfiguration(user);
+		final RecommendedMoviesId latestRecommendedMoviesId = tut.recommendMoviesByConfiguration(user);
 
+		// when
 		final RecommendedMovies latestRecommendedMovies = tut.findLatestRecommendedMovies(user);
 
 		// then
 		assertThat(latestRecommendedMovies.getRecommendedMoviesId()).isNotEqualTo(previouslyRecommendedMoviesId);
-		assertThat(latestRecommendedMovies.getRecommendedMoviesId()).isEqualTo(recommendedMoviesId);
+		assertThat(latestRecommendedMovies.getRecommendedMoviesId()).isEqualTo(latestRecommendedMoviesId);
 	}
 
 	@Test
@@ -117,8 +117,9 @@ class RecommendationServiceTest {
 				.genreNames(Set.of(MovieGenre.ROMANCE))
 				.build());
 
-		// when
 		tut.recommendMoviesByConfiguration(user);
+
+		// when
 		final RecommendedMovies recommendedMovies = tut.findLatestRecommendedMovies(user);
 
 		// then
@@ -137,8 +138,10 @@ class RecommendationServiceTest {
 		// when
 		tut.recommendMoviesByConfiguration(user);
 		final RecommendedMovies recommendedMovies1 = tut.findLatestRecommendedMovies(user);
+
 		tut.recommendMoviesByConfiguration(user);
 		final RecommendedMovies recommendedMovies2 = tut.findLatestRecommendedMovies(user);
+
 		tut.recommendMoviesByConfiguration(user);
 		final RecommendedMovies recommendedMovies3 = tut.findLatestRecommendedMovies(user);
 

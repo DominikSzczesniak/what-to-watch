@@ -53,24 +53,6 @@ class RecommendationConfigurationManagerTest {
 	}
 
 	@Test
-	void should_find_updated_recommendation_configuration() {
-		// given
-		final UserId userId = createAnyUserId();
-		tut.create(CreateRecommendationConfigurationSample.builder()
-				.userId(userId)
-				.genreNames(Set.of(MovieGenre.ADVENTURE))
-				.build());
-		final RecommendationConfiguration configuration = tut.findBy(userId);
-		tut.update(UpdateRecommendationConfigurationSample.builder().userId(userId).build());
-
-		// when
-		final RecommendationConfiguration updatedConfiguration = tut.findBy(userId);
-
-		// then
-		assertThat(updatedConfiguration).isEqualTo(configuration);
-	}
-
-	@Test
 	void should_find_user_recommendation_configuration() {
 		// given
 		final UserId userId = createAnyUserId();
@@ -81,6 +63,26 @@ class RecommendationConfigurationManagerTest {
 
 		// then
 		assertThat(foundConfiguration.getConfigurationId()).isEqualTo(configurationId);
+	}
+
+	@Test
+	void should_find_updated_recommendation_configuration() {
+		// given
+		final UserId userId = createAnyUserId();
+		tut.create(CreateRecommendationConfigurationSample.builder()
+				.userId(userId)
+				.genreNames(Set.of(MovieGenre.ADVENTURE))
+				.build());
+
+		final RecommendationConfiguration configuration = tut.findBy(userId);
+		tut.update(UpdateRecommendationConfigurationSample.builder().genreNames(Set.of(MovieGenre.ACTION)).userId(userId).build());
+
+		// when
+		final RecommendationConfiguration updatedConfiguration = tut.findBy(userId);
+
+		// then
+		assertThat(updatedConfiguration).isEqualTo(configuration);
+		assertThat(updatedConfiguration.getGenres()).containsExactly(MovieGenre.ACTION);
 	}
 
 	@Test
