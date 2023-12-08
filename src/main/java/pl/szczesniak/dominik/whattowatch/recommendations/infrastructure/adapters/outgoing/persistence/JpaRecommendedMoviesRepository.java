@@ -21,7 +21,7 @@ class JpaRecommendedMoviesRepository implements RecommendedMoviesRepository {
 	@Override
 	public RecommendedMoviesId create(final RecommendedMovies recommendedMovies) {
 		final RecommendedMovies recommendation = springDataJpaRecommendedMoviesRepository.save(recommendedMovies);
-		return new RecommendedMoviesId(recommendation.getRecommendedMoviesId());
+		return recommendation.getRecommendedMoviesId();
 	}
 
 	@Override

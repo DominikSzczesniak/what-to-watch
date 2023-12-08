@@ -20,7 +20,7 @@ class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRepository
 		final Long idAsLong = (long) id;
 		recommendedMovies.setRecommendedMoviesId(idAsLong);
 		movies.put(new RecommendedMoviesId(idAsLong), recommendedMovies);
-		return new RecommendedMoviesId(recommendedMovies.getRecommendedMoviesId());
+		return recommendedMovies.getRecommendedMoviesId();
 	}
 
 	@Override

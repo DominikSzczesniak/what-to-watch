@@ -2,7 +2,6 @@ package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
@@ -13,8 +12,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-@Component
-public class RecommendationConfigurationManager { // todo: config
+public class RecommendationConfigurationManager {
 
 	private final RecommendationConfigurationRepository repository;
 

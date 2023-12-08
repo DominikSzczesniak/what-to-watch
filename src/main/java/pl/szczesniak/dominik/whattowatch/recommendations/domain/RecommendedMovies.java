@@ -13,9 +13,11 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.DayOfWeek;
@@ -46,7 +48,7 @@ public class RecommendedMovies {
 
 	private LocalDateTime endInterval;
 
-	RecommendedMovies(final List<MovieInfo> movies, final UserId userId) {
+	RecommendedMovies(@NonNull final List<MovieInfo> movies, @NonNull final UserId userId) {
 		this.movies = movies;
 		this.creationDate = LocalDateTime.now();
 		this.userId = userId;
@@ -60,6 +62,10 @@ public class RecommendedMovies {
 				.withMinute(59)
 				.withSecond(59)
 				.withNano(999999999);
+	}
+
+	public RecommendedMoviesId getRecommendedMoviesId() {
+		return new RecommendedMoviesId(recommendedMoviesId);
 	}
 
 }
