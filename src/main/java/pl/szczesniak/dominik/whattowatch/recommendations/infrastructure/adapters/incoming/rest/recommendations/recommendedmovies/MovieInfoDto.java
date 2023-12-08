@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.recommendedmovies;
 
+import lombok.NonNull;
 import lombok.Value;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 
@@ -10,11 +11,11 @@ import java.util.stream.Collectors;
 @Value
 class MovieInfoDto {
 
-	String title;
-	String overview;
-	List<String> genresNames;
-	Integer externalId;
-	String externalApi;
+	@NonNull String title;
+	@NonNull String overview;
+	@NonNull List<String> genresNames;
+	@NonNull Integer externalId;
+	@NonNull String externalApi;
 
 	static List<MovieInfoDto> mapToMovieInfoDto(final List<MovieInfo> movies) {
 		final List<MovieInfoDto> movieDtos = new ArrayList<>();

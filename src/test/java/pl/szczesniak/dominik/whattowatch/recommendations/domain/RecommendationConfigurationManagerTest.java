@@ -27,7 +27,7 @@ class RecommendationConfigurationManagerTest {
 	}
 
 	@Test
-	void should_not_be_able_to_create_configuration_when_already_exists() {
+	void should_not_be_able_to_create_recommendation_configuration_when_already_exists_for_given_user() {
 		// given
 		final UserId userId = createAnyUserId();
 
@@ -41,7 +41,7 @@ class RecommendationConfigurationManagerTest {
 	}
 
 	@Test
-	void should_not_be_able_to_update_non_existing_configuration() {
+	void should_not_be_able_to_update_non_existing_recommendation_configuration() {
 		// given
 		final UserId userId = createAnyUserId();
 
@@ -84,7 +84,7 @@ class RecommendationConfigurationManagerTest {
 	}
 
 	@Test
-	void should_throw_exception_when_user_configuration_not_found() {
+	void should_throw_exception_when_user_recommendation_configuration_not_found() {
 		// given
 		final UserId userId = createAnyUserId();
 

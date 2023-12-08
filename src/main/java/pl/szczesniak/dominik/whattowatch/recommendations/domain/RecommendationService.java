@@ -7,6 +7,7 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesId;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.MovieInfoApi;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -38,7 +39,7 @@ public class RecommendationService {
 	}
 
 	@Transactional
-	public RecommendedMovies recommendMoviesByConfiguration(final UserId userId) {
+	public RecommendedMoviesId recommendMoviesByConfiguration(final UserId userId) {
 		final RecommendationConfiguration configuration = configurationManager.findBy(userId);
 		final List<MovieInfo> moviesByConfig = getMovieInfosByConfig(configuration);
 		final List<MovieInfo> latestRecommendedMovies = repository.findLatestRecommendedMovies(userId)
@@ -50,7 +51,7 @@ public class RecommendationService {
 		final RecommendedMovies recommendation = new RecommendedMovies(moviesToRecommend, userId);
 		repository.create(recommendation);
 
-		return recommendation;
+		return recommendation.getRecommendedMoviesId();
 	}
 
 	public RecommendedMovies findLatestRecommendedMovies(final UserId userId) {
