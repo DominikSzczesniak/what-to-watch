@@ -10,7 +10,7 @@ import java.util.Set;
 @Value
 public class CreateRecommendationConfiguration {
 
-	@NonNull Set<MovieGenre> genres;
+	@NonNull Set<MovieGenre> limitToGenres;
 	@NonNull UserId userId;
 
 }

@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.configurations;
+package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.configurations;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

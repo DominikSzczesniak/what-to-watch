@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.configurations;
+package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.configurations;
 
 import lombok.Builder;
 import lombok.Data;
@@ -12,30 +12,30 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 @RequiredArgsConstructor
-public class CreateRecommendationConfigurationInvoker {
+@Component
+public class UpdateRecommendationConfigurationInvoker {
 
-	private static final String URL = "/api/recommendations/configuration";
+	private static final String URL = "/api/users/recommendations/configuration";
 
 	private final TestRestTemplate restTemplate;
 
-	public ResponseEntity<Long> createRecommendationConfiguration(final Integer userId, final CreateRecommendationConfigurationDto dto) {
+	public ResponseEntity<Void> updateRecommendationConfiguration(final Integer userId, final UpdateRecommendationConfigurationDto dto) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("userId", String.valueOf(userId));
 		return restTemplate.exchange(
 				URL,
-				HttpMethod.POST,
+				HttpMethod.PUT,
 				new HttpEntity<>(dto, headers),
-				Long.class
+				Void.class
 		);
 	}
 
 	@Data
 	@Builder
-	public static class CreateRecommendationConfigurationDto {
+	public static class UpdateRecommendationConfigurationDto {
 
-		private final List<String> genres;
+		private List<String> limitToGenres;
 
 	}
 

@@ -1,26 +1,26 @@
-package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.recommendedmovies;
+package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendedmovies;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationService;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 
 import java.util.List;
 
-import static pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.recommendedmovies.MovieInfoDto.mapToMovieInfoDto;
+import static pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendedmovies.MovieInfoDto.mapToMovieInfoDto;
 
 @RestController
 @RequiredArgsConstructor
-public class GetPopularMovies {
+public class GetPopularMoviesController {
 
-	private final RecommendationService service;
+	private final RecommendationFacade facade;
 
 	@GetMapping("/api/recommendations/popular")
 	public ResponseEntity<RecommendedMoviesDto> getPopularMovies() {
-		final List<MovieInfo> movies = service.recommendPopularMovies().getResults();
+		final List<MovieInfo> movies = facade.recommendPopularMovies().getResults();
 
 		final RecommendedMoviesDto recommendedMoviesDto = new RecommendedMoviesDto(mapToMovieInfoDto(movies));
 

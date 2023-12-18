@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.recommendationconfigurations;
+package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendationconfigurations;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -7,33 +7,45 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationConfigurationManager;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfiguration;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.recommendationconfigurations.CreateMovieGenreSet.createGenreSet;
+import static java.util.Optional.ofNullable;
 
 @RequiredArgsConstructor
 @RestController
 public class CreateRecommendationConfigurationController {
 
-	private final RecommendationConfigurationManager recommendationConfigurationManager;
+	private final RecommendationFacade facade;
 
-	@PostMapping("/api/recommendations/configuration")
+	@PostMapping("/api/users/recommendations/configuration")
 	public ResponseEntity<?> createRecommendationConfiguration(@RequestHeader("userId") final Integer userId,
 															   @RequestBody final RecommendationConfigurationDto dto) {
-		final ConfigurationId configurationId = recommendationConfigurationManager.create(
-				new CreateRecommendationConfiguration(createGenreSet(dto.getGenres()), new UserId(userId)));
+		final ConfigurationId configurationId = facade.create(
+				new CreateRecommendationConfiguration(toSet(ofNullable(dto.getLimitToGenres())), new UserId(userId)));
 		return ResponseEntity.status(201).body(configurationId.getValue());
+	}
+
+	private static Set<MovieGenre> toSet(final Optional<List<String>> limitToGenres) {
+		final List<String> genres = limitToGenres.orElseGet(Collections::emptyList);
+		final Set<MovieGenre> genresFromDto;
+		genresFromDto = genres.stream().map(MovieGenre::valueOf).collect(Collectors.toSet());
+		return genresFromDto;
 	}
 
 	@Data
 	private static class RecommendationConfigurationDto {
 
-		private List<String> genres;
+		private List<String> limitToGenres;
 
 	}
 

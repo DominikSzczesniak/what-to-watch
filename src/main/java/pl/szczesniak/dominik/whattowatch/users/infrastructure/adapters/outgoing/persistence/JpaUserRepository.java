@@ -32,12 +32,4 @@ public class JpaUserRepository implements UserRepository {
 		return springDataJpaUserRepository.findUserByUsername_Value(username);
 	}
 
-	@Override
-	public List<UserId> findAllUsers() {
-		return springDataJpaUserRepository.findAll()
-				.stream()
-				.map(User::getUserId)
-				.collect(Collectors.toList());
-	}
-
 }

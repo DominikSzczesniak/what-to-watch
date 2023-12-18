@@ -13,6 +13,4 @@ public interface UserRepository {
 
 	Optional<User> findBy(String username);
 
-	List<UserId> findAllUsers();
-
 }

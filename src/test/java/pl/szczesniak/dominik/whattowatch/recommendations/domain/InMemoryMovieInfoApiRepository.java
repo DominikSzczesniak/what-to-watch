@@ -11,7 +11,9 @@ import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 class InMemoryMovieInfoApiRepository implements MovieInfoApi {
 
@@ -44,6 +46,18 @@ class InMemoryMovieInfoApiRepository implements MovieInfoApi {
 				.toList();
 
 		return new MovieInfoResponse(moviesByGenres);
+	}
+
+	@Override
+	public List<Long> mapGenreNamesToApiIds(final Set<MovieGenre> genres) {
+		return genres.stream()
+				.filter(assignedGenreIds::containsValue)
+				.map(genre -> assignedGenreIds.entrySet().stream()
+						.filter(apiGenreEntry -> apiGenreEntry.getValue().equals(genre))
+						.findFirst()
+						.map(Map.Entry::getKey)
+						.orElse(null))
+				.collect(Collectors.toList());
 	}
 
 	private void addGenres() {

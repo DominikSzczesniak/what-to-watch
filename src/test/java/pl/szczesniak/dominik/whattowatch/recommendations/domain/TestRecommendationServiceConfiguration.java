@@ -1,12 +1,21 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
+import java.time.Clock;
+
 class TestRecommendationServiceConfiguration {
 
-	static RecommendationService recommendationService(final RecommendationConfigurationManager configManager) {
-		return new RecommendationService(
-				configManager,
-				new InMemoryMovieInfoApiRepository(),
-				new InMemoryRecommendedMoviesRepository()
+	static RecommendationFacade recommendationFacade(final Clock clock) {
+		final InMemoryRecommendationConfigurationRepository inMemoryRecommendationConfigurationRepository = new InMemoryRecommendationConfigurationRepository();
+		final RecommendationConfigurationManager configurationManager = new RecommendationConfigurationManager(inMemoryRecommendationConfigurationRepository);
+		return new RecommendationFacade(
+				configurationManager,
+				new RecommendationService(
+						configurationManager,
+						new InMemoryMovieInfoApiRepository(),
+						new InMemoryRecommendedMoviesRepository(),
+						new RecommendedMoviesFactory(2),
+						clock
+				)
 		);
 	}
 

@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendations.recommendedmovies;
+package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendedmovies;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetLatestRecommendedMoviesInvoker {
 
-	private static final String URL = "/api/recommendations";
+	private static final String URL = "/api/recommendations/latest";
 
 	private final TestRestTemplate restTemplate;
 

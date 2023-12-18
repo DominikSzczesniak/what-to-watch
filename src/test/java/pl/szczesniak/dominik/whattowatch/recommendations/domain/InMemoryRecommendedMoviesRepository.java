@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,9 +19,20 @@ class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRepository
 	public RecommendedMoviesId create(final RecommendedMovies recommendedMovies) {
 		final int id = nextId.incrementAndGet();
 		final Long idAsLong = (long) id;
-		recommendedMovies.setRecommendedMoviesId(idAsLong);
+		try {
+			setId(recommendedMovies, idAsLong);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 		movies.put(new RecommendedMoviesId(idAsLong), recommendedMovies);
 		return recommendedMovies.getRecommendedMoviesId();
+	}
+
+	private static void setId(final RecommendedMovies recommendedMovies, final Long idAsLong) throws NoSuchFieldException, IllegalAccessException {
+		final Class<RecommendedMovies> recommendationConfigurationClass = RecommendedMovies.class;
+		final Field recommendedMoviesId = recommendationConfigurationClass.getDeclaredField("recommendedMoviesId");
+		recommendedMoviesId.setAccessible(true);
+		recommendedMoviesId.set(recommendedMovies, idAsLong);
 	}
 
 	@Override

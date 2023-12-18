@@ -4,14 +4,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.MovieInfoApi;
 
+import java.time.Clock;
+
 @Configuration
-public class RecommendationServiceConfiguration {
+class RecommendationServiceConfiguration {
 
 	@Bean
-	public RecommendationService recommendationService(final RecommendationConfigurationManager configurationManager,
-													   final MovieInfoApi movieInfoApi,
-													   final RecommendedMoviesRepository repository) {
-		return new RecommendationService(configurationManager, movieInfoApi, repository);
+	RecommendationService recommendationService(final RecommendationConfigurationManager configurationManager,
+												final MovieInfoApi movieInfoApi,
+												final RecommendedMoviesRepository repository,
+												final RecommendedMoviesFactory recommendedMoviesFactory) {
+		return new RecommendationService(configurationManager, movieInfoApi, repository, recommendedMoviesFactory, Clock.systemDefaultZone());
 	}
 
 }

@@ -9,12 +9,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesId;
@@ -33,7 +31,6 @@ import java.util.List;
 public class RecommendedMovies {
 
 	@Id
-	@Setter(AccessLevel.PACKAGE)
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long recommendedMoviesId;
 

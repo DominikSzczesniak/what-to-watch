@@ -4,9 +4,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationConfiguration;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationConfigurationManager;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationService;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
 
@@ -15,23 +14,11 @@ import java.util.List;
 @Slf4j
 public class RecommendationDecisionHandler {
 
-	private final RecommendationService recommendationService;
-	private final RecommendationConfigurationManager recommendationConfigurationManager;
+	private final RecommendationFacade facade;
 
 	public void recommendMovies() {
-		final List<RecommendationConfiguration> allRecommendationConfigurations = recommendationConfigurationManager.findAll();
-
-		allRecommendationConfigurations.forEach(config -> {
-			if (shouldRecommendMovies(config)) {
-				recommendationService.recommendMoviesByConfiguration(config.getUserId());
-			} else {
-				log.info("User with userId: " + config.getUserId().getValue() + " already has recommended movies for this interval");
-			}
-		});
-	}
-
-	private boolean shouldRecommendMovies(final RecommendationConfiguration config) {
-		return !recommendationService.hasRecommendedMoviesForCurrentInterval(config.getUserId());
+		final List<UserId> usersWithRecommendationConfiguration = facade.findAllUsersWithRecommendationConfiguration();
+		usersWithRecommendationConfiguration.forEach(facade::recommendMoviesByConfiguration);
 	}
 
 }

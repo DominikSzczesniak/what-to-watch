@@ -1,5 +1,9 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain.model;
 
+import com.google.common.collect.ImmutableSet;
+
+import java.util.Set;
+
 public enum MovieGenre {
 	ACTION,
 	ADVENTURE,
@@ -19,5 +23,10 @@ public enum MovieGenre {
 	TV_MOVIE,
 	THRILLER,
 	WAR,
-	WESTERN
+	WESTERN;
+
+	public static Set<MovieGenre> allValues() {
+		return ImmutableSet.copyOf(MovieGenre.values());
+	}
+
 }

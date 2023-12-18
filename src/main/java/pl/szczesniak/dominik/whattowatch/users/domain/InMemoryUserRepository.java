@@ -33,11 +33,6 @@ public class InMemoryUserRepository implements UserRepository {
 		return users.values().stream().filter(user -> user.getUsername().getValue().equals(username)).findFirst();
 	}
 
-	@Override
-	public List<UserId> findAllUsers() {
-		return users.keySet().stream().toList();
-	}
-
 	private boolean usernameIsTaken(final String username) {
 		return users.values().stream().anyMatch(user -> username.equalsIgnoreCase(user.getUsername().getValue()));
 	}

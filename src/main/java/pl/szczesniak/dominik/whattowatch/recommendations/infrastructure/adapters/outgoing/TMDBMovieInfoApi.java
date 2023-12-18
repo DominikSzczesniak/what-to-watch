@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -91,6 +92,18 @@ class TMDBMovieInfoApi implements MovieInfoApi {
 				.block();
 	}
 
+	@Override
+	public List<Long> mapGenreNamesToApiIds(final Set<MovieGenre> genres) {
+		return genres.stream()
+				.filter(assignedGenreIds::containsValue)
+				.map(genre -> assignedGenreIds.entrySet().stream()
+						.filter(apiGenreEntry -> apiGenreEntry.getValue().equals(genre))
+						.findFirst()
+						.map(Map.Entry::getKey)
+						.orElse(null))
+				.collect(Collectors.toList());
+	}
+
 	private static String prepareGenresForRequest(final List<Long> genreId) {
 		String genres = "";
 		for (Long id : genreId) {
@@ -135,6 +148,7 @@ class TMDBMovieInfoApi implements MovieInfoApi {
 		private String overview;
 		private List<Long> genre_ids;
 		private Integer id;
+		private Long popularity;
 	}
 
 	@Data
