@@ -26,7 +26,7 @@ class RecommendedMoviesFactory {
 
 	RecommendedMovies createNewRecommendedMovies(final Set<MovieGenre> configGenres,
 												 final List<MovieInfo> recommendedFromApi,
-												 final List<MovieInfo> latestRecommendedMovies, // todo: na latest moze
+												 final List<MovieInfo> latestRecommendedMovies, // Todo: na latest moze
 												 final UserId userId) {
 
 		validateInput(configGenres, recommendedFromApi);
