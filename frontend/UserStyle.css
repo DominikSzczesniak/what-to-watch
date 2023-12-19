@@ -15,11 +15,6 @@ form {
     width: 400px;
 }
 
-/*label {*/
-/*    display: block;*/
-/*    margin-bottom: 5px;*/
-/*}*/
-
 input {
     width: 100%;
     padding: 10px;
@@ -35,7 +30,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     width: 100%;
-    margin-bottom: 3px;
+    margin-top: 15px;
 }
 
 button:hover {
@@ -53,4 +48,22 @@ button:hover {
     font-weight: bold;
     margin: 15px;
     padding-bottom: 5px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-info button {
+    margin-left: 10px;
+}
+
+.create-user-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
 }
