@@ -22,7 +22,7 @@ function loginUser() {
             }
         })
         .then(data => {
-            document.getElementById('response').innerText = `Logged in successfully. User ID: ${data}`;
+            document.getElementById('response').innerText = `Logged in successfully`;
             showLoggedInState(username);
         })
         .catch(error => {
@@ -79,20 +79,14 @@ function createAccount() {
                 throw new Error('Failed to create user');
             }
         })
-        .then(data => {
+        .then(() => {
             const createResponseElement = document.getElementById('createResponse');
-            createResponseElement.style.color = '#008000'; // Green color
-            createResponseElement.innerText = `User created successfully. User ID: ${data}`;
+            createResponseElement.style.color = '#008000';
+            createResponseElement.innerText = `User created successfully.`;
         })
-        // .then(data => {
-        //     document.getElementById('createResponse').innerText = `User created successfully. User ID: ${data}`;
-        // })
         .catch(error => {
             const createResponseElement = document.getElementById('createResponse');
-            createResponseElement.style.color = '#ff0000'; // Red color
+            createResponseElement.style.color = '#ff0000';
             createResponseElement.innerText = error.message;
         });
-        // .catch(error => {
-        //     document.getElementById('createResponse').innerText = error.message;
-        // });
 }
