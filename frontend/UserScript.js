@@ -1,61 +1,3 @@
-function loginUser() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    const userDto = {
-        username: username,
-        password: password
-    };
-
-    fetch('http://localhost:8080/api/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(userDto),
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else if (response.status === 401) {
-                throw new Error('Invalid credentials');
-            } else {
-                throw new Error('Failed to login');
-            }
-        })
-        .then(data => {
-            document.getElementById('response').innerText = `Logged in successfully`;
-            showLoggedInState(username);
-        })
-        .catch(error => {
-            document.getElementById('response').innerText = error.message;
-        });
-}
-
-function showLoggedInState(username) {
-    document.getElementById('loginContainer').style.display = 'none';
-    document.getElementById('loggedInContainer').style.display = 'block';
-    document.getElementById('loggedInUser').innerText = `Logged in as: ${username}`;
-
-    const userInfoContainer = document.getElementById('loggedInContainer');
-    userInfoContainer.style.position = 'absolute';
-    userInfoContainer.style.top = '10px';
-    userInfoContainer.style.right = '10px';
-}
-
-function logoutUser() {
-    document.getElementById('loginContainer').style.display = 'block';
-    document.getElementById('loggedInContainer').style.display = 'none';
-}
-
-function toggleCreateAccountForm() {
-    document.getElementById('loginContainer').style.display = 'none';
-    document.getElementById('createAccountContainer').style.display = 'block';
-}
-
-function toggleLoginForm() {
-    document.getElementById('loginContainer').style.display = 'block';
-    document.getElementById('createAccountContainer').style.display = 'none';
-}
-
 function createAccount() {
     const newUsername = document.getElementById('newUsername').value;
     const newPassword = document.getElementById('newPassword').value;
@@ -89,4 +31,63 @@ function createAccount() {
             createResponseElement.style.color = '#ff0000';
             createResponseElement.innerText = error.message;
         });
+}
+
+function loginUser() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    const userDto = {
+        username: username,
+        password: password
+    };
+
+    fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(userDto),
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else if (response.status === 401) {
+                throw new Error('Invalid credentials');
+            } else {
+                throw new Error('Failed to login');
+            }
+        })
+        .then(data => {
+            document.getElementById('response').innerText = `Logged in successfully`;
+            document.getElementById('response').style.color = '#008000'
+            showLoggedInState(username);
+        })
+        .catch(error => {
+            document.getElementById('response').innerText = error.message;
+        });
+}
+
+function showLoggedInState(username) {
+    document.getElementById('loginContainer').style.display = 'none';
+    document.getElementById('loggedInContainer').style.display = 'block';
+    document.getElementById('loggedInUser').innerText = `Logged in as: ${username}`;
+
+    const userInfoContainer = document.getElementById('loggedInContainer');
+    userInfoContainer.style.position = 'absolute';
+    userInfoContainer.style.top = '10px';
+    userInfoContainer.style.right = '10px';
+}
+
+function logoutUser() {
+    document.getElementById('loginContainer').style.display = 'block';
+    document.getElementById('loggedInContainer').style.display = 'none';
+}
+
+function toggleCreateAccountForm() {
+    document.getElementById('loginContainer').style.display = 'none';
+    document.getElementById('createAccountContainer').style.display = 'block';
+}
+
+function toggleLoginForm() {
+    document.getElementById('loginContainer').style.display = 'block';
+    document.getElementById('createAccountContainer').style.display = 'none';
 }
