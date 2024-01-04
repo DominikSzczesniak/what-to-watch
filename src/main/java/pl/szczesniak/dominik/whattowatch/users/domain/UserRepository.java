@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {

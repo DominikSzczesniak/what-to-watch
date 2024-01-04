@@ -6,7 +6,9 @@ import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
