@@ -4,7 +4,6 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,14 +38,13 @@ import static java.util.Objects.requireNonNull;
 @Table
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = {"movieId"})
-public class Movie {
+//@EqualsAndHashCode(of = {"id"})
+public class Movie extends BaseEntity{
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@AttributeOverride(name = "value", column = @Column(name = "movie_id"))
-	@Setter(AccessLevel.PACKAGE)
-	private Integer movieId;
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@Setter(AccessLevel.PACKAGE)
+//	private Integer id;
 
 	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
 	private UserId userId;
@@ -60,7 +58,7 @@ public class Movie {
 	@JoinColumn(name = "movieId")
 	private Set<MovieComment> comments;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
 	@JoinTable
 	@ToString.Exclude
 	private Set<MovieTag> tags;
@@ -73,7 +71,7 @@ public class Movie {
 	}
 
 	WatchedMovie markAsWatched() {
-		return new WatchedMovie(new MovieId(movieId), userId, title);
+		return new WatchedMovie(new MovieId(getId()), userId, title);
 	}
 
 	public void updateMovieTitle(final MovieTitle title) {
@@ -86,7 +84,7 @@ public class Movie {
 
 	public UUID addComment(final String comment) {
 		final UUID commentId = UUID.randomUUID();
-		this.comments.add(new MovieComment(new CommentId(commentId), movieId, comment));
+		this.comments.add(new MovieComment(new CommentId(commentId), getId(), comment));
 		return commentId;
 	}
 
@@ -95,7 +93,7 @@ public class Movie {
 	}
 
 	public MovieId getMovieId() {
-		return new MovieId(movieId);
+		return new MovieId(getId());
 	}
 
 	public Optional<MovieCover> getCover() {

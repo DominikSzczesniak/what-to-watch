@@ -11,7 +11,7 @@ class MovieTest {
 	void watchedmovies_fields_should_equal_movies_fields() {
 		// given
 		final Movie movie = MovieSample.builder().build();
-		movie.setMovieId(createAnyMovieId().getValue());
+		movie.setId(createAnyMovieId().getValue());
 
 		// when
 		final WatchedMovie watchedMovie = movie.markAsWatched();

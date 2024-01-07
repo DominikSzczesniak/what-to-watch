@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -21,7 +20,7 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery {
 
 	@Override
 	public void create(final Movie movie) {
-		movie.setMovieId(nextId.incrementAndGet());
+		movie.setId(nextId.incrementAndGet());
 		movies.put(movie.getMovieId(), movie);
 	}
 

@@ -16,7 +16,7 @@ public interface SpringDataJpaMoviesRepository extends JpaRepository<Movie, Inte
 
 	List<Movie> findAllByUserId(UserId userId);
 
-	Optional<Movie> findByMovieIdAndUserId(Integer movieId, UserId userId);
+	Optional<Movie> findByIdAndUserId(Integer movieId, UserId userId);
 
 	@Query("SELECT m FROM Movie m JOIN m.tags t WHERE t.tagId IN :tagIds AND m.userId = :userId GROUP BY m HAVING COUNT(DISTINCT t.tagId) = :#{#tagIds.size()}")
 	List<Movie> findAllByTags_TagIdInAndUserId(@Param("tagIds") List<MovieTagId> tagIds, @Param("userId") UserId userId);
