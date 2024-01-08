@@ -57,8 +57,6 @@ function loginUser() {
             }
         })
         .then(data => {
-            document.getElementById('response').innerText = `Logged in successfully`;
-            document.getElementById('response').style.color = '#008000'
             showLoggedInState(username);
         })
         .catch(error => {
@@ -78,6 +76,8 @@ function showLoggedInState(username) {
 }
 
 function logoutUser() {
+    document.getElementById('createResponse').innerText = '';
+    document.getElementById('response').innerText = ''
     document.getElementById('loginContainer').style.display = 'block';
     document.getElementById('loggedInContainer').style.display = 'none';
 }
