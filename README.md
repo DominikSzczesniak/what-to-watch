@@ -11,7 +11,7 @@ also tv shows).
 * [Features](#Features)
 * [Planned improvements](#Planned-improvements)
 * [Project Status](#project-status)
-* [Movie Recommendation Module Summary](#recommendation-module)
+* [Movie Recommendation Module Summary](#movie-recommendation-module-summary)
 
 
 ## General Information
