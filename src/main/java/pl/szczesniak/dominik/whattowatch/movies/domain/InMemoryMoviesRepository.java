@@ -4,6 +4,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,20 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery {
 
 	@Override
 	public void create(final Movie movie) {
-		movie.setId(nextId.incrementAndGet());
+		setId(movie, nextId.incrementAndGet());
 		movies.put(movie.getMovieId(), movie);
+	}
+
+	private void setId(final Movie movie, final int id) {
+		final Class<Movie> movieClass = Movie.class;
+		final Class<? super Movie> baseEntityClass = movieClass.getSuperclass();
+		try {
+			final Field movieId = baseEntityClass.getDeclaredField("id");
+			movieId.setAccessible(true);
+			movieId.set(movie, id);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

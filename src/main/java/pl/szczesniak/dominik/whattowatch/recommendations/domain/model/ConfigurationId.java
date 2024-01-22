@@ -14,9 +14,9 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class ConfigurationId {
 
-	private Long value;
+	private Integer value;
 
-	public ConfigurationId(@NonNull final Long value) {
+	public ConfigurationId(@NonNull final Integer value) {
 		this.value = value;
 	}
 

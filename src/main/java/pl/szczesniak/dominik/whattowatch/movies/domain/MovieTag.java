@@ -37,10 +37,6 @@ public class MovieTag {
 	@AttributeOverride(name = "value", column = @Column(name = "tag_user_id"))
 	private UserId userId;
 
-//	@ManyToMany(mappedBy = "tags")
-//	@JsonIgnoreProperties("tags")
-//	private Set<Movie> movies;
-
 	MovieTag(final MovieTagId tagId, final MovieTagLabel label, final UserId userId) {
 		this.tagId = requireNonNull(tagId, "TagId cannot be null");
 		this.label = requireNonNull(label, "TagLabel cannot be null");

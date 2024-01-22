@@ -7,17 +7,14 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import pl.szczesniak.dominik.whattowatch.commons.domain.model.BaseEntity;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -29,13 +26,7 @@ import java.util.Set;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = {"configurationId"})
-public class RecommendationConfiguration {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@AttributeOverride(name = "value", column = @Column(name = "configuration_id"))
-	private Long configurationId;
+public class RecommendationConfiguration extends BaseEntity {
 
 	@ElementCollection(targetClass = MovieGenre.class)
 	@Enumerated(EnumType.STRING)
@@ -56,7 +47,7 @@ public class RecommendationConfiguration {
 	}
 
 	public ConfigurationId getConfigurationId() {
-		return new ConfigurationId(configurationId);
+		return new ConfigurationId(getId());
 	}
 
 }

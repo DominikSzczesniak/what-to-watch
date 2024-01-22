@@ -4,20 +4,16 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
+import pl.szczesniak.dominik.whattowatch.commons.domain.model.BaseEntity;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -38,13 +34,7 @@ import static java.util.Objects.requireNonNull;
 @Table
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//@EqualsAndHashCode(of = {"id"})
-public class Movie extends BaseEntity{
-
-//	@Id
-//	@GeneratedValue(strategy = GenerationType.AUTO)
-//	@Setter(AccessLevel.PACKAGE)
-//	private Integer id;
+public class Movie extends BaseEntity {
 
 	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
 	private UserId userId;
