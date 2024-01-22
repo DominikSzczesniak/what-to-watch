@@ -24,12 +24,7 @@ class InMemoryRecommendationConfigurationRepository implements RecommendationCon
 	@Override
 	public ConfigurationId create(final RecommendationConfiguration configuration) {
 		final int id = nextId.incrementAndGet();
-		final Long idAsLong = (long) id;
-		try {
-			setId(configuration, idAsLong);
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+		setId(configuration, id);
 		configurations.put(configuration.getUserId(), toPersisted(configuration));
 		return configuration.getConfigurationId();
 	}
@@ -50,16 +45,23 @@ class InMemoryRecommendationConfigurationRepository implements RecommendationCon
 		return configurations.values().stream().map(PersistedRecommendationConfiguration::fromPersisted).toList();
 	}
 
-	private static void setId(final RecommendationConfiguration configuration, final Long idAsLong) throws NoSuchFieldException, IllegalAccessException {
+	private static void setId(final RecommendationConfiguration configuration, final Integer idAsLong) {
 		final Class<RecommendationConfiguration> recommendationConfigurationClass = RecommendationConfiguration.class;
-		final Field configurationId = recommendationConfigurationClass.getDeclaredField("configurationId");
-		configurationId.setAccessible(true);
-		configurationId.set(configuration, idAsLong);
+		final Class<? super RecommendationConfiguration> baseEntityClass = recommendationConfigurationClass.getSuperclass();
+		try {
+			final Field configurationId = baseEntityClass.getDeclaredField("id");
+			configurationId.setAccessible(true);
+			configurationId.set(configuration, idAsLong);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Value
-	@EqualsAndHashCode(of = {"configurationId"})
+	@EqualsAndHashCode(of = "uuid")
 	static class PersistedRecommendationConfiguration {
+
+		String uuid;
 
 		ConfigurationId configurationId;
 
@@ -68,7 +70,7 @@ class InMemoryRecommendationConfigurationRepository implements RecommendationCon
 		UserId userId;
 
 		static PersistedRecommendationConfiguration toPersisted(final RecommendationConfiguration configuration) {
-			return new PersistedRecommendationConfiguration(configuration.getConfigurationId(), configuration.getGenres(), configuration.getUserId());
+			return new PersistedRecommendationConfiguration(configuration.getUuid(), configuration.getConfigurationId(), configuration.getGenres(), configuration.getUserId());
 		}
 
 		static RecommendationConfiguration fromPersisted(final PersistedRecommendationConfiguration persistedConfig) {
@@ -84,11 +86,16 @@ class InMemoryRecommendationConfigurationRepository implements RecommendationCon
 		private static void setRecommendationConfigurationId(final PersistedRecommendationConfiguration persistedConfig,
 															 final RecommendationConfiguration recommendationConfiguration) {
 			final Class<RecommendationConfiguration> recommendationConfigurationClass = RecommendationConfiguration.class;
+			final Class<? super RecommendationConfiguration> baseEntityClass = recommendationConfigurationClass.getSuperclass();
 			final Field configurationId;
+			final Field uuid;
 			try {
-				configurationId = recommendationConfigurationClass.getDeclaredField("configurationId");
+				configurationId = baseEntityClass.getDeclaredField("id");
 				configurationId.setAccessible(true);
 				configurationId.set(recommendationConfiguration, persistedConfig.getConfigurationId().getValue());
+				uuid = baseEntityClass.getDeclaredField("uuid");
+				uuid.setAccessible(true);
+				uuid.set(recommendationConfiguration, persistedConfig.getUuid());
 			} catch (NoSuchFieldException | IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}

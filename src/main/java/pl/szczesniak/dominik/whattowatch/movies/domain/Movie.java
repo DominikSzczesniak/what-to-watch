@@ -4,21 +4,16 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
+import pl.szczesniak.dominik.whattowatch.commons.domain.model.BaseEntity;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -39,14 +34,7 @@ import static java.util.Objects.requireNonNull;
 @Table
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = {"movieId"})
-public class Movie {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@AttributeOverride(name = "value", column = @Column(name = "movie_id"))
-	@Setter(AccessLevel.PACKAGE)
-	private Integer movieId;
+public class Movie extends BaseEntity {
 
 	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
 	private UserId userId;
@@ -60,7 +48,7 @@ public class Movie {
 	@JoinColumn(name = "movieId")
 	private Set<MovieComment> comments;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
 	@JoinTable
 	@ToString.Exclude
 	private Set<MovieTag> tags;
@@ -73,7 +61,7 @@ public class Movie {
 	}
 
 	WatchedMovie markAsWatched() {
-		return new WatchedMovie(new MovieId(movieId), userId, title);
+		return new WatchedMovie(new MovieId(getId()), userId, title);
 	}
 
 	public void updateMovieTitle(final MovieTitle title) {
@@ -86,7 +74,7 @@ public class Movie {
 
 	public UUID addComment(final String comment) {
 		final UUID commentId = UUID.randomUUID();
-		this.comments.add(new MovieComment(new CommentId(commentId), movieId, comment));
+		this.comments.add(new MovieComment(new CommentId(commentId), getId(), comment));
 		return commentId;
 	}
 
@@ -95,7 +83,7 @@ public class Movie {
 	}
 
 	public MovieId getMovieId() {
-		return new MovieId(movieId);
+		return new MovieId(getId());
 	}
 
 	public Optional<MovieCover> getCover() {

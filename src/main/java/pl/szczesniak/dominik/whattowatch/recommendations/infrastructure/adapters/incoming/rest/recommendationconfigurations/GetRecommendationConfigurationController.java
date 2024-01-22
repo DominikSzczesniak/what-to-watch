@@ -38,7 +38,7 @@ public class GetRecommendationConfigurationController {
 	@Value
 	private static class RecommendationConfigurationDto {
 
-		Long configurationId;
+		Integer configurationId;
 		List<String> genreNames;
 		Integer userId;
 

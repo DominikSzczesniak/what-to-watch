@@ -13,7 +13,7 @@ interface SpringDataJpaRecommendedMoviesRepository extends JpaRepository<Recomme
 
 	RecommendedMovies findTopByUserIdOrderByCreationDateDesc(UserId userId);
 
-	@Query("SELECT COUNT(movies.recommendedMoviesId) > 0 FROM RecommendedMovies movies " +
+	@Query("SELECT COUNT(movies.id) > 0 FROM RecommendedMovies movies " +
 			"WHERE movies.userId = :userId AND movies.creationDate < :endInterval AND movies.endInterval > :startDate")
 	boolean existsByUserIdAndStartDateAndEndInterval(UserId userId,
 													 LocalDateTime startDate,

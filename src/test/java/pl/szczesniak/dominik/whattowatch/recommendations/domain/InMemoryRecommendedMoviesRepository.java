@@ -18,21 +18,21 @@ class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRepository
 	@Override
 	public RecommendedMoviesId create(final RecommendedMovies recommendedMovies) {
 		final int id = nextId.incrementAndGet();
-		final Long idAsLong = (long) id;
-		try {
-			setId(recommendedMovies, idAsLong);
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-		movies.put(new RecommendedMoviesId(idAsLong), recommendedMovies);
+		setId(recommendedMovies, id);
+		movies.put(new RecommendedMoviesId(id), recommendedMovies);
 		return recommendedMovies.getRecommendedMoviesId();
 	}
 
-	private static void setId(final RecommendedMovies recommendedMovies, final Long idAsLong) throws NoSuchFieldException, IllegalAccessException {
-		final Class<RecommendedMovies> recommendationConfigurationClass = RecommendedMovies.class;
-		final Field recommendedMoviesId = recommendationConfigurationClass.getDeclaredField("recommendedMoviesId");
-		recommendedMoviesId.setAccessible(true);
-		recommendedMoviesId.set(recommendedMovies, idAsLong);
+	private static void setId(final RecommendedMovies recommendedMovies, final int id) {
+		final Class<?> recommendedMoviesClass = RecommendedMovies.class;
+		final Class<?> baseEntityClass = recommendedMoviesClass.getSuperclass();
+		try {
+			final Field idField = baseEntityClass.getDeclaredField("id");
+			idField.setAccessible(true);
+			idField.set(recommendedMovies, id);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
