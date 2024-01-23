@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 public class UserServiceConfiguration {
 
 	@Bean
-	public UserService userService(final UserRepository userRepository) {
-		return new UserService(userRepository);
+	public UserService userService(final UserRepository userRepository, final UserRoleRepository userRoleRepository) {
+		return new UserService(userRepository, userRoleRepository);
 	}
 
 }

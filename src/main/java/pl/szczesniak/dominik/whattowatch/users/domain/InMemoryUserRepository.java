@@ -1,6 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.lang.reflect.Field;
@@ -23,6 +24,11 @@ public class InMemoryUserRepository implements UserRepository {
 		users.put(user.getUserId(), user);
 	}
 
+	@Override
+	public void update(final User user) {
+		users.put(user.getUserId(), user);
+	}
+
 	private void setId(final User user, final int id) {
 		final Class<User> userClass = User.class;
 		final Class<? super User> baseEntityClass = userClass.getSuperclass();
@@ -41,8 +47,13 @@ public class InMemoryUserRepository implements UserRepository {
 	}
 
 	@Override
-	public Optional<User> findBy(final String username) {
-		return users.values().stream().filter(user -> user.getUsername().getValue().equals(username)).findFirst();
+	public Optional<User> findBy(final Username username) {
+		return users.values().stream().filter(user -> user.getUsername().equals(username)).findFirst();
+	}
+
+	@Override
+	public Optional<User> findBy(final UserId userId) {
+		return users.values().stream().filter(user -> user.getUserId().equals(userId)).findFirst();
 	}
 
 	private boolean usernameIsTaken(final String username) {

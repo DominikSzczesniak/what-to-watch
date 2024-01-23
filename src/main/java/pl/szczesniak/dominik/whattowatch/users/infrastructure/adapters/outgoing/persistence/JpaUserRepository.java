@@ -5,10 +5,9 @@ import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.User;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,6 +20,10 @@ public class JpaUserRepository implements UserRepository {
 		springDataJpaUserRepository.save(user);
 	}
 
+	@Override
+	public void update(final User user) {
+		springDataJpaUserRepository.save(user);
+	}
 
 	@Override
 	public boolean exists(final UserId userId) {
@@ -28,8 +31,13 @@ public class JpaUserRepository implements UserRepository {
 	}
 
 	@Override
-	public Optional<User> findBy(final String username) {
-		return springDataJpaUserRepository.findUserByUsername_Value(username);
+	public Optional<User> findBy(final Username username) {
+		return springDataJpaUserRepository.findUserByUsername(username);
+	}
+
+	@Override
+	public Optional<User> findBy(final UserId userId) {
+		return springDataJpaUserRepository.findById(userId.getValue());
 	}
 
 }
