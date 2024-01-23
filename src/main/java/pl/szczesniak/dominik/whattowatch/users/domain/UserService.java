@@ -10,6 +10,8 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class UserService {
 
@@ -50,8 +52,9 @@ public class UserService {
 
 	public void addRole(final UserId userId, final UserRole role) {
 		final User user = repository.findBy(userId).orElseThrow(() -> new ObjectDoesNotExistException("asd"));
-		checkUserAlreadyHasRole(role, user);
-		user.addRole(role, user);
+		UserRole by = roleRepository.findBy(role.getRoleName()).orElse(role);
+		checkUserAlreadyHasRole(by, user);
+		user.addRole(by, user);
 		repository.update(user);
 	}
 
