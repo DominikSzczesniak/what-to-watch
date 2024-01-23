@@ -10,8 +10,6 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 public class UserService {
 
