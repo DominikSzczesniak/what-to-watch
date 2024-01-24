@@ -141,6 +141,34 @@ class RecommendationsModuleIntegrationTest {
 				.extracting(MovieInfoDto::getGenresNames).allMatch(movieGenres -> movieGenres.containsAll(updatedGenreNames));
 	}
 
+	@Test
+	void should_forbid_endpoints_when_not_logged_in_user() {
+		// given
+
+		// when
+		final ResponseEntity<MovieGenresDto> getMovieGenresResponse = getMovieGenresRest.getMovieGenres();
+
+		final ResponseEntity<Long> createRecommendationResponse = createRecommendationConfigurationRest.createRecommendationConfiguration(
+				userId, CreateRecommendationConfigurationDto.builder().limitToGenres(List.of("WAR")).build());
+
+		final ResponseEntity<RecommendationConfigurationDto> recommendationConfiguration =
+				getRecommendationConfigurationRest.getRecommendationConfiguration(userId);
+
+		final ResponseEntity<RecommendedMoviesDto> latestRecommendedMoviesResponse = getLatestRecommendedMoviesRest.getLatestRecommendedMovies(userId);
+
+		final ResponseEntity<Void> updateRecommendationConfigurationResponse = updateRecommendationConfigurationRest
+				.updateRecommendationConfiguration(userId, UpdateRecommendationConfigurationDto.builder()
+						.limitToGenres(List.of("ACTION"))
+						.build());
+
+		// then
+		assertThat(getMovieGenresResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(createRecommendationResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(recommendationConfiguration.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(latestRecommendedMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(updateRecommendationConfigurationResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+	}
+
 	private void simulateRecommendationsAvailable() {
 		recommendationDecisionHandler.recommendMovies();
 	}

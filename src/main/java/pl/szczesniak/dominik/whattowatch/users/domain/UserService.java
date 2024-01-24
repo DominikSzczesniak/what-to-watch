@@ -1,6 +1,10 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
@@ -11,14 +15,17 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
 	private final UserRepository repository;
 
 	private final UserRoleRepository roleRepository;
 
+	private final PasswordEncoder passwordEncoder;
+
 	public UserId createUser(final CreateUser command) {
-		final User user = new User(command.getUsername(), command.getUserPassword());
+		final String encodedPassword = passwordEncoder.encode(command.getUserPassword().getValue());
+		final User user = new User(command.getUsername(), new UserPassword(encodedPassword));
 		addDefaultRoleToUser(user);
 		repository.create(user);
 		return user.getUserId();
@@ -40,7 +47,7 @@ public class UserService {
 
 	public UserId login(final Username username, final UserPassword userPassword) {
 		return repository.findBy(username)
-				.filter(user -> user.getUserPassword().equals(userPassword))
+				.filter(user -> passwordEncoder.matches(userPassword.getValue(), user.getUserPassword().getValue()))
 				.orElseThrow(() -> new InvalidCredentialsException("Invalid credentials, could not log in.")).getUserId();
 	}
 
@@ -74,4 +81,9 @@ public class UserService {
 				new ObjectDoesNotExistException("User with userId: " + userId.getValue() + " does not exist."));
 	}
 
+	@Override
+	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+		return repository.findBy(new Username(username)).orElseThrow(
+				() -> new UsernameNotFoundException("User not found with username: " + username));
+	}
 }

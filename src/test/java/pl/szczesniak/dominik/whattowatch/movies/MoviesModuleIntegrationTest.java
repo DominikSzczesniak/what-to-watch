@@ -492,6 +492,89 @@ class MoviesModuleIntegrationTest {
 		assertThat(findAllMoviesByOneTagResponse.getBody()).hasSize(2);
 	}
 
+	@Test
+	void should_forbid_endpoints_when_not_logged_in_user() throws IOException {
+		// given
+		final File coverFile = new File("src/test/resources/imagesTest/2x.png");
+		final String filename = coverFile.getName();
+		final String originalFilename = coverFile.getName();
+		final String contentType = "image/png";
+		final byte[] content = Files.readAllBytes(coverFile.toPath());
+
+		final ResponseEntity<Integer> addMovieResponse = addMovieRest.addMovie(
+				AddMovieDto.builder().userId(userId).build(),
+				Integer.class
+		);
+
+		final Integer movieId = addMovieResponse.getBody();
+
+		// when
+
+		final ResponseEntity<FindMovieToWatchRestInvoker.MovieDetailsDto> findMovieToWatchResponse = findMovieToWatchRest.findMovieToWatch(userId, addMovieResponse.getBody());
+
+		final ResponseEntity<String> addMovieTagToMovieResponse = addMovieTagToMovieRest.addTagToMovie(
+				MovieTagDto.builder().tagLabel(createAnyTagLabel().getValue()).build(), userId, movieId);
+
+		final ResponseEntity<List<FoundMovieTagDto>> findMovieTagsResponse = findMovieTagsRest.getMovieTagsByUserId(userId);
+
+		final ResponseEntity<Void> deleteMovieTagFromMovieResponse = deleteMovieTagFromMovieRest.deleteTagFromMovie(
+				addMovieTagToMovieResponse.getBody(),
+				userId,
+				addMovieResponse.getBody()
+		);
+
+		final ResponseEntity<List<MovieDetailsDto>> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(userId);
+
+		final ResponseEntity<Void> deleteMovieResponse = removeMovieFromListRest.removeMovie(userId, movieId);
+
+		final UpdateMovieDto updateMovieDto = UpdateMovieDto.builder().movieTitle(createAnyMovieTitle().getValue()).build();
+
+		final ResponseEntity<Void> updateMovieResponse = updateMovieRest.updateMovie(updateMovieDto, userId, movieId);
+
+		final ResponseEntity<Void> moveMovieToWatchedListResponse = moveMovieToWatchToWatchedListRest.findMoviesToWatch(
+				userId,
+				movieId
+		);
+
+		final ResponseEntity<List<WatchedMovieDto>> getWatchedMoviesResponse = findWatchedMoviesRest.findWatchedMovies(userId);
+
+		final ResponseEntity<String> addCommentToMovieResponse = addCommentToMovieRest.addCommentToMovie(
+				userId,
+				addMovieResponse.getBody(),
+				CommentDto.builder().build()
+		);
+
+		final ResponseEntity<Void> deleteCommentFromMovieToWatchResponse = deleteCommentFromMovieToWatchRest.deleteCommentFromMovieToWatch(
+				userId,
+				addMovieResponse.getBody(),
+				new DeleteCommentDto(addCommentToMovieResponse.getBody())
+		);
+
+		final MultipartFile multipartFile = new MockMultipartFile(filename, originalFilename, contentType, content);
+		final ResponseEntity<?> setMovieToWatchResponse = setMovieToWatchCoverRest.setCover(userId, addMovieResponse.getBody(), multipartFile);
+
+		final ResponseEntity<byte[]> getMovieToWatchCoverResponse = getMovieToWatchCoverRest.getMovieToWatchCover(userId, addMovieResponse.getBody());
+
+		final ResponseEntity<Void> deleteMovieToWatchCoverResponse = deleteMovieToWatchCoverRest.deleteMovieToWatchCover(userId, addMovieResponse.getBody());
+
+		// then
+		assertThat(addMovieResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(addMovieTagToMovieResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(deleteMovieResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(updateMovieResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(moveMovieToWatchedListResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(getWatchedMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(addCommentToMovieResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(setMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(getMovieToWatchCoverResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(deleteMovieToWatchCoverResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(deleteCommentFromMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(deleteMovieTagFromMovieResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(findMovieTagsResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(findMovieToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+	}
+
 	private static void assertMovieWasAdded(final ResponseEntity<Integer> addMovieResponse) {
 		assertThat(addMovieResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(addMovieResponse.getBody()).isNotNull();
