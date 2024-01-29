@@ -4,6 +4,8 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -46,14 +48,8 @@ public class User extends BaseEntity {
 		this.roles = new ArrayList<>();
 	}
 
-	void addRole(final UserRole role, final User user) {
+	void addRole(final UserRole role) {
 		roles.add(role);
-		roles.forEach(roleEntity -> {
-			final List<User> users = roleEntity.getUsers();
-			if (!users.contains(user)) {
-				users.add(user);
-			}
-		});
 	}
 
 	public UserId getUserId() {

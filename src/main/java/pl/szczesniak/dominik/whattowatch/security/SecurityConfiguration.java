@@ -67,7 +67,7 @@ public class SecurityConfiguration {
 
 	private UserDetails createUserDetails(final User user) {
 		final List<SimpleGrantedAuthority> grantedAuthorities = user.getRoles().stream()
-				.map(userRole -> new SimpleGrantedAuthority(userRole.getRoleName().getValue()))
+				.map(userRole -> new SimpleGrantedAuthority(userRole.getRoleName().toString()))
 				.toList();
 		return new org.springframework.security.core.userdetails.User(
 				user.getUsername().getValue(),

@@ -9,6 +9,10 @@ public class InMemoryUserRoleRepository implements UserRoleRepository {
 
 	private final HashMap<Integer, UserRole> roles = new HashMap<>();
 
+	InMemoryUserRoleRepository() {
+		roles.put(1, new UserRole(RoleName.USER));
+	}
+
 	@Override
 	public void create(final UserRole role) {
 		roles.put(role.getId(), role);

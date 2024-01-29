@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.persistence;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRole;
@@ -22,6 +23,11 @@ public class JpaUserRoleRepository implements UserRoleRepository {
 	@Override
 	public Optional<UserRole> findBy(final RoleName roleName) {
 		return springDataJpaUserRoleRepository.findByRoleName(roleName);
+	}
+
+	@PostConstruct
+	public void construct() {
+		springDataJpaUserRoleRepository.save(new UserRole(RoleName.USER));
 	}
 
 }

@@ -147,7 +147,7 @@ class UserServiceTest {
 		final User user = tut.findUserBy(username).get();
 
 		// then
-		assertThat(user.getRoles()).extracting(UserRole::getRoleName).containsExactlyInAnyOrder(new RoleName("USER"));
+		assertThat(user.getRoles()).extracting(UserRole::getRoleName).containsExactlyInAnyOrder(RoleName.USER);
 	}
 
 	@Test

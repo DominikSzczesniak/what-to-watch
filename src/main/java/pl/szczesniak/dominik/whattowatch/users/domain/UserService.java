@@ -1,9 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
@@ -42,13 +40,8 @@ public class UserService {
 	}
 
 	private void addDefaultRoleToUser(final User user) {
-		final UserRole role = roleRepository.findBy(new RoleName("USER")).orElseGet(() -> {
-			final UserRole createdRole = new UserRole(new RoleName("USER"));
-			roleRepository.create(createdRole);
-			return createdRole;
-		});
-
-		user.addRole(role, user);
+		UserRole userRole = roleRepository.findBy(RoleName.USER).get();
+		user.addRole(userRole);
 	}
 
 	public boolean exists(final UserId userId) {

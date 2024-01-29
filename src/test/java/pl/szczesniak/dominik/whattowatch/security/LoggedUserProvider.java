@@ -30,31 +30,22 @@ public class LoggedUserProvider {
 	public LoggedUser getLoggedUser() {
 		final CreateUserDto build = CreateUserDto.builder()
 				.username(createAnyUsername().getValue()).password(createAnyUserPassword().getValue()).build();
-		final ResponseEntity<Integer> user = createUserRest.createUser(build, Integer.class);
-		assertThat(user.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		final ResponseEntity<Integer> createUserResponse = createUserRest.createUser(build, Integer.class);
+		assertThat(createUserResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 
 		final ResponseEntity<Integer> loggedUserResponse = loginUserRest.loginUser(
 				LoginUserDto.builder().username(build.getUsername()).password(build.getPassword()).build(),
 				Integer.class
 		);
+		assertThat(loggedUserResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		final List<String> cookies = loggedUserResponse
 				.getHeaders()
 				.get("Set-Cookie");
 		final Integer userId = loggedUserResponse.getBody();
-		checkUserIdOrCookiesAreNotNull(cookies, userId);
 
 		return new LoggedUser(userId, cookies);
-	}
-
-	private static void checkUserIdOrCookiesAreNotNull(final List<String> cookies, final Integer userId) {
-		if (userId == null) {
-			throw new ObjectDoesNotExistException("userid is null");
-		}
-		if (cookies == null) {
-			throw new ObjectDoesNotExistException("cookies not found");
-		}
 	}
 
 	@Value

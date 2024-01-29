@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.multipart.MultipartFile;
 import pl.szczesniak.dominik.whattowatch.movies.domain.UserProvider;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
@@ -55,6 +56,7 @@ import static pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.i
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class MoviesModuleIntegrationTest {
 
 	@MockBean
