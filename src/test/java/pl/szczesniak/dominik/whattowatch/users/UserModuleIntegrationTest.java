@@ -5,14 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientException;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker.CreateUserDto;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.LoginUserRestInvoker;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.LoginUserRestInvoker.LoginUserDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserPasswordSample.createAnyUserPassword;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSample.createAnyUsername;
@@ -82,13 +80,13 @@ class UserModuleIntegrationTest {
 		assertThat(createUserResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		// when
-		final Throwable thrown = catchThrowable(() -> createUserRest.createUser(
+		final ResponseEntity<Integer> user = createUserRest.createUser(
 				CreateUserDto.builder().username(userToCreate.getUsername()).password(createAnyUserPassword().getValue()).build(),
 				Integer.class
-		));
+		);
 
 		// then
-		assertThat(thrown).isInstanceOf(RestClientException.class);
+		assertThat(user.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 
 	private static CreateUserDto createAnyUser() {

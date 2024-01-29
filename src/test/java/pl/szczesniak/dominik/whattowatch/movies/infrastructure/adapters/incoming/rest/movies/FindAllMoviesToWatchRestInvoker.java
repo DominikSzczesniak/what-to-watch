@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -9,20 +8,23 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import pl.szczesniak.dominik.whattowatch.infrastructure.adapters.incoming.rest.BaseRestInvoker;
+import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class FindAllMoviesToWatchRestInvoker {
+public class FindAllMoviesToWatchRestInvoker extends BaseRestInvoker {
 
 	private static final String URL = "/api/movies";
 
-	private final TestRestTemplate restTemplate;
+	FindAllMoviesToWatchRestInvoker(final TestRestTemplate restTemplate) {
+		super(restTemplate);
+	}
 
-	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(final Integer userId) {
+	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(final LoggedUser loggedUser) {
 		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", String.valueOf(userId));
+		addSessionIdandUserIdHeaders(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,
@@ -32,9 +34,9 @@ public class FindAllMoviesToWatchRestInvoker {
 		);
 	}
 
-	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(final Integer userId, final String tags) {
+	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(final LoggedUser loggedUser, final String tags) {
 		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", String.valueOf(userId));
+		addSessionIdandUserIdHeaders(headers, loggedUser);
 		final String urlWithParams = URL + "?tags=" + tags;
 		return restTemplate.exchange(
 				urlWithParams,

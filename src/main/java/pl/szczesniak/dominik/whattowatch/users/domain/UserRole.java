@@ -12,6 +12,7 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.BaseEntity;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
@@ -35,7 +36,7 @@ public class UserRole extends BaseEntity {
 	@JsonIgnoreProperties("roles")
 	private List<User> users;
 
-	public UserRole(final RoleName roleName) {
+	public UserRole(@NonNull final RoleName roleName) {
 		this.roleName = roleName;
 		users = new ArrayList<>();
 	}

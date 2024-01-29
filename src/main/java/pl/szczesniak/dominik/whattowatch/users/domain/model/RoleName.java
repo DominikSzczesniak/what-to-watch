@@ -16,8 +16,6 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class RoleName {
 
-	@NonNull
-	private String value;
-
+	@NonNull private String value;
 
 }

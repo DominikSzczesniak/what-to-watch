@@ -21,11 +21,6 @@ public class JpaUserRepository implements UserRepository {
 	}
 
 	@Override
-	public void update(final User user) {
-		springDataJpaUserRepository.save(user);
-	}
-
-	@Override
 	public boolean exists(final UserId userId) {
 		return springDataJpaUserRepository.existsById(userId.getValue());
 	}

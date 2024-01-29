@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,14 +20,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserRole;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
@@ -83,12 +80,6 @@ public class UserRestController {
 	@ExceptionHandler(UsernameIsTakenException.class)
 	public ResponseEntity<?> handleUsernameIsTakenException() {
 		return ResponseEntity.badRequest().build();
-	}
-
-	@PutMapping("/api/users/{userId}")
-	public ResponseEntity<?> setRole(@PathVariable final Integer userId) {
-		userService.addRole(new UserId(userId), new UserRole(new RoleName("ADMIN")));
-		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	@Data

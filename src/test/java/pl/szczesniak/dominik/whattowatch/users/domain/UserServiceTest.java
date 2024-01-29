@@ -2,7 +2,6 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
@@ -139,66 +138,31 @@ class UserServiceTest {
 	}
 
 	@Test
-	void user_should_have_user_role_by_default() {
+	void created_user_should_have_user_role_by_default() {
 		// given
 		final Username username = createAnyUsername();
 		tut.createUser(CreateUserSample.builder().username(username).build());
 
 		// when
-		final User user = tut.getUserBy(username);
-
-		// then
-		assertThat(user.getRoles()).extracting(UserRole::getRoleName).containsExactly(new RoleName("USER"));
-	}
-
-	@Test
-	void user_should_have_user_and_admin_role() {
-		// given
-		final UserId userId = tut.createUser(CreateUserSample.builder().build());
-
-		// when
-		tut.addRole(userId, new UserRole(new RoleName("ADMIN")));
-		final User user = tut.getUserBy(userId);
-
-		// then
-		assertThat(user.getRoles()).extracting(UserRole::getRoleName).containsExactlyInAnyOrder(new RoleName("ADMIN"), new RoleName("USER"));
-	}
-
-	@Test
-	void should_throw_exception_when_user_already_has_admin_role() {
-		// given
-		final UserId userId = tut.createUser(CreateUserSample.builder().build());
-		tut.addRole(userId, new UserRole(new RoleName("ADMIN")));
-
-		// when
-		final Throwable thrown = catchThrowable(() -> tut.addRole(userId, new UserRole(new RoleName("ADMIN"))));
-
-		// then
-		assertThat(thrown).isInstanceOf(ObjectAlreadyExistsException.class);
-	}
-
-	@Test
-	void created_user_should_have_user_role_by_default() {
-		// given
-		final UserId userId = tut.createUser(CreateUserSample.builder().build());
-
-		// when
-		final User user = tut.getUserBy(userId);
+		final User user = tut.findUserBy(username).get();
 
 		// then
 		assertThat(user.getRoles()).extracting(UserRole::getRoleName).containsExactlyInAnyOrder(new RoleName("USER"));
 	}
 
 	@Test
-	void should_not_be_able_to_add_same_role() {
+	void created_users_default_roles_should_be_equal() {
 		// given
-		final UserId userId = tut.createUser(CreateUserSample.builder().build());
+		final Username username1 = createAnyUsername();
+		tut.createUser(CreateUserSample.builder().username(username1).build());
+		final Username username2 = createAnyUsername();
+		tut.createUser(CreateUserSample.builder().username(username2).build());
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.addRole(userId, new UserRole(new RoleName("USER"))));
+		final User user1 = tut.findUserBy(username1).get();
+		final User user2 = tut.findUserBy(username2).get();
 
 		// then
-		assertThat(thrown).isInstanceOf(ObjectAlreadyExistsException.class);
+		assertThat(user1.getRoles().get(0)).isEqualTo(user2.getRoles().get(0));
 	}
-
 }

@@ -2,28 +2,34 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import pl.szczesniak.dominik.whattowatch.infrastructure.adapters.incoming.rest.BaseRestInvoker;
+import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
 
 @Component
-@RequiredArgsConstructor
-public class AddMovieToWatchRestInvoker {
+public class AddMovieToWatchRestInvoker extends BaseRestInvoker {
 
 	private static final String URL = "/api/movies";
 
-	private final TestRestTemplate restTemplate;
+	AddMovieToWatchRestInvoker(final TestRestTemplate restTemplate) {
+		super(restTemplate);
+	}
 
-	public <T> ResponseEntity<T> addMovie(final AddMovieDto addMovieDto, final Class<T> responseType) {
+	public <T> ResponseEntity<T> addMovie(final AddMovieDto addMovieDto, final LoggedUser loggedUser, final Class<T> responseType) {
+		final HttpHeaders headers = new HttpHeaders();
+		headers.put(HttpHeaders.COOKIE, loggedUser.getSessionId());
+
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.POST,
-				new HttpEntity<>(addMovieDto),
+				new HttpEntity<>(addMovieDto, headers),
 				responseType
 		);
 	}

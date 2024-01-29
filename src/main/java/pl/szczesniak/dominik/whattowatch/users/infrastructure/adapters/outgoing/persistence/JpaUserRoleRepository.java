@@ -23,4 +23,5 @@ public class JpaUserRoleRepository implements UserRoleRepository {
 	public Optional<UserRole> findBy(final RoleName roleName) {
 		return springDataJpaUserRoleRepository.findByRoleName(roleName);
 	}
+
 }

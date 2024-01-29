@@ -1,11 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectAlreadyExistsException;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -13,9 +10,12 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
 	private final UserRepository repository;
 
@@ -24,11 +24,21 @@ public class UserService implements UserDetailsService {
 	private final PasswordEncoder passwordEncoder;
 
 	public UserId createUser(final CreateUser command) {
-		final String encodedPassword = passwordEncoder.encode(command.getUserPassword().getValue());
-		final User user = new User(command.getUsername(), new UserPassword(encodedPassword));
+		checkUsernameIsTaken(command);
+		final User user = createFrom(command);
 		addDefaultRoleToUser(user);
 		repository.create(user);
 		return user.getUserId();
+	}
+
+	private User createFrom(final CreateUser command) {
+		return new User(command.getUsername(), new UserPassword(passwordEncoder.encode(command.getUserPassword().getValue())));
+	}
+
+	private void checkUsernameIsTaken(final CreateUser command) {
+		if (isUsernameTaken(command.getUsername())) {
+			throw new UsernameIsTakenException("Username is taken");
+		}
 	}
 
 	private void addDefaultRoleToUser(final User user) {
@@ -55,35 +65,8 @@ public class UserService implements UserDetailsService {
 		return repository.findBy(username).isPresent();
 	}
 
-	public void addRole(final UserId userId, final UserRole role) {
-		final User user = repository.findBy(userId).orElseThrow(() -> new ObjectDoesNotExistException("asd"));
-		UserRole by = roleRepository.findBy(role.getRoleName()).orElse(role);
-		checkUserAlreadyHasRole(by, user);
-		user.addRole(by, user);
-		repository.update(user);
+	public Optional<User> findUserBy(final Username username) {
+		return repository.findBy(username);
 	}
 
-	private static void checkUserAlreadyHasRole(final UserRole role, final User user) {
-		user.getRoles().forEach(userRole -> {
-			if (userRole.getRoleName().equals(role.getRoleName())) {
-				throw new ObjectAlreadyExistsException("User already has this role.");
-			}
-		});
-	}
-
-	User getUserBy(final Username username) {
-		return repository.findBy(username).orElseThrow(() ->
-				new ObjectDoesNotExistException("User with username " + username.getValue() + " does not exist."));
-	}
-
-	User getUserBy(final UserId userId) {
-		return repository.findBy(userId).orElseThrow(() ->
-				new ObjectDoesNotExistException("User with userId: " + userId.getValue() + " does not exist."));
-	}
-
-	@Override
-	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-		return repository.findBy(new Username(username)).orElseThrow(
-				() -> new UsernameNotFoundException("User not found with username: " + username));
-	}
 }

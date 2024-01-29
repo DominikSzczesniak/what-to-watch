@@ -9,8 +9,6 @@ public interface UserRepository {
 
 	void create(User user);
 
-	void update(User user);
-
 	boolean exists(UserId userId);
 
 	Optional<User> findBy(Username username);

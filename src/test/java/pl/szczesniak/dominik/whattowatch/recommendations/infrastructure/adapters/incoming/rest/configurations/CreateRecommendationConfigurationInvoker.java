@@ -3,27 +3,29 @@ package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapter
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import pl.szczesniak.dominik.whattowatch.infrastructure.adapters.incoming.rest.BaseRestInvoker;
+import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class CreateRecommendationConfigurationInvoker {
+public class CreateRecommendationConfigurationInvoker extends BaseRestInvoker {
 
 	private static final String URL = "/api/users/recommendations/configuration";
 
-	private final TestRestTemplate restTemplate;
+	CreateRecommendationConfigurationInvoker(final TestRestTemplate restTemplate) {
+		super(restTemplate);
+	}
 
-	public ResponseEntity<Long> createRecommendationConfiguration(final Integer userId, final CreateRecommendationConfigurationDto dto) {
+	public ResponseEntity<Long> createRecommendationConfiguration(final LoggedUser loggedUser, final CreateRecommendationConfigurationDto dto) {
 		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", String.valueOf(userId));
+		addSessionIdandUserIdHeaders(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.POST,
