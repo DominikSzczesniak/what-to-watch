@@ -26,13 +26,8 @@ public class UserRole extends BaseEntity {
 	@Enumerated(value = EnumType.STRING)
 	private RoleName roleName;
 
-//	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "roles")
-//	@JsonIgnoreProperties("roles")
-//	private List<User> users;
-
 	public UserRole(@NonNull final RoleName roleName) {
 		this.roleName = roleName;
-//		users = new ArrayList<>();
 	}
 
 }
