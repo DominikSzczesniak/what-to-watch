@@ -1,6 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -8,11 +10,11 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
 	private final UserRepository repository;
@@ -21,8 +23,8 @@ public class UserService {
 
 	private final PasswordEncoder passwordEncoder;
 
+	@Transactional
 	public UserId createUser(final CreateUser command) {
-		checkUsernameIsTaken(command);
 		final User user = createFrom(command);
 		addDefaultRoleToUser(user);
 		repository.create(user);
@@ -33,14 +35,8 @@ public class UserService {
 		return new User(command.getUsername(), new UserPassword(passwordEncoder.encode(command.getUserPassword().getValue())));
 	}
 
-	private void checkUsernameIsTaken(final CreateUser command) {
-		if (isUsernameTaken(command.getUsername())) {
-			throw new UsernameIsTakenException("Username is taken");
-		}
-	}
-
 	private void addDefaultRoleToUser(final User user) {
-		UserRole userRole = roleRepository.findBy(RoleName.USER).get();
+		final UserRole userRole = roleRepository.findBy(RoleName.USER).get();
 		user.addRole(userRole);
 	}
 
@@ -48,6 +44,7 @@ public class UserService {
 		return repository.exists(userId);
 	}
 
+	@Transactional
 	public UserId login(final Username username, final UserPassword userPassword) {
 		return repository.findBy(username)
 				.filter(user -> passwordEncoder.matches(userPassword.getValue(), user.getUserPassword().getValue()))

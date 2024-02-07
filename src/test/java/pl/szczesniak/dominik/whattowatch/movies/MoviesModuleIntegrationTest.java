@@ -1,17 +1,13 @@
 package pl.szczesniak.dominik.whattowatch.movies;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.multipart.MultipartFile;
-import pl.szczesniak.dominik.whattowatch.movies.domain.UserProvider;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddCommentToMovieRestInvoker;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies.AddCommentToMovieRestInvoker.CommentDto;
@@ -46,8 +42,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentSample.createAnyComment;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
@@ -56,11 +50,7 @@ import static pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.i
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class MoviesModuleIntegrationTest {
-
-	@MockBean
-	private UserProvider userProvider;
 
 	@Autowired
 	private FindAllMoviesToWatchRestInvoker findAllMoviesToWatchRest;
@@ -109,11 +99,6 @@ class MoviesModuleIntegrationTest {
 
 	@Autowired
 	private LoggedUserProvider loggedUserProvider;
-
-	@BeforeEach
-	void setUp() {
-		given(userProvider.exists(any())).willReturn(true);
-	}
 
 	@Test
 	void should_add_movie_and_retrieve_list() {

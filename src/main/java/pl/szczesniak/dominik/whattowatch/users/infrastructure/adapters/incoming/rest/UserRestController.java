@@ -66,7 +66,7 @@ public class UserRestController {
 		try {
 			final Integer value = userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()))).getValue();
 			return ResponseEntity.status(HttpStatus.CREATED).body(value);
-		} catch (UsernameIsTakenException e) {
+		} catch (UsernameIsTakenException | DataIntegrityViolationException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 	}

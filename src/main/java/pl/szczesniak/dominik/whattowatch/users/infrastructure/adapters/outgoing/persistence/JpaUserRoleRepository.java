@@ -27,7 +27,9 @@ public class JpaUserRoleRepository implements UserRoleRepository {
 
 	@PostConstruct
 	public void construct() {
-		springDataJpaUserRoleRepository.save(new UserRole(RoleName.USER));
+		if (springDataJpaUserRoleRepository.findByRoleName(RoleName.USER).isEmpty()) {
+			springDataJpaUserRoleRepository.save(new UserRole(RoleName.USER));
+		}
 	}
 
 }

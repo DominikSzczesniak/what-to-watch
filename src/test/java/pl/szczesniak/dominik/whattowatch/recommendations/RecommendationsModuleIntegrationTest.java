@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.GetRecommendationConfigurationInvoker;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.GetRecommendationConfigurationInvoker.RecommendationConfigurationDto;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.configurations.CreateRecommendationConfigurationInvoker;
@@ -28,7 +27,6 @@ import static pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.a
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class RecommendationsModuleIntegrationTest {
 
 	@Autowired
