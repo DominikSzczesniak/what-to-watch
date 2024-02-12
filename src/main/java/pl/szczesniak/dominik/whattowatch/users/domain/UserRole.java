@@ -1,12 +1,10 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +20,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserRole extends BaseEntity {
 
-	@AttributeOverride(name = "value", column = @Column(name = "role_name"))
+	@Column(unique = true)
 	@Enumerated(value = EnumType.STRING)
 	private RoleName roleName;
 

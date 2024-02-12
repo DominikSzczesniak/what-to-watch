@@ -46,11 +46,6 @@ public class InMemoryUserRepository implements UserRepository {
 		return users.values().stream().filter(user -> user.getUsername().equals(username)).findFirst();
 	}
 
-	@Override
-	public Optional<User> findBy(final UserId userId) {
-		return users.values().stream().filter(user -> user.getUserId().equals(userId)).findFirst();
-	}
-
 	private boolean usernameIsTaken(final String username) {
 		return users.values().stream().anyMatch(user -> username.equalsIgnoreCase(user.getUsername().getValue()));
 	}

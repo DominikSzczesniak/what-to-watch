@@ -44,7 +44,6 @@ public class UserService {
 		return repository.exists(userId);
 	}
 
-	@Transactional
 	public UserId login(final Username username, final UserPassword userPassword) {
 		return repository.findBy(username)
 				.filter(user -> passwordEncoder.matches(userPassword.getValue(), user.getUserPassword().getValue()))

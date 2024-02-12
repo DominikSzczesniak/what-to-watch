@@ -618,7 +618,7 @@ class MoviesModuleIntegrationTest {
 	}
 
 	@Test
-	void should_forbid_endpoints_when_not_logged_in_user_comments() {
+	void should_unauthorize_endpoints_when_not_logged_in_user_comments() {
 		// given
 		final Integer userId = createAnyUserId().getValue();
 		final LoggedUser notLoggedUser = new LoggedUser(userId, List.of("asd"));

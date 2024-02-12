@@ -150,7 +150,7 @@ class RecommendationsModuleIntegrationTest {
 	}
 
 	@Test
-	void should_forbid_endpoints_when_not_logged_in_user() {
+	void should_unauthorize_endpoints_when_not_logged_in_user() {
 		// given
 		final Integer userId = createAnyUserId().getValue();
 		final LoggedUser loggedUser = new LoggedUser(userId, List.of("asd"));

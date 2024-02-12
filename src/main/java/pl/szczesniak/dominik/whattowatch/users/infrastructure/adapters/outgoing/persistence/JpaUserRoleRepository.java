@@ -1,12 +1,12 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.persistence;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRole;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRoleRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,11 +25,21 @@ public class JpaUserRoleRepository implements UserRoleRepository {
 		return springDataJpaUserRoleRepository.findByRoleName(roleName);
 	}
 
-	@PostConstruct
-	public void construct() {
-		if (springDataJpaUserRoleRepository.findByRoleName(RoleName.USER).isEmpty()) {
-			springDataJpaUserRoleRepository.save(new UserRole(RoleName.USER));
-		}
+	@Override
+	public void addDefaultRoles(final List<RoleName> roles) {
+		final List<UserRole> userRolesInDatabase = springDataJpaUserRoleRepository.findAll();
+		final List<RoleName> defaultRoles = List.of(RoleName.USER);
+
+		final List<RoleName> rolesToAdd = defaultRoles.stream()
+				.filter(roleName -> !roleExists(roleName, userRolesInDatabase))
+				.toList();
+
+		rolesToAdd.forEach(roleName -> springDataJpaUserRoleRepository.save(new UserRole(roleName)));
+	}
+
+	private boolean roleExists(final RoleName roleName, final List<UserRole> userRolesInDatabase) {
+		return userRolesInDatabase.stream()
+				.anyMatch(role -> role.getRoleName().equals(roleName));
 	}
 
 }

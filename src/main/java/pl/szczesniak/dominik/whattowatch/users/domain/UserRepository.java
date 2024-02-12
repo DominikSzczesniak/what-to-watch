@@ -13,6 +13,4 @@ public interface UserRepository {
 
 	Optional<User> findBy(Username username);
 
-	Optional<User> findBy(UserId userId);
-
 }

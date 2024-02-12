@@ -151,7 +151,7 @@ class UserServiceTest {
 	}
 
 	@Test
-	void created_users_default_roles_should_be_equal() {
+	void created_users_default_roles_should_be_same() {
 		// given
 		final Username username1 = createAnyUsername();
 		tut.createUser(CreateUserSample.builder().username(username1).build());

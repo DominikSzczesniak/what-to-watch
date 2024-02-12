@@ -30,9 +30,4 @@ public class JpaUserRepository implements UserRepository {
 		return springDataJpaUserRepository.findUserByUsername(username);
 	}
 
-	@Override
-	public Optional<User> findBy(final UserId userId) {
-		return springDataJpaUserRepository.findById(userId.getValue());
-	}
-
 }
