@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
@@ -44,8 +45,8 @@ public class MoviesFacadeTagsTest {
 		tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movieId).userId(user).build());
 
 		// then
-		final Set<MovieTag> tags = tut.getMovie(movieId, user).getTags();
-		assertThat(tags).extracting(MovieTag::getLabel).containsExactly(tagLabel);
+		final Set<MovieTagQueryResult> tags = tut.getMovie(movieId, user).getTags();
+		assertThat(tags).extracting(MovieTagQueryResult::getLabel).containsExactly(tagLabel);
 	}
 
 	@Test
@@ -64,12 +65,12 @@ public class MoviesFacadeTagsTest {
 		final MovieTagId thirdTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(thirdTagLabel).movieId(movieId).userId(user).build());
 		final MovieTagId fourthTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(fourthTagLabel).movieId(movieId).userId(user).build());
 
-		final List<MovieTag> tags = tut.getMovieTagsByUserId(user.getValue());
+		final List<MovieTagQueryResult> tags = tut.getMovieTagsByUserId(user.getValue());
 
 		// then
 		assertThat(tags.size()).isEqualTo(4);
-		assertThat(tags).extracting(MovieTag::getTagId).containsExactlyInAnyOrder(firstTagId, secondTagId, thirdTagId, fourthTagId);
-		assertThat(tags).extracting(MovieTag::getLabel).containsExactlyInAnyOrder(firstTagLabel, secondTagLabel, thirdTagLabel, fourthTagLabel);
+		assertThat(tags).extracting(MovieTagQueryResult::getTagId).containsExactlyInAnyOrder(firstTagId, secondTagId, thirdTagId, fourthTagId);
+		assertThat(tags).extracting(MovieTagQueryResult::getLabel).containsExactlyInAnyOrder(firstTagLabel, secondTagLabel, thirdTagLabel, fourthTagLabel);
 	}
 
 	@Test

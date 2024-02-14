@@ -1,9 +1,7 @@
-package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing.persistence;
+package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import pl.szczesniak.dominik.whattowatch.movies.domain.WatchedMovie;
-import pl.szczesniak.dominik.whattowatch.movies.domain.WatchedMoviesRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;

@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
@@ -38,7 +39,7 @@ public class MoviesFacade {
 		moviesListService.removeMovieFromList(movieId, userId);
 	}
 
-	public List<Movie> getMoviesToWatch(final UserId userId) {
+	public List<MovieQueryResult> getMoviesToWatch(final UserId userId) {
 		return moviesListService.getMoviesToWatch(userId);
 	}
 
@@ -54,7 +55,7 @@ public class MoviesFacade {
 		moviesListService.updateMovie(command);
 	}
 
-	public Movie getMovie(final MovieId movieId, final UserId userId) {
+	public MovieQueryResult getMovie(final MovieId movieId, final UserId userId) {
 		return moviesListService.getMovie(movieId, userId);
 	}
 

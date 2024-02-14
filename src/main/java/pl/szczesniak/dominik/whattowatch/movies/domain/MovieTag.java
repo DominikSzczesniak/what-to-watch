@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @EqualsAndHashCode(of = {"tagId"})
-public class MovieTag {
+class MovieTag {
 
 	@EmbeddedId
 	@AttributeOverride(name = "value", column = @Column(name = "tag_id"))
