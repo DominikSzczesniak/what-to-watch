@@ -25,10 +25,10 @@ public class JpaMoviesRepository implements MoviesRepository {
 		springDataJpaMoviesRepository.save(movie);
 	}
 
-	@Override
-	public List<Movie> findAll(final UserId userId) {
-		return springDataJpaMoviesRepository.findAllByUserId(userId);
-	}
+//	@Override
+//	public List<Movie> findAll(final UserId userId) {
+//		return springDataJpaMoviesRepository.findAllByUserId(userId);
+//	}
 
 	@Override
 	public void removeMovie(final MovieId movieId, final UserId userId) {
@@ -40,10 +40,10 @@ public class JpaMoviesRepository implements MoviesRepository {
 		return springDataJpaMoviesRepository.findByIdAndUserId(movieId.getValue(), userId);
 	}
 
-	@Override
-	public List<Movie> findAllMoviesByTagIds(final List<MovieTagId> tags, final UserId userId) {
-		return springDataJpaMoviesRepository.findAllByTags_TagIdInAndUserId(tags, userId);
-	}
+//	@Override
+//	public List<Movie> findAllMoviesByTagIds(final List<MovieTagId> tags, final UserId userId) {
+//		return springDataJpaMoviesRepository.findAllByTags_TagIdInAndUserId(tags, userId);
+//	}
 
 
 }

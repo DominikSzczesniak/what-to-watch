@@ -11,7 +11,7 @@ public class MovieQueryResult {
 
 	MovieTitle title;
 
-	Set<MovieComment> comments;
+	Set<MovieCommentQueryResult> comments;
 
 	Set<MovieTagQueryResult> tags;
 

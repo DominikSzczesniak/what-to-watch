@@ -15,10 +15,10 @@ public class JpaMovieTagsRepository implements TagsQuery {
 
 	private final SpringDataJpaMovieTagsRepository springDataJpaMovieTagsRepository;
 
-	@Override
-	public List<MovieTag> findByUserId(final Integer userId) {
-		return springDataJpaMovieTagsRepository.findByUserId(new UserId(userId));
-	}
+//	@Override
+//	public List<MovieTag> findByUserId(final Integer userId) {
+//		return springDataJpaMovieTagsRepository.findByUserId(new UserId(userId));
+//	}
 
 	@Override
 	public Optional<MovieTag> findTagByTagId(final String tagId) {

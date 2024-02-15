@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCommentQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
@@ -42,8 +42,8 @@ public class MoviesFacadeCommentsTest {
 		tut.addCommentToMovie(AddCommentToMovieSample.builder().userId(user).movieId(movieId).comment(comment).build());
 
 		// then
-		final Set<MovieComment> comments = tut.getMovie(movieId, user).getComments();
-		assertThat(comments).extracting(MovieComment::getText).containsExactly(comment);
+		final Set<MovieCommentQueryResult> comments = tut.getMovie(movieId, user).getComments();
+		assertThat(comments).extracting(MovieCommentQueryResult::getText).containsExactly(comment);
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class MoviesFacadeCommentsTest {
 				.build());
 
 		// then
-		final Set<MovieComment> comments = tut.getMovie(movieId, user).getComments();
+		final Set<MovieCommentQueryResult> comments = tut.getMovie(movieId, user).getComments();
 		assertThat(comments.size()).isEqualTo(1);
 	}
 

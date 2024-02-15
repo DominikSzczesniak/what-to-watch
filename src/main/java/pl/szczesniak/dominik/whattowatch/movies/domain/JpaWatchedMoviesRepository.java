@@ -17,9 +17,4 @@ public class JpaWatchedMoviesRepository implements WatchedMoviesRepository {
 		springDataJpaWatchedMoviesRepository.save(watchedMovie);
 	}
 
-	@Override
-	public List<WatchedMovie> findAllBy(final UserId userId) {
-		return springDataJpaWatchedMoviesRepository.findAllByUserId(userId);
-	}
-
 }

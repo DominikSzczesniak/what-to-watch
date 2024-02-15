@@ -8,6 +8,4 @@ public interface WatchedMoviesRepository {
 
 	void add(WatchedMovie watchedMovie);
 
-	List<WatchedMovie> findAllBy(UserId userId);
-
 }

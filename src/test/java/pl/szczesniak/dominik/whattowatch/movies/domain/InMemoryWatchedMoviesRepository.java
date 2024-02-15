@@ -1,16 +1,15 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
-import pl.szczesniak.dominik.whattowatch.movies.domain.WatchedMovie;
-import pl.szczesniak.dominik.whattowatch.movies.domain.WatchedMoviesRepository;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.WatchedMovieQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.query.WatchedMoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository {
+public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository, WatchedMoviesQueryService {
 
 	private final Map<MovieId, WatchedMovie> watchedMovies = new HashMap<>();
 
@@ -20,10 +19,16 @@ public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository 
 	}
 
 	@Override
-	public List<WatchedMovie> findAllBy(final UserId userId) {
-		return watchedMovies.values().stream()
+	public List<WatchedMovieQueryResult> getWatchedMovies(final UserId userId) {
+		final List<WatchedMovie> foundMovies = watchedMovies.values().stream()
 				.filter(movie -> movie.getUserId().equals(userId))
-				.collect(Collectors.toList());
+				.toList();
+
+		return mapToQueryResult(foundMovies);
+	}
+
+	private static List<WatchedMovieQueryResult> mapToQueryResult(final List<WatchedMovie> foundMovies) {
+		return foundMovies.stream().map(watchedMovie -> new WatchedMovieQueryResult(watchedMovie.getMovieId(), watchedMovie.getTitle(), watchedMovie.getUserId())).toList();
 	}
 
 }

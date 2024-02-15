@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
@@ -17,6 +18,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagF
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.query.MoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.movies.infrastructure.query.WatchedMoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -34,6 +37,10 @@ public class MoviesFacade {
 
 	private final MoviesTagsService moviesTagsService;
 
+	private final MoviesQueryService moviesQueryService;
+
+	private final WatchedMoviesQueryService watchedMoviesQueryService;
+
 	public MovieId addMovieToList(final AddMovieToList command) {
 		return moviesWatchlistService.addMovieToList(command);
 	}
@@ -43,11 +50,11 @@ public class MoviesFacade {
 	}
 
 	public List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
-		return moviesWatchlistService.getMoviesToWatch(userId);
+		return moviesQueryService.getMoviesToWatch(userId);
 	}
 
 	public List<WatchedMovieQueryResult> getWatchedMovies(final UserId userId) {
-		return moviesWatchlistService.getWatchedMovies(userId);
+		return watchedMoviesQueryService.getWatchedMovies(userId);
 	}
 
 	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
@@ -59,7 +66,8 @@ public class MoviesFacade {
 	}
 
 	public MovieQueryResult getMovie(final MovieId movieId, final UserId userId) {
-		return moviesWatchlistService.getMovieQueryResult(movieId, userId);
+		return moviesQueryService.findMovieQueryResult(movieId, userId)
+				.orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 
 	public MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId user) { // zastanowic sie
@@ -87,7 +95,7 @@ public class MoviesFacade {
 	}
 
 	public Optional<MovieTagQueryResult> getTagByTagId(final MovieTagId tagId) {
-		return moviesTagsService.getTagByTagId(tagId);
+		return moviesQueryService.getTagByTagId(tagId);
 	}
 
 	public void deleteTagFromMovie(final DeleteTagFromMovie command) {
@@ -95,11 +103,11 @@ public class MoviesFacade {
 	}
 
 	public List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
-		return moviesTagsService.getMoviesByTags(tags, userId);
+		return moviesQueryService.getMoviesByTags(tags, userId);
 	}
 
 	public List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {
-		return moviesTagsService.getMovieTagsByUserId(userId);
+		return moviesQueryService.getMovieTagsByUserId(userId);
 	}
 
 }

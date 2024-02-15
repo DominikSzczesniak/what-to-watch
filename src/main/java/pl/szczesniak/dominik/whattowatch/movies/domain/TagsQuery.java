@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface TagsQuery {
 
-	List<MovieTag> findByUserId(Integer userId);
+//	List<MovieTag> findByUserId(Integer userId);
 
 	Optional<MovieTag> findTagByTagId(String tagId);
 

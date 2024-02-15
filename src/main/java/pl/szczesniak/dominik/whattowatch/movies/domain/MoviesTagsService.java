@@ -42,9 +42,9 @@ public class MoviesTagsService {
 		return tagByTagId;
 	}
 
-	Optional<MovieTagQueryResult> getTagByTagId(final MovieTagId tagId) {
-		return tagsQuery.findTagByTagId(tagId.getValue());
-	}
+//	Optional<MovieTagQueryResult> getTagByTagId(final MovieTagId tagId) {
+//		return tagsQuery.findTagByTagId(tagId.getValue());
+//	}
 
 	void deleteTagFromMovie(final DeleteTagFromMovie command) {
 		final Movie movie = moviesRepository.getMovie(command.getMovieId(), command.getUserId());
@@ -52,13 +52,13 @@ public class MoviesTagsService {
 		moviesRepository.update(movie);
 	}
 
-	List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
-		return moviesRepository.findAllMoviesByTagIds(tags, userId);
-	}
+//	List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
+//		return moviesRepository.findAllMoviesByTagIds(tags, userId);
+//	}
 
 
-	List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {
-		return tagsQuery.findByUserId(userId);
-	}
+//	List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {
+//		return tagsQuery.findByUserId(userId);
+//	}
 
 }

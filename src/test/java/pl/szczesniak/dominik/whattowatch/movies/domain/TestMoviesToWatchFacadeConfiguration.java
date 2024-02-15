@@ -6,12 +6,15 @@ public class TestMoviesToWatchFacadeConfiguration {
 
 	static MoviesFacade moviesToWatchService(final UserProvider userProvider) {
 		final InMemoryMoviesRepository repository = new InMemoryMoviesRepository();
+		final InMemoryWatchedMoviesRepository watchedRepository = new InMemoryWatchedMoviesRepository();
 		return new MoviesFacadeConfiguration()
-				.moviesService(
-						new MoviesWatchlistService(repository, userProvider, new InMemoryWatchedMoviesRepository()),
+				.moviesFacade(
+						new MoviesWatchlistService(repository, userProvider, watchedRepository),
 						new MoviesCoverService(repository, userProvider, new InMemoryFilesStorage()),
 						new MoviesCommentsService(repository),
-						new MoviesTagsService(repository, repository)
+						new MoviesTagsService(repository, repository),
+						repository,
+						watchedRepository
 				);
 	}
 

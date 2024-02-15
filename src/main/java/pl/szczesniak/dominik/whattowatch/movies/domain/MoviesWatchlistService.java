@@ -35,15 +35,15 @@ public class MoviesWatchlistService {
 		repository.removeMovie(movieId, userId);
 	}
 
-	List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
-		checkUserExists(userId);
-		return repository.findAll(userId);
-	}
+//	List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
+//		checkUserExists(userId);
+//		return repository.findAll(userId);
+//	}
 
-	List<WatchedMovieQueryResult> getWatchedMovies(final UserId userId) {
-		checkUserExists(userId);
-		return watchedRepository.findAllBy(userId);
-	}
+//	List<WatchedMovieQueryResult> getWatchedMovies(final UserId userId) {
+//		checkUserExists(userId);
+//		return watchedRepository.findAllBy(userId);
+//	}
 
 	void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
 		checkUserExists(command.getUserId());
@@ -63,9 +63,9 @@ public class MoviesWatchlistService {
 		return repository.findBy(movieId, userId).orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 
-	MovieQueryResult getMovieQueryResult(final MovieId movieId, final UserId userId) {
-		return repository.findBy(movieId, userId).orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
-	}
+//	MovieQueryResult getMovieQueryResult(final MovieId movieId, final UserId userId) {
+//		return repository.findBy(movieId, userId).orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
+//	}
 
 	private void checkUserExists(final UserId userId) {
 		if (!userProvider.exists(userId)) {

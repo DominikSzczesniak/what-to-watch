@@ -14,13 +14,13 @@ public interface MoviesRepository {
 
 	void update(Movie movie);
 
-	List<Movie> findAll(UserId userId);
+//	List<Movie> findAll(UserId userId);
 
 	void removeMovie(MovieId movieId, UserId userId);
 
 	Optional<Movie> findBy(MovieId movieId, UserId userId);
 
-	List<Movie> findAllMoviesByTagIds(List<MovieTagId> tags, UserId userId);
+//	List<Movie> findAllMoviesByTagIds(List<MovieTagId> tags, UserId userId);
 
 	default Movie getMovie(final MovieId movieId, final UserId userId) {
 		return findBy(movieId, userId)
