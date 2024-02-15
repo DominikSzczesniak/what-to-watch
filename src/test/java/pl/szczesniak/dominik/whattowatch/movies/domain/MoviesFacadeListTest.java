@@ -4,7 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.WatchedMovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchListSample;
@@ -69,7 +71,7 @@ public class MoviesFacadeListTest {
 
 		// then
 		assertThat(tut.getMoviesToWatch(userId)).hasSize(1)
-				.extracting(Movie::getMovieId)
+				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactly(addedMovieId);
 	}
 
@@ -95,7 +97,7 @@ public class MoviesFacadeListTest {
 
 		// then
 		assertThat(tut.getMoviesToWatch(userId)).hasSize(2)
-				.extracting(Movie::getTitle)
+				.extracting(MovieInListQueryResult::getTitle)
 				.containsExactlyInAnyOrder(createdMovie.getMovieTitle(), movieWithSameTitle.getMovieTitle());
 	}
 
@@ -113,7 +115,7 @@ public class MoviesFacadeListTest {
 
 		// then
 		assertThat(tut.getMoviesToWatch(userId)).hasSize(1)
-				.extracting(Movie::getMovieId)
+				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactlyInAnyOrder(movieId);
 	}
 
@@ -130,11 +132,11 @@ public class MoviesFacadeListTest {
 
 		// then
 		assertThat(tut.getMoviesToWatch(userIdOne))
-				.extracting(Movie::getMovieId)
+				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactlyInAnyOrder(firstUserMovieOne, firstUserMovieTwo);
 
 		assertThat(tut.getMoviesToWatch(userIdTwo))
-				.extracting(Movie::getMovieId)
+				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactlyInAnyOrder(secondUserMovie);
 	}
 
@@ -171,11 +173,11 @@ public class MoviesFacadeListTest {
 
 		// then
 		assertThat(tut.getMoviesToWatch(userIdOne))
-				.extracting(Movie::getMovieId)
+				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactlyInAnyOrder(firstUserMovie);
 
 		assertThat(tut.getMoviesToWatch(userIdTwo))
-				.extracting(Movie::getMovieId)
+				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactlyInAnyOrder(secondUserMovie);
 	}
 
@@ -185,7 +187,7 @@ public class MoviesFacadeListTest {
 		final UserId userId = userProvider.addUser(createAnyUserId());
 
 		// when
-		final List<Movie> movies = tut.getMoviesToWatch(userId);
+		final List<MovieInListQueryResult> movies = tut.getMoviesToWatch(userId);
 
 		// then
 		assertThat(movies.isEmpty()).isTrue();
@@ -210,14 +212,14 @@ public class MoviesFacadeListTest {
 
 		// then
 		assertThat(tut.getMoviesToWatch(userId))
-				.extracting(Movie::getMovieId, Movie::getTitle)
+				.extracting(MovieInListQueryResult::getMovieId, MovieInListQueryResult::getTitle)
 				.containsExactlyInAnyOrder(
 						tuple(movieOneId, movieOne.getMovieTitle()),
 						tuple(movieThreeId, movieThree.getMovieTitle())
 				);
 
 		assertThat(tut.getWatchedMovies(userId))
-				.extracting(WatchedMovie::getMovieId, WatchedMovie::getTitle)
+				.extracting(WatchedMovieQueryResult::getMovieId, WatchedMovieQueryResult::getTitle) // todo: dodac tu sprawdzenie userid?
 				.containsExactlyInAnyOrder(tuple(movieTwoId, movieTwo.getMovieTitle()));
 	}
 
@@ -287,7 +289,7 @@ public class MoviesFacadeListTest {
 
 		// then
 		assertThat(tut.getMoviesToWatch(userId))
-				.extracting(Movie::getTitle)
+				.extracting(MovieInListQueryResult::getTitle)
 				.containsExactly(changedTitle);
 	}
 

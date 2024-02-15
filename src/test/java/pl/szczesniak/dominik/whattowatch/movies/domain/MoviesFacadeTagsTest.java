@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
@@ -116,7 +118,7 @@ public class MoviesFacadeTagsTest {
 		final MovieTagId tagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(tagLabel).movieId(movieId).userId(user).build());
 		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(tagId).movieId(movieId).userId(user).build());
 
-		final Movie movie = tut.getMovie(movieId, user);
+		final MovieQueryResult movie = tut.getMovie(movieId, user);
 
 		// then
 		assertThat(movie.getTags()).hasSize(1);
@@ -157,7 +159,7 @@ public class MoviesFacadeTagsTest {
 		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(movieTag1).movieId(movie2).userId(user).build());
 		final MovieTagId movieTag2 = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(createAnyTagLabel()).movieId(movie2).userId(user).build());
 
-		final List<Movie> foundMovies = tut.getMoviesByTags(List.of(movieTag1, movieTag2), user);
+		final List<MovieInListQueryResult> foundMovies = tut.getMoviesByTags(List.of(movieTag1, movieTag2), user);
 
 		// then
 		assertThat(foundMovies.size()).isEqualTo(1);

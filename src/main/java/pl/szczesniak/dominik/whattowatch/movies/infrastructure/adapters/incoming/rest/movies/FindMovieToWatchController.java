@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.Movie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class FindMovieToWatchController {
 
 	@GetMapping("/api/movies/{movieId}")
 	public MovieDetailsDto findMovieToWatch(@RequestHeader("userId") final Integer userId, @PathVariable Integer movieId) {
-		final Movie movie = moviesFacade.getMovie(new MovieId(movieId), new UserId(userId));
+		final MovieQueryResult movie = moviesFacade.getMovie(new MovieId(movieId), new UserId(userId));
 		return new MovieDetailsDto(
 				movie.getTitle().getValue(),
 				movieId,
@@ -32,13 +33,13 @@ public class FindMovieToWatchController {
 		);
 	}
 
-	private static List<MovieTagDto> mapMovieTags(final Movie movie) {
+	private static List<MovieTagDto> mapMovieTags(final MovieQueryResult movie) {
 		return movie.getTags().stream()
 				.map(movieTag -> new MovieTagDto(movieTag.getTagId().getValue().toString(), movieTag.getLabel().getValue()))
 				.toList();
 	}
 
-	private static List<MovieCommentDto> mapMovieComments(final Movie movie) {
+	private static List<MovieCommentDto> mapMovieComments(final MovieQueryResult movie) {
 		return movie.getComments().stream()
 				.map(movieComment -> new MovieCommentDto(
 						movieComment.getCommentId().getValue().toString(),

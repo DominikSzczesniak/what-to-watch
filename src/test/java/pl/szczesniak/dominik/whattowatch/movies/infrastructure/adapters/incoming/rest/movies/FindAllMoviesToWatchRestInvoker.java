@@ -52,7 +52,7 @@ public class FindAllMoviesToWatchRestInvoker extends BaseRestInvoker {
 		String title;
 		Integer movieId;
 		Integer userId;
-		List<MovieCommentDto> comments;
+//		List<MovieCommentDto> comments;
 		List<MovieTagDto> tags;
 	}
 

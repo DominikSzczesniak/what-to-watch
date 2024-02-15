@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.WatchedMovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
@@ -14,7 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MoviesListService {
+public class MoviesWatchlistService {
 
 	private final MoviesRepository repository;
 	private final UserProvider userProvider;
@@ -33,12 +35,12 @@ public class MoviesListService {
 		repository.removeMovie(movieId, userId);
 	}
 
-	List<Movie> getMoviesToWatch(final UserId userId) {
+	List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
 		checkUserExists(userId);
 		return repository.findAll(userId);
 	}
 
-	List<WatchedMovie> getWatchedMovies(final UserId userId) {
+	List<WatchedMovieQueryResult> getWatchedMovies(final UserId userId) {
 		checkUserExists(userId);
 		return watchedRepository.findAllBy(userId);
 	}
@@ -57,7 +59,11 @@ public class MoviesListService {
 		repository.update(movie);
 	}
 
-	MovieQueryResult getMovie(final MovieId movieId, final UserId userId) {
+	private Movie getMovie(final MovieId movieId, final UserId userId) {
+		return repository.findBy(movieId, userId).orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
+	}
+
+	MovieQueryResult getMovieQueryResult(final MovieId movieId, final UserId userId) {
 		return repository.findBy(movieId, userId).orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 

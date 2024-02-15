@@ -8,11 +8,11 @@ import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
 public class MoviesFacadeConfiguration {
 
 	@Bean
-	public MoviesFacade moviesService(final MoviesListService moviesListService,
+	public MoviesFacade moviesService(final MoviesWatchlistService moviesWatchlistService,
 									  final MoviesCoverService movieListService,
 									  final MoviesCommentsService moviesCommentsService,
 									  final MoviesTagsService moviesTagsService) {
-		return new MoviesFacade(moviesListService, movieListService, moviesCommentsService, moviesTagsService);
+		return new MoviesFacade(moviesWatchlistService, movieListService, moviesCommentsService, moviesTagsService);
 	}
 
 	@Bean

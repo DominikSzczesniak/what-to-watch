@@ -1,18 +1,15 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
 import lombok.Value;
-
-import java.util.Set;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @Value
-public class MovieQueryResult {
+public class WatchedMovieQueryResult {
 
 	MovieId movieId;
 
 	MovieTitle title;
 
-	Set<MovieComment> comments;
-
-	Set<MovieTagQueryResult> tags;
+	UserId userId;
 
 }

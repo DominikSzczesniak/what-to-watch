@@ -4,8 +4,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.WatchedMovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovie;
@@ -23,7 +26,7 @@ import java.util.UUID;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class MoviesFacade {
 
-	private final MoviesListService moviesListService;
+	private final MoviesWatchlistService moviesWatchlistService;
 
 	private final MoviesCoverService movieListService;
 
@@ -32,34 +35,34 @@ public class MoviesFacade {
 	private final MoviesTagsService moviesTagsService;
 
 	public MovieId addMovieToList(final AddMovieToList command) {
-		return moviesListService.addMovieToList(command);
+		return moviesWatchlistService.addMovieToList(command);
 	}
 
 	public void removeMovieFromList(final MovieId movieId, final UserId userId) {
-		moviesListService.removeMovieFromList(movieId, userId);
+		moviesWatchlistService.removeMovieFromList(movieId, userId);
 	}
 
-	public List<MovieQueryResult> getMoviesToWatch(final UserId userId) {
-		return moviesListService.getMoviesToWatch(userId);
+	public List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
+		return moviesWatchlistService.getMoviesToWatch(userId);
 	}
 
-	public List<WatchedMovie> getWatchedMovies(final UserId userId) {
-		return moviesListService.getWatchedMovies(userId);
+	public List<WatchedMovieQueryResult> getWatchedMovies(final UserId userId) {
+		return moviesWatchlistService.getWatchedMovies(userId);
 	}
 
 	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
-		moviesListService.moveMovieToWatchedList(command);
+		moviesWatchlistService.moveMovieToWatchedList(command);
 	}
 
 	public void updateMovie(final UpdateMovie command) {
-		moviesListService.updateMovie(command);
+		moviesWatchlistService.updateMovie(command);
 	}
 
 	public MovieQueryResult getMovie(final MovieId movieId, final UserId userId) {
-		return moviesListService.getMovie(movieId, userId);
+		return moviesWatchlistService.getMovieQueryResult(movieId, userId);
 	}
 
-	public MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId user) {
+	public MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId user) { // zastanowic sie
 		return movieListService.getCoverForMovie(movieId, user);
 	}
 
@@ -83,7 +86,7 @@ public class MoviesFacade {
 		return moviesTagsService.addTagToMovie(command);
 	}
 
-	public Optional<MovieTag> getTagByTagId(final MovieTagId tagId) {
+	public Optional<MovieTagQueryResult> getTagByTagId(final MovieTagId tagId) {
 		return moviesTagsService.getTagByTagId(tagId);
 	}
 
@@ -91,11 +94,11 @@ public class MoviesFacade {
 		moviesTagsService.deleteTagFromMovie(command);
 	}
 
-	public List<Movie> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
+	public List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
 		return moviesTagsService.getMoviesByTags(tags, userId);
 	}
 
-	public List<MovieTag> getMovieTagsByUserId(final Integer userId) {
+	public List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {
 		return moviesTagsService.getMovieTagsByUserId(userId);
 	}
 

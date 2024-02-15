@@ -3,8 +3,10 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovie;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -33,14 +35,14 @@ public class MoviesTagsService {
 	}
 
 	private Optional<MovieTag> checkMovieTagBelongsToUser(final UserId userId, final MovieTagId tagId) {
-		final Optional<MovieTag> tagByTagId = getTagByTagId(tagId);
+		final Optional<MovieTag> tagByTagId = tagsQuery.findTagByTagId(tagId.getValue());
 		if (tagByTagId.isPresent() && !tagByTagId.get().getUserId().equals(userId)) {
 			throw new ObjectDoesNotExistException("MovieTag does not belong to user");
 		}
 		return tagByTagId;
 	}
 
-	Optional<MovieTag> getTagByTagId(final MovieTagId tagId) {
+	Optional<MovieTagQueryResult> getTagByTagId(final MovieTagId tagId) {
 		return tagsQuery.findTagByTagId(tagId.getValue());
 	}
 
@@ -50,12 +52,12 @@ public class MoviesTagsService {
 		moviesRepository.update(movie);
 	}
 
-	List<Movie> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
+	List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
 		return moviesRepository.findAllMoviesByTagIds(tags, userId);
 	}
 
 
-	List<MovieTag> getMovieTagsByUserId(final Integer userId) {
+	List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {
 		return tagsQuery.findByUserId(userId);
 	}
 

@@ -5,13 +5,11 @@ import lombok.Value;
 import java.util.Set;
 
 @Value
-public class MovieQueryResult {
+public class MovieInListQueryResult {
 
 	MovieId movieId;
 
 	MovieTitle title;
-
-	Set<MovieComment> comments;
 
 	Set<MovieTagQueryResult> tags;
 
