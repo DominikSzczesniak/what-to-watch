@@ -5,7 +5,7 @@ import lombok.Value;
 @Value
 public class MovieCommentQueryResult {
 
-	CommentId commentId;
+	String commentId;
 
 	String text;
 

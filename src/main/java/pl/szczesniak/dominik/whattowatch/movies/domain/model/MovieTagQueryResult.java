@@ -1,15 +1,14 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain.model;
 
 import lombok.Value;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @Value
 public class MovieTagQueryResult {
 
-	MovieTagId tagId;
+	String tagId;
 
-	MovieTagLabel label;
+	String label;
 
-	UserId userId;
+	Integer userId;
 
 }

@@ -3,15 +3,12 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovie;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,23 +39,10 @@ public class MoviesTagsService {
 		return tagByTagId;
 	}
 
-//	Optional<MovieTagQueryResult> getTagByTagId(final MovieTagId tagId) {
-//		return tagsQuery.findTagByTagId(tagId.getValue());
-//	}
-
 	void deleteTagFromMovie(final DeleteTagFromMovie command) {
 		final Movie movie = moviesRepository.getMovie(command.getMovieId(), command.getUserId());
 		movie.deleteTag(command.getTagId());
 		moviesRepository.update(movie);
 	}
-
-//	List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
-//		return moviesRepository.findAllMoviesByTagIds(tags, userId);
-//	}
-
-
-//	List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {
-//		return tagsQuery.findByUserId(userId);
-//	}
 
 }

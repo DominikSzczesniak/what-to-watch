@@ -28,7 +28,8 @@ public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository,
 	}
 
 	private static List<WatchedMovieQueryResult> mapToQueryResult(final List<WatchedMovie> foundMovies) {
-		return foundMovies.stream().map(watchedMovie -> new WatchedMovieQueryResult(watchedMovie.getMovieId(), watchedMovie.getTitle(), watchedMovie.getUserId())).toList();
+		return foundMovies.stream().map(watchedMovie -> new WatchedMovieQueryResult(
+				watchedMovie.getMovieId().getValue(), watchedMovie.getTitle().getValue(), watchedMovie.getUserId().getValue())).toList();
 	}
 
 }

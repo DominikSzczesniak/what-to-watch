@@ -7,9 +7,9 @@ import java.util.Set;
 @Value
 public class MovieInListQueryResult {
 
-	MovieId movieId;
+	Integer movieId;
 
-	MovieTitle title;
+	String title;
 
 	Set<MovieTagQueryResult> tags;
 

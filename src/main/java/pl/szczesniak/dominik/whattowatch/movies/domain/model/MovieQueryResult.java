@@ -7,9 +7,9 @@ import java.util.Set;
 @Value
 public class MovieQueryResult {
 
-	MovieId movieId;
+	Integer movieId;
 
-	MovieTitle title;
+	String title;
 
 	Set<MovieCommentQueryResult> comments;
 

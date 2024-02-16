@@ -22,9 +22,9 @@ public class FindMovieTagsController {
 		List<MovieTagQueryResult> movieTagsByUserId = moviesFacade.getMovieTagsByUserId(userId);
 		return movieTagsByUserId.stream()
 				.map(movieTag -> new MovieTagDto(
-						movieTag.getTagId().getValue(),
-						movieTag.getLabel().getValue(),
-						movieTag.getUserId().getValue()))
+						movieTag.getTagId(),
+						movieTag.getLabel(),
+						movieTag.getUserId()))
 				.collect(Collectors.toList());
 	}
 

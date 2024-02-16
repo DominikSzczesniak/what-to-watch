@@ -50,6 +50,7 @@ public class MoviesFacade {
 	}
 
 	public List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
+		moviesWatchlistService.checkUserExists(userId); // todo: zapytac
 		return moviesQueryService.getMoviesToWatch(userId);
 	}
 
@@ -70,7 +71,7 @@ public class MoviesFacade {
 				.orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 
-	public MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId user) { // zastanowic sie
+	public MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId user) {
 		return movieListService.getCoverForMovie(movieId, user);
 	}
 

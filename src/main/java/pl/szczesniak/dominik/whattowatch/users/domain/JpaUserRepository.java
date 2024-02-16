@@ -1,9 +1,7 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.persistence;
+package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import pl.szczesniak.dominik.whattowatch.users.domain.User;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 

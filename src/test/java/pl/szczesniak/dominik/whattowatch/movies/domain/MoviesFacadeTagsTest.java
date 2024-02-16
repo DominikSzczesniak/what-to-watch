@@ -48,7 +48,7 @@ public class MoviesFacadeTagsTest {
 
 		// then
 		final Set<MovieTagQueryResult> tags = tut.getMovie(movieId, user).getTags();
-		assertThat(tags).extracting(MovieTagQueryResult::getLabel).containsExactly(tagLabel);
+		assertThat(tags).extracting(MovieTagQueryResult::getLabel).containsExactly(tagLabel.getValue());
 	}
 
 	@Test
@@ -71,8 +71,10 @@ public class MoviesFacadeTagsTest {
 
 		// then
 		assertThat(tags.size()).isEqualTo(4);
-		assertThat(tags).extracting(MovieTagQueryResult::getTagId).containsExactlyInAnyOrder(firstTagId, secondTagId, thirdTagId, fourthTagId);
-		assertThat(tags).extracting(MovieTagQueryResult::getLabel).containsExactlyInAnyOrder(firstTagLabel, secondTagLabel, thirdTagLabel, fourthTagLabel);
+		assertThat(tags).extracting(MovieTagQueryResult::getTagId)
+				.containsExactlyInAnyOrder(firstTagId.getValue(), secondTagId.getValue(), thirdTagId.getValue(), fourthTagId.getValue());
+		assertThat(tags).extracting(MovieTagQueryResult::getLabel)
+				.containsExactlyInAnyOrder(firstTagLabel.getValue(), secondTagLabel.getValue(), thirdTagLabel.getValue(), fourthTagLabel.getValue());
 	}
 
 	@Test

@@ -48,8 +48,8 @@ public class AddMovieTagToMovieController {
 	}
 
 	private static MovieTagLabel getTagLabel(final Integer userId, final MovieTagDto movieTagDto, final Optional<MovieTagQueryResult> foundTag) {
-		return foundTag.filter(tag -> tag.getUserId().getValue().equals(userId))
-				.map(MovieTagQueryResult::getLabel)
+		return foundTag.filter(tag -> tag.getUserId().equals(userId))
+				.map(movieTagQueryResult -> new MovieTagLabel(movieTagQueryResult.getLabel()))
 				.orElseGet(() -> {
 					if (movieTagDto == null) {
 						throw new ObjectDoesNotExistException("MovieTag does not belong to user");

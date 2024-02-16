@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCommentQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
@@ -85,8 +84,8 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery, Mo
 
 	private static List<MovieInListQueryResult> toDto(final List<Movie> foundMovies) {
 		return foundMovies.stream().map(movie -> new MovieInListQueryResult(
-								movie.getMovieId(),
-								movie.getTitle(),
+								movie.getMovieId().getValue(),
+								movie.getTitle().getValue(),
 								mapTagsToQueryResult(movie.getTags())
 						)
 				)
@@ -99,8 +98,8 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery, Mo
 				.filter(movie -> movie.getMovieId().equals(movieId) && movie.getUserId().equals(userId))
 				.findFirst()
 				.map(movie -> new MovieQueryResult(
-						movie.getMovieId(),
-						movie.getTitle(),
+						movie.getMovieId().getValue(),
+						movie.getTitle().getValue(),
 						mapCommentsToQueryResult(movie.getComments()),
 						mapTagsToQueryResult(movie.getTags())
 				));
@@ -108,13 +107,13 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery, Mo
 
 	private static Set<MovieCommentQueryResult> mapCommentsToQueryResult(final Set<MovieComment> comments) {
 		return comments.stream().map(comment -> new MovieCommentQueryResult(
-				comment.getCommentId(), comment.getText())).collect(Collectors.toSet());
+				comment.getCommentId().toString(), comment.getText())).collect(Collectors.toSet());
 	}
 
 
 	private static Set<MovieTagQueryResult> mapTagsToQueryResult(final Set<MovieTag> tags) {
 		return tags.stream().map(movieTag -> new MovieTagQueryResult(
-				movieTag.getTagId(), movieTag.getLabel(), movieTag.getUserId())).collect(Collectors.toSet());
+				movieTag.getTagId().getValue(), movieTag.getLabel().getValue(), movieTag.getUserId().getValue())).collect(Collectors.toSet());
 	}
 
 	@Override
@@ -122,7 +121,7 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery, Mo
 		return tags.values().stream()
 				.filter(tag -> tag.getTagId().equals(tagId))
 				.findFirst()
-				.map(movieTag -> new MovieTagQueryResult(movieTag.getTagId(), movieTag.getLabel(), movieTag.getUserId()));
+				.map(movieTag -> new MovieTagQueryResult(movieTag.getTagId().getValue(), movieTag.getLabel().getValue(), movieTag.getUserId().getValue()));
 	}
 
 	@Override
@@ -141,7 +140,7 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery, Mo
 		final List<MovieTag> foundTags = tags.values().stream()
 				.filter(movieTag -> movieTag.getUserId().equals(new UserId(userId)))
 				.toList();
-		return foundTags.stream().map(tag -> new MovieTagQueryResult(tag.getTagId(), tag.getLabel(), tag.getUserId())).toList();
+		return foundTags.stream().map(tag -> new MovieTagQueryResult(tag.getTagId().getValue(), tag.getLabel().getValue(), tag.getUserId().getValue())).toList();
 	}
 
 	//	@Override

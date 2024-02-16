@@ -11,6 +11,4 @@ import java.util.List;
 @Repository
 public interface SpringDataJpaMovieTagsRepository extends JpaRepository<MovieTag, MovieTagId> {
 
-	List<MovieTag> findByUserId(final UserId userId);
-
 }
