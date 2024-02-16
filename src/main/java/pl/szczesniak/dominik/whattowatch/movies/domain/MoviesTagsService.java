@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class MoviesTagsService {
+class MoviesTagsService {
 
 	private final MoviesRepository moviesRepository;
 	private final TagsQuery tagsQuery;

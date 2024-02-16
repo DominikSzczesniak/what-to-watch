@@ -14,7 +14,7 @@ import java.io.InputStream;
 
 @RequiredArgsConstructor
 @Service
-public class MoviesCoverService {
+class MoviesCoverService {
 
 	private final MoviesRepository repository;
 	private final UserProvider userProvider;

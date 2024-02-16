@@ -22,7 +22,7 @@ import static java.util.Objects.requireNonNull;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"movieId"})
-public class WatchedMovie {
+class WatchedMovie {
 
 	@EmbeddedId
 	@AttributeOverride(name = "value", column = @Column(name = "movie_id"))

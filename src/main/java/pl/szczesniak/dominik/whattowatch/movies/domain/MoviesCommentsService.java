@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class MoviesCommentsService {
+class MoviesCommentsService {
 
 	private final MoviesRepository repository;
 

@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
 @Table
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Movie extends BaseEntity {
+class Movie extends BaseEntity {
 
 	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
 	private UserId userId;

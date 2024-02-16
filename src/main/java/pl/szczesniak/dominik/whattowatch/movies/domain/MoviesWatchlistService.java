@@ -11,7 +11,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 @Service
 @RequiredArgsConstructor
-public class MoviesWatchlistService {
+class MoviesWatchlistService {
 
 	private final MoviesRepository repository;
 	private final UserProvider userProvider;
