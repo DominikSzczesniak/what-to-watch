@@ -14,6 +14,5 @@ public interface RecommendationConfigurationRepository {
 
 	Optional<RecommendationConfiguration> findBy(UserId userId);
 
-	List<RecommendationConfiguration> findAll();
 
 }

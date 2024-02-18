@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationConfiguration;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendationConfigurationRequestResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -22,11 +22,11 @@ public class GetRecommendationConfigurationController {
 
 	@GetMapping("/api/recommendations/configuration")
 	public ResponseEntity<RecommendationConfigurationDto> getRecommendationConfiguration(@RequestHeader("userId") final Integer userId) {
-		final RecommendationConfiguration config = facade.findBy(new UserId(userId));
+		final RecommendationConfigurationRequestResult config = facade.findBy(new UserId(userId));
 		final RecommendationConfigurationDto configDto = new RecommendationConfigurationDto(
-				config.getConfigurationId().getValue(),
+				config.getConfigurationId(),
 				mapGenres(config.getGenres()),
-				config.getUserId().getValue()
+				config.getUserId()
 		);
 		return ResponseEntity.status(200).body(configDto);
 	}

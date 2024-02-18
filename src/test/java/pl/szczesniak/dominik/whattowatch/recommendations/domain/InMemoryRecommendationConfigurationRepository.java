@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendationConfigurationRequestResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query.RecommendationQueryService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.lang.reflect.Field;
@@ -16,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static pl.szczesniak.dominik.whattowatch.recommendations.domain.InMemoryRecommendationConfigurationRepository.PersistedRecommendationConfiguration.toPersisted;
 
-class InMemoryRecommendationConfigurationRepository implements RecommendationConfigurationRepository {
+class InMemoryRecommendationConfigurationRepository implements RecommendationConfigurationRepository, RecommendationQueryService {
 
 	private final AtomicInteger nextId = new AtomicInteger(0);
 	private final Map<UserId, PersistedRecommendationConfiguration> configurations = new HashMap<>();
@@ -40,11 +42,6 @@ class InMemoryRecommendationConfigurationRepository implements RecommendationCon
 		return Optional.ofNullable(configurations.get(userId)).map(PersistedRecommendationConfiguration::fromPersisted);
 	}
 
-	@Override
-	public List<RecommendationConfiguration> findAll() {
-		return configurations.values().stream().map(PersistedRecommendationConfiguration::fromPersisted).toList();
-	}
-
 	private static void setId(final RecommendationConfiguration configuration, final Integer idAsLong) {
 		final Class<RecommendationConfiguration> recommendationConfigurationClass = RecommendationConfiguration.class;
 		final Class<? super RecommendationConfiguration> baseEntityClass = recommendationConfigurationClass.getSuperclass();
@@ -55,6 +52,23 @@ class InMemoryRecommendationConfigurationRepository implements RecommendationCon
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public Optional<RecommendationConfigurationRequestResult> findRecommendationConfigurationQueryResultBy(final UserId userId) {
+		return configurations.values().stream()
+				.filter(configuration -> configuration.getUserId().equals(userId))
+				.findFirst()
+				.map(config -> new RecommendationConfigurationRequestResult(
+						config.getUserId().getValue(),
+						config.getConfigurationId().getValue(),
+						config.getLimitToGenres())
+				);
+	}
+
+	@Override
+	public List<UserId> findAllUsersWithRecommendationConfigurations() {
+		return configurations.keySet().stream().toList();
 	}
 
 	@Value

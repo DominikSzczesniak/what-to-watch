@@ -26,7 +26,7 @@ import java.util.Set;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RecommendationConfiguration extends BaseEntity {
+class RecommendationConfiguration extends BaseEntity {
 
 	@ElementCollection(targetClass = MovieGenre.class)
 	@Enumerated(EnumType.STRING)

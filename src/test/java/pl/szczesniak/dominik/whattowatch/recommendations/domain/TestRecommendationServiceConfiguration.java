@@ -15,7 +15,8 @@ class TestRecommendationServiceConfiguration {
 						new InMemoryRecommendedMoviesRepository(),
 						new RecommendedMoviesFactory(2),
 						clock
-				)
+				),
+				inMemoryRecommendationConfigurationRepository
 		);
 	}
 

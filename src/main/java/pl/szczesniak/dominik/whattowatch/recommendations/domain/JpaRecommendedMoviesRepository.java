@@ -1,10 +1,8 @@
-package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.persistence;
+package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendedMovies;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendedMoviesRepository;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 

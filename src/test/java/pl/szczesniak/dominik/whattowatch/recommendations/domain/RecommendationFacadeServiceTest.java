@@ -26,14 +26,12 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.
 class RecommendationFacadeServiceTest {
 
 	private RecommendationFacade tut;
-	private Clock clock;
 
 	private static final int EXPECTED_RECOMMENDED_MOVIES_COUNT = 2;
 
 	@BeforeEach
 	void setUp() {
-		clock = new FakeClock();
-		tut = recommendationFacade(clock);
+		tut = recommendationFacade(new FakeClock());
 	}
 
 	@Test

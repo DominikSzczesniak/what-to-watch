@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendationConfigurationRequestResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfigurationSample;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfigurationSample;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -34,11 +35,11 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 
 		// when
 		final ConfigurationId configurationId = tut.create(CreateRecommendationConfigurationSample.builder().userId(userId).build());
-		final RecommendationConfiguration configuration = tut.findBy(userId);
+		final RecommendationConfigurationRequestResult configuration = tut.findBy(userId);
 
 		// then
-		assertThat(configuration.getUserId()).isEqualTo(userId);
-		assertThat(configuration.getConfigurationId()).isEqualTo(configurationId);
+		assertThat(configuration.getUserId()).isEqualTo(userId.getValue());
+		assertThat(configuration.getConfigurationId()).isEqualTo(configurationId.getValue());
 	}
 
 	@Test
@@ -50,11 +51,11 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 				.genreNames(Set.of(MovieGenre.ADVENTURE))
 				.build());
 
-		final RecommendationConfiguration configuration = tut.findBy(userId);
+		final RecommendationConfigurationRequestResult configuration = tut.findBy(userId);
 		tut.update(UpdateRecommendationConfigurationSample.builder().genreNames(Set.of(MovieGenre.ACTION)).userId(userId).build());
 
 		// when
-		final RecommendationConfiguration updatedConfiguration = tut.findBy(userId);
+		final RecommendationConfigurationRequestResult updatedConfiguration = tut.findBy(userId);
 
 		// then
 		assertThat(updatedConfiguration).isEqualTo(configuration);
@@ -71,25 +72,6 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 
 		// then
 		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
-	}
-
-	@Test
-	void should_find_all_recommendation_configurations() {
-		// given
-		final UserId userId1 = createAnyUserId();
-		final UserId userId2 = createAnyUserId();
-		final UserId userId3 = createAnyUserId();
-		final UserId userId4 = createAnyUserId();
-		tut.create(CreateRecommendationConfigurationSample.builder().userId(userId1).build());
-		tut.create(CreateRecommendationConfigurationSample.builder().userId(userId2).build());
-		tut.create(CreateRecommendationConfigurationSample.builder().userId(userId3).build());
-		tut.create(CreateRecommendationConfigurationSample.builder().userId(userId4).build());
-
-		// when
-		final List<RecommendationConfiguration> foundConfigs = tut.findAllRecommendationConfigurations();
-
-		// then
-		assertThat(foundConfigs).hasSize(4);
 	}
 
 	@Test

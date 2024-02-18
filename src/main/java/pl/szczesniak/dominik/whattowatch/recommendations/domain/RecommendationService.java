@@ -35,7 +35,7 @@ class RecommendationService {
 	@Transactional
 	public void recommendMoviesByConfiguration(final UserId userId) {
 		if (!hasRecommendedMoviesForCurrentInterval(userId)) {
-			final RecommendationConfiguration configuration = configurationManager.findBy(userId);
+			final RecommendationConfiguration configuration = configurationManager.getRecommendationConfigurationBy(userId); // todo
 			final List<MovieInfo> recommendedFromApi = getMovieInfosByConfig(configuration.getGenres());
 			final List<MovieInfo> latestRecommendedMovies = repository.findLatestRecommendedMovies(userId)
 					.map(RecommendedMovies::getMovies)
