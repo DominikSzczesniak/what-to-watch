@@ -3,6 +3,8 @@ package pl.szczesniak.dominik.whattowatch.recommendations.domain.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,6 +30,7 @@ public class MovieInfo {
 	private Integer movieInfoId;
 
 	@ElementCollection
+	@Enumerated(EnumType.STRING)
 	private List<MovieGenre> genres;
 
 	@Column(length = 1024)
@@ -37,6 +40,7 @@ public class MovieInfo {
 
 	private Integer externalId;
 
+	@Enumerated(EnumType.STRING)
 	private MovieInfoApis externalApi;
 
 	public MovieInfo(@NonNull final List<MovieGenre> genres,

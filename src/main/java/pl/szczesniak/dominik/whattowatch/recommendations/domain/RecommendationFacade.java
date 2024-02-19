@@ -6,9 +6,11 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendationConfigurationRequestResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfiguration;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfiguration;
-import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query.RecommendationQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query.RecommendationConfigurationQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query.RecommendedMoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -20,7 +22,9 @@ public class RecommendationFacade {
 
 	private final RecommendationService recommendationService;
 
-	private final RecommendationQueryService recommendationQueryService;
+	private final RecommendationConfigurationQueryService recommendationConfigurationQueryService;
+
+	private final RecommendedMoviesQueryService recommendedMoviesQueryService;
 
 	public MovieInfoResponse recommendPopularMovies() {
 		return recommendationService.recommendPopularMovies();
@@ -30,8 +34,9 @@ public class RecommendationFacade {
 		recommendationService.recommendMoviesByConfiguration(userId);
 	}
 
-	public RecommendedMovies getLatestRecommendedMovies(final UserId userId) {
-		return recommendationService.getLatestRecommendedMovies(userId);
+	public RecommendedMoviesQueryResult getLatestRecommendedMovies(final UserId userId) {
+		return recommendedMoviesQueryService.findLatestRecommendedMoviesQueryResult(userId)
+				.orElseThrow(() -> new ObjectDoesNotExistException("No recommended movies for user")); // todo: nie wiem czy ja chce ten wyjatek rzucac
 	}
 
 	public boolean hasRecommendedMoviesForCurrentInterval(final UserId userId) {
@@ -47,12 +52,12 @@ public class RecommendationFacade {
 	}
 
 	public RecommendationConfigurationRequestResult findBy(final UserId userId) {
-		return recommendationQueryService.findRecommendationConfigurationQueryResultBy(userId)
+		return recommendationConfigurationQueryService.findRecommendationConfigurationQueryResultBy(userId)
 				.orElseThrow(() -> new ObjectDoesNotExistException("No recommended movies for user with id " + userId.getValue()));
 	}
 
 	public List<UserId> findAllUsersWithRecommendationConfiguration() {
-		return recommendationQueryService.findAllUsersWithRecommendationConfigurations();
+		return recommendationConfigurationQueryService.findAllUsersWithRecommendationConfigurations();
 	}
 
 }

@@ -101,4 +101,5 @@ class Movie extends BaseEntity {
 	public Set<MovieTag> getTags() {
 		return tags;
 	}
+
 }

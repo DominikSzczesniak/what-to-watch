@@ -7,6 +7,7 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfigurationSample;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -65,12 +66,12 @@ class RecommendationFacadeServiceTest {
 				.build());
 
 		tut.recommendMoviesByConfiguration(user);
-		final RecommendedMovies latestRecommendedMovies1 = tut.getLatestRecommendedMovies(user);
+		final RecommendedMoviesQueryResult latestRecommendedMovies1 = tut.getLatestRecommendedMovies(user);
 		FakeClock.simulateWeeksIntoFuture(1);
 
 		// when
 		tut.recommendMoviesByConfiguration(user);
-		final RecommendedMovies latestRecommendedMovies2 = tut.getLatestRecommendedMovies(user);
+		final RecommendedMoviesQueryResult latestRecommendedMovies2 = tut.getLatestRecommendedMovies(user);
 
 		// then
 		assertThat(latestRecommendedMovies2.getRecommendedMoviesId()).isNotEqualTo(latestRecommendedMovies1.getRecommendedMoviesId());
@@ -93,10 +94,10 @@ class RecommendationFacadeServiceTest {
 
 		// when
 		tut.recommendMoviesByConfiguration(user1);
-		final RecommendedMovies recommendedMoviesUser1 = tut.getLatestRecommendedMovies(user1);
+		final RecommendedMoviesQueryResult recommendedMoviesUser1 = tut.getLatestRecommendedMovies(user1);
 
 		tut.recommendMoviesByConfiguration(user2);
-		final RecommendedMovies recommendedMoviesUser2 = tut.getLatestRecommendedMovies(user2);
+		final RecommendedMoviesQueryResult recommendedMoviesUser2 = tut.getLatestRecommendedMovies(user2);
 
 		// then
 		assertThat(recommendedMoviesUser1.getMovies()).hasSize(EXPECTED_RECOMMENDED_MOVIES_COUNT);
@@ -123,7 +124,7 @@ class RecommendationFacadeServiceTest {
 
 		// when
 		tut.recommendMoviesByConfiguration(user);
-		final RecommendedMovies recommendedMovies = tut.getLatestRecommendedMovies(user);
+		final RecommendedMoviesQueryResult recommendedMovies = tut.getLatestRecommendedMovies(user);
 
 		// then
 		assertThat(recommendedMovies.getMovies())
@@ -143,7 +144,7 @@ class RecommendationFacadeServiceTest {
 		tut.recommendMoviesByConfiguration(user);
 
 		// when
-		final RecommendedMovies recommendedMovies = tut.getLatestRecommendedMovies(user);
+		final RecommendedMoviesQueryResult recommendedMovies = tut.getLatestRecommendedMovies(user);
 
 		// then
 		assertThat(recommendedMovies.getMovies()).hasSize(1);
@@ -160,15 +161,15 @@ class RecommendationFacadeServiceTest {
 
 		// when
 		tut.recommendMoviesByConfiguration(user);
-		final RecommendedMovies recommendedMovies1 = tut.getLatestRecommendedMovies(user);
+		final RecommendedMoviesQueryResult recommendedMovies1 = tut.getLatestRecommendedMovies(user);
 		FakeClock.simulateWeeksIntoFuture(1);
 
 		tut.recommendMoviesByConfiguration(user);
-		final RecommendedMovies recommendedMovies2 = tut.getLatestRecommendedMovies(user);
+		final RecommendedMoviesQueryResult recommendedMovies2 = tut.getLatestRecommendedMovies(user);
 		FakeClock.simulateWeeksIntoFuture(1);
 
 		tut.recommendMoviesByConfiguration(user);
-		final RecommendedMovies recommendedMovies3 = tut.getLatestRecommendedMovies(user);
+		final RecommendedMoviesQueryResult recommendedMovies3 = tut.getLatestRecommendedMovies(user);
 
 		// then
 		assertThat(recommendedMovies2.getMovies()).doesNotContainAnyElementsOf(recommendedMovies1.getMovies());
@@ -224,10 +225,6 @@ class RecommendationFacadeServiceTest {
 		// then
 		assertThat(hasRecommendedMoviesForCurrentInterval).isFalse();
 	}
-
-//	interface Clock {
-//		Instant now();
-//	}
 
 	static class FakeClock extends Clock {
 

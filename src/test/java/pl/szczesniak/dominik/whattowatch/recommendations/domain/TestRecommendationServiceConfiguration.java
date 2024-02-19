@@ -5,18 +5,21 @@ import java.time.Clock;
 class TestRecommendationServiceConfiguration {
 
 	static RecommendationFacade recommendationFacade(final Clock clock) {
-		final InMemoryRecommendationConfigurationRepository inMemoryRecommendationConfigurationRepository = new InMemoryRecommendationConfigurationRepository();
+		final InMemoryRecommendationConfigurationRepositoryConfiguration inMemoryRecommendationConfigurationRepository =
+				new InMemoryRecommendationConfigurationRepositoryConfiguration();
 		final RecommendationConfigurationManager configurationManager = new RecommendationConfigurationManager(inMemoryRecommendationConfigurationRepository);
+		final InMemoryRecommendedMoviesRepository repository = new InMemoryRecommendedMoviesRepository();
 		return new RecommendationFacade(
 				configurationManager,
 				new RecommendationService(
 						configurationManager,
 						new InMemoryMovieInfoApiRepository(),
-						new InMemoryRecommendedMoviesRepository(),
+						repository,
 						new RecommendedMoviesFactory(2),
 						clock
 				),
-				inMemoryRecommendationConfigurationRepository
+				inMemoryRecommendationConfigurationRepository,
+				repository
 		);
 	}
 

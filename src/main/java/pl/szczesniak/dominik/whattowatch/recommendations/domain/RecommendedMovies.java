@@ -24,7 +24,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @ToString
-public class RecommendedMovies extends BaseEntity {
+class RecommendedMovies extends BaseEntity {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id")

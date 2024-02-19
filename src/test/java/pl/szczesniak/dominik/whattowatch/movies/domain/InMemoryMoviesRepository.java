@@ -143,29 +143,4 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery, Mo
 		return foundTags.stream().map(tag -> new MovieTagQueryResult(tag.getTagId().getValue(), tag.getLabel().getValue(), tag.getUserId().getValue())).toList();
 	}
 
-	//	@Override
-//	public List<Movie> findAll(final UserId userId) {
-//		return movies.values().stream()
-//				.filter(movie -> movie.getUserId().equals(userId))
-//				.collect(Collectors.toList());
-//	}
-
-	//	@Override
-//	public List<Movie> findAllMoviesByTagIds(final List<MovieTagId> tags, final UserId userId) {
-//		return movies.values().stream()
-//				.filter(movie -> tags.stream().allMatch(tag ->
-//						movie.getTags().stream().anyMatch(movieTag -> tag.equals(movieTag.getTagId()))
-//				))
-//				.filter(movie -> movie.getUserId().equals(userId))
-//				.collect(Collectors.toList());
-//	}
-
-
-//	@Override
-//	public List<MovieTag> findByUserId(final Integer userId) {
-//		return tags.values().stream()
-//				.filter(movieTag -> movieTag.getUserId().equals(new UserId(userId)))
-//				.collect(Collectors.toList());
-//	}
-
 }

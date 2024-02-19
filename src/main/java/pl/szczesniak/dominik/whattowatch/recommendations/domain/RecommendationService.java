@@ -3,7 +3,6 @@ package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
@@ -35,7 +34,7 @@ class RecommendationService {
 	@Transactional
 	public void recommendMoviesByConfiguration(final UserId userId) {
 		if (!hasRecommendedMoviesForCurrentInterval(userId)) {
-			final RecommendationConfiguration configuration = configurationManager.getRecommendationConfigurationBy(userId); // todo
+			final RecommendationConfiguration configuration = configurationManager.getRecommendationConfigurationBy(userId);
 			final List<MovieInfo> recommendedFromApi = getMovieInfosByConfig(configuration.getGenres());
 			final List<MovieInfo> latestRecommendedMovies = repository.findLatestRecommendedMovies(userId)
 					.map(RecommendedMovies::getMovies)
@@ -50,11 +49,6 @@ class RecommendationService {
 
 			repository.create(recommendedMovies);
 		}
-	}
-
-	RecommendedMovies getLatestRecommendedMovies(final UserId userId) {
-		return repository.findLatestRecommendedMovies(userId)
-				.orElseThrow(() -> new ObjectDoesNotExistException("No movies to recommend for user with id:" + userId.getValue()));
 	}
 
 	boolean hasRecommendedMoviesForCurrentInterval(final UserId userId) {

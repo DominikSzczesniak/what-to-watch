@@ -5,7 +5,7 @@ import lombok.Value;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendationConfigurationRequestResult;
-import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query.RecommendationQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query.RecommendationConfigurationQueryService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.lang.reflect.Field;
@@ -16,9 +16,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static pl.szczesniak.dominik.whattowatch.recommendations.domain.InMemoryRecommendationConfigurationRepository.PersistedRecommendationConfiguration.toPersisted;
+import static pl.szczesniak.dominik.whattowatch.recommendations.domain.InMemoryRecommendationConfigurationRepositoryConfiguration.PersistedRecommendationConfiguration.toPersisted;
 
-class InMemoryRecommendationConfigurationRepository implements RecommendationConfigurationRepository, RecommendationQueryService {
+class InMemoryRecommendationConfigurationRepositoryConfiguration implements RecommendationConfigurationRepository, RecommendationConfigurationQueryService {
 
 	private final AtomicInteger nextId = new AtomicInteger(0);
 	private final Map<UserId, PersistedRecommendationConfiguration> configurations = new HashMap<>();
