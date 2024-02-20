@@ -1,8 +1,7 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.persistence;
+package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserRole;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 
 import java.util.Optional;

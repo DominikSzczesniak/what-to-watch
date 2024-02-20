@@ -1,9 +1,7 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.persistence;
+package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserRole;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserRoleRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 
 import java.util.List;

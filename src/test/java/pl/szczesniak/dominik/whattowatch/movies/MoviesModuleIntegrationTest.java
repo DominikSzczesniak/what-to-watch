@@ -489,7 +489,7 @@ class MoviesModuleIntegrationTest {
 				Integer.class
 		);
 
-		addMovieRest.addMovie(AddMovieDto.builder().userId(userId).build(), Integer.class);
+		addMovieRest.addMovie(AddMovieDto.builder().userId(loggedUser.getUserId()).build(), loggedUser, Integer.class);
 
 		final ResponseEntity<String> addTagToMovieOneResponse1 = addMovieTagToMovieRest.addTagToMovie(
 				MovieTagDto.builder().tagLabel(createAnyTagLabel().getValue()).build(), loggedUser, addMovieResponse1.getBody());

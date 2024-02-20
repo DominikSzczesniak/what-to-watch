@@ -4,8 +4,6 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -29,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class User extends BaseEntity {
+public class User extends BaseEntity {
 
 	@AttributeOverride(name = "value", column = @Column(name = "user_name", unique = true))
 	private Username username;
