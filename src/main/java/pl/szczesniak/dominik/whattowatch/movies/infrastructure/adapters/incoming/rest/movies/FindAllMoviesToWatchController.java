@@ -50,15 +50,8 @@ public class FindAllMoviesToWatchController {
 				new MovieDetailsDto(
 						movie.getTitle(),
 						movie.getMovieId(),
-						userId,
-						mapMovieTags(movie)
+						userId
 				)).toList();
-	}
-
-	private static List<MovieTagDto> mapMovieTags(final MovieInListQueryResult movie) {
-		return movie.getTags().stream()
-				.map(movieTag -> new MovieTagDto(movieTag.getTagId(), movieTag.getLabel()))
-				.toList();
 	}
 
 	@Value
@@ -66,7 +59,6 @@ public class FindAllMoviesToWatchController {
 		String title;
 		Integer movieId;
 		Integer userId;
-		List<MovieTagDto> tags;
 	}
 
 	@Value

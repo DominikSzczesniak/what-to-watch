@@ -46,11 +46,8 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 		final List<MovieInListQueryResult> results = jdbcTemplate.query(sql, (rs, rowNum) -> {
 			final MovieInListQueryResult movieQueryResult = new MovieInListQueryResult(
 					rs.getInt("movie_id"),
-					rs.getString("movie_title"),
-					new HashSet<>()
+					rs.getString("movie_title")
 			);
-
-			fillTags(rs, movieQueryResult.getTags());
 
 			return movieQueryResult;
 		}, userId.getValue());
@@ -137,8 +134,7 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 		return jdbcTemplate.query(sql, params, (rs, rowNum) ->
 				new MovieInListQueryResult(
 						rs.getInt("id"),
-						rs.getString("movie_title"),
-						new HashSet<>())
+						rs.getString("movie_title"))
 		);
 	}
 

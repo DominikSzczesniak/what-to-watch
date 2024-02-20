@@ -85,8 +85,7 @@ public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery, Mo
 	private static List<MovieInListQueryResult> toDto(final List<Movie> foundMovies) {
 		return foundMovies.stream().map(movie -> new MovieInListQueryResult(
 								movie.getMovieId().getValue(),
-								movie.getTitle().getValue(),
-								mapTagsToQueryResult(movie.getTags())
+								movie.getTitle().getValue()
 						)
 				)
 				.toList();
