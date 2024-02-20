@@ -13,6 +13,8 @@ import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.configurations.UpdateRecommendationConfigurationInvoker;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendedmovies.GetLatestRecommendedMoviesInvoker;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.scheduler.RecommendationDecisionHandler;
+import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider;
+import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 
 import java.util.List;
 
@@ -45,12 +47,16 @@ class RecommendationsModuleIntegrationTest {
 	@Autowired
 	private UpdateRecommendationConfigurationInvoker updateRecommendationConfigurationRest;
 
-	private final Integer userId = createAnyUserId().getValue();
+	@Autowired
+	private LoggedUserProvider loggedUserProvider;
 
 	@Test
 	void should_create_and_find_recommendation_configuration() {
+		// given
+		final LoggedUser loggedUser = loggedUserProvider.getLoggedUser();
+
 		// when
-		final ResponseEntity<MovieGenresDto> getMovieGenresResponse = getMovieGenresRest.getMovieGenres();
+		final ResponseEntity<MovieGenresDto> getMovieGenresResponse = getMovieGenresRest.getMovieGenres(loggedUser);
 
 		// then
 		assertThat(getMovieGenresResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -61,37 +67,38 @@ class RecommendationsModuleIntegrationTest {
 
 		// when
 		final ResponseEntity<Long> createRecommendationResponse = createRecommendationConfigurationRest.createRecommendationConfiguration(
-				userId, CreateRecommendationConfigurationDto.builder().limitToGenres(genreNames).build());
+				loggedUser, CreateRecommendationConfigurationDto.builder().limitToGenres(genreNames).build());
 
 		// then
 		assertThat(createRecommendationResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		// when
 		final ResponseEntity<RecommendationConfigurationDto> recommendationConfiguration =
-				getRecommendationConfigurationRest.getRecommendationConfiguration(userId);
+				getRecommendationConfigurationRest.getRecommendationConfiguration(loggedUser);
 
 		// then
 		assertThat(recommendationConfiguration.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(recommendationConfiguration.getBody().getConfigurationId()).isEqualTo(createRecommendationResponse.getBody());
 		assertThat(recommendationConfiguration.getBody().getGenreNames()).isEqualTo(genreNames);
-		assertThat(recommendationConfiguration.getBody().getUserId()).isEqualTo(userId);
+		assertThat(recommendationConfiguration.getBody().getUserId()).isEqualTo(loggedUser.getUserId());
 	}
 
 	@Test
 	void should_create_recommendation_configuration_and_recommend_movies() {
 		// given
+		final LoggedUser loggedUser = loggedUserProvider.getLoggedUser();
 		final List<String> genreNames = List.of("WAR");
 
 		// when
 		final ResponseEntity<Long> createRecommendationResponse = createRecommendationConfigurationRest.createRecommendationConfiguration(
-				userId, CreateRecommendationConfigurationDto.builder().limitToGenres(genreNames).build());
+				loggedUser, CreateRecommendationConfigurationDto.builder().limitToGenres(genreNames).build());
 
 		// then
 		assertThat(createRecommendationResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		// when
 		simulateRecommendationsAvailable();
-		final ResponseEntity<RecommendedMoviesDto> latestRecommendedMoviesResponse = getLatestRecommendedMoviesRest.getLatestRecommendedMovies(userId);
+		final ResponseEntity<RecommendedMoviesDto> latestRecommendedMoviesResponse = getLatestRecommendedMoviesRest.getLatestRecommendedMovies(loggedUser);
 
 		// then
 		assertThat(latestRecommendedMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -103,19 +110,20 @@ class RecommendationsModuleIntegrationTest {
 	@Test
 	void should_update_recommendation_configuration_and_recommend_movies() {
 		// given
+		final LoggedUser loggedUser = loggedUserProvider.getLoggedUser();
 		final List<String> genreNames = List.of("WAR");
 		final List<String> updatedGenreNames = List.of("THRILLER");
 
 		// when
 		final ResponseEntity<Long> createRecommendationResponse = createRecommendationConfigurationRest.createRecommendationConfiguration(
-				userId, CreateRecommendationConfigurationDto.builder().limitToGenres(genreNames).build());
+				loggedUser, CreateRecommendationConfigurationDto.builder().limitToGenres(genreNames).build());
 
 		// then
 		assertThat(createRecommendationResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		// when
 		final ResponseEntity<Void> updateRecommendationConfigurationResponse = updateRecommendationConfigurationRest
-				.updateRecommendationConfiguration(userId, UpdateRecommendationConfigurationDto.builder()
+				.updateRecommendationConfiguration(loggedUser, UpdateRecommendationConfigurationDto.builder()
 						.limitToGenres(updatedGenreNames)
 						.build());
 
@@ -124,7 +132,7 @@ class RecommendationsModuleIntegrationTest {
 
 		// when
 		final ResponseEntity<RecommendationConfigurationDto> getRecommendationConfigurationResponse =
-				getRecommendationConfigurationRest.getRecommendationConfiguration(userId);
+				getRecommendationConfigurationRest.getRecommendationConfiguration(loggedUser);
 
 		// then
 		assertThat(getRecommendationConfigurationResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -133,12 +141,42 @@ class RecommendationsModuleIntegrationTest {
 		// when
 		simulateRecommendationsAvailable();
 		final ResponseEntity<RecommendedMoviesDto> getLatestRecommendedMoviesResponse =
-				getLatestRecommendedMoviesRest.getLatestRecommendedMovies(userId);
+				getLatestRecommendedMoviesRest.getLatestRecommendedMovies(loggedUser);
 
 		assertThat(getLatestRecommendedMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(getLatestRecommendedMoviesResponse.getBody().getMovieInfos()).hasSize(2);
 		assertThat(getLatestRecommendedMoviesResponse.getBody().getMovieInfos())
 				.extracting(MovieInfoDto::getGenresNames).allMatch(movieGenres -> movieGenres.containsAll(updatedGenreNames));
+	}
+
+	@Test
+	void should_unauthorize_endpoints_when_not_logged_in_user() {
+		// given
+		final Integer userId = createAnyUserId().getValue();
+		final LoggedUser loggedUser = new LoggedUser(userId, List.of("asd"));
+
+		// when
+		final ResponseEntity<MovieGenresDto> getMovieGenresResponse = getMovieGenresRest.getMovieGenres(loggedUser);
+
+		final ResponseEntity<Long> createRecommendationResponse = createRecommendationConfigurationRest.createRecommendationConfiguration(
+				loggedUser, CreateRecommendationConfigurationDto.builder().limitToGenres(List.of("WAR")).build());
+
+		final ResponseEntity<RecommendationConfigurationDto> recommendationConfiguration =
+				getRecommendationConfigurationRest.getRecommendationConfiguration(loggedUser);
+
+		final ResponseEntity<RecommendedMoviesDto> latestRecommendedMoviesResponse = getLatestRecommendedMoviesRest.getLatestRecommendedMovies(loggedUser);
+
+		final ResponseEntity<Void> updateRecommendationConfigurationResponse = updateRecommendationConfigurationRest
+				.updateRecommendationConfiguration(loggedUser, UpdateRecommendationConfigurationDto.builder()
+						.limitToGenres(List.of("ACTION"))
+						.build());
+
+		// then
+		assertThat(getMovieGenresResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+		assertThat(createRecommendationResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+		assertThat(recommendationConfiguration.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+		assertThat(latestRecommendedMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+		assertThat(updateRecommendationConfigurationResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
 
 	private void simulateRecommendationsAvailable() {

@@ -37,6 +37,8 @@ also tv shows).
 - Update existing movie details.
 - Remove movies from the list.
 - Assigning covers to movies.
+- Adding comments.
+- Adding tags and searching movies by them.
 - Saves cover files in "files" folder in project's directory.
 - Recommending movies based on configuration using external API.
 
@@ -49,7 +51,7 @@ also tv shows).
 Project is still under development. I am currently using it to learn new technologies and gain practice in coding.
 
 ## Testing the app:
-Repositories are filled with data at application start.
+Repositories are filled with data at application start while using profile "test".
 In order to test you can just import the file from httprequests folder to postman. File has all 
 endpoints handled in the app.
 

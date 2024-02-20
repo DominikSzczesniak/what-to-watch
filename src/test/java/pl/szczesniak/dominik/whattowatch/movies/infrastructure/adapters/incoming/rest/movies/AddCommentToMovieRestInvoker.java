@@ -2,25 +2,28 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import pl.szczesniak.dominik.whattowatch.infrastructure.adapters.incoming.rest.BaseRestInvoker;
+import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 
 @Component
-@RequiredArgsConstructor
-public class AddCommentToMovieRestInvoker {
+public class AddCommentToMovieRestInvoker extends BaseRestInvoker {
 
 	private static final String URL = "/api/movies/{movieId}/comments";
 
-	private final TestRestTemplate restTemplate;
+	AddCommentToMovieRestInvoker(final TestRestTemplate restTemplate) {
+		super(restTemplate);
+	}
 
-	public ResponseEntity<String> addCommentToMovie(final Integer userId, final Integer movieId, final CommentDto commentDto) {
+
+	public ResponseEntity<String> addCommentToMovie(final LoggedUser loggedUser, final Integer movieId, final CommentDto commentDto) {
 		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", String.valueOf(userId));
+		addSessionIdandUserIdHeaders(headers, loggedUser);
 		final HttpEntity<CommentDto> requestEntity = new HttpEntity<>(commentDto, headers);
 		return restTemplate.exchange(
 				URL,

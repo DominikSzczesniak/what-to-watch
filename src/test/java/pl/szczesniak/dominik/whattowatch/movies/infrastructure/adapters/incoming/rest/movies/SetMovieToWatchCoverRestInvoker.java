@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
@@ -11,20 +10,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
+import pl.szczesniak.dominik.whattowatch.infrastructure.adapters.incoming.rest.BaseRestInvoker;
+import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 
 import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor
-public class SetMovieToWatchCoverRestInvoker {
+public class SetMovieToWatchCoverRestInvoker extends BaseRestInvoker {
 
 	private static final String URL = "/api/movies/{movieId}/cover";
 
-	private final TestRestTemplate restTemplate;
+	SetMovieToWatchCoverRestInvoker(final TestRestTemplate restTemplate) {
+		super(restTemplate);
+	}
 
-	public ResponseEntity<?> setCover(final Integer userId, final Integer movieId, MultipartFile image) throws IOException {
+	public ResponseEntity<?> setCover(final LoggedUser loggedUser, final Integer movieId, MultipartFile image) throws IOException {
 		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", userId.toString());
+		addSessionIdandUserIdHeaders(headers, loggedUser);
 
 		final MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 		body.add("image", new ByteArrayResource(image.getBytes()) {

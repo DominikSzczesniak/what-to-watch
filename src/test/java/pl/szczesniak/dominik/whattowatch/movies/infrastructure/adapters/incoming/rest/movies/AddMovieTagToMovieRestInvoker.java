@@ -2,27 +2,30 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import pl.szczesniak.dominik.whattowatch.infrastructure.adapters.incoming.rest.BaseRestInvoker;
+import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
-public class AddMovieTagToMovieRestInvoker {
+public class AddMovieTagToMovieRestInvoker extends BaseRestInvoker {
 
 	private static final String URL = "/api/movies/{movieId}/tags";
 
-	private final TestRestTemplate restTemplate;
+	AddMovieTagToMovieRestInvoker(final TestRestTemplate restTemplate) {
+		super(restTemplate);
+	}
 
-	public ResponseEntity<String> addTagToMovie(final MovieTagDto movieTagDto, final Integer userId, final Integer movieId) {
+
+	public ResponseEntity<String> addTagToMovie(final MovieTagDto movieTagDto, final LoggedUser loggedUser, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", String.valueOf(userId));
+		addSessionIdandUserIdHeaders(headers, loggedUser);
 		final HttpEntity<MovieTagDto> requestEntity = new HttpEntity<>(movieTagDto, headers);
 
 		return getAddTagToMovieResponse(movieTagDto, movieId, requestEntity);

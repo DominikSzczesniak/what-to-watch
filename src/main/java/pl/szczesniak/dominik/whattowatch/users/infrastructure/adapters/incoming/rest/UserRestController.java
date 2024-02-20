@@ -1,11 +1,21 @@
 package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest;
 
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,14 +36,28 @@ public class UserRestController {
 
 	private final UserService userService;
 
+	private final AuthenticationManager authenticationManager;
+	private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+
 	@PostMapping("/api/login")
-	public ResponseEntity<Integer> loginUser(@RequestBody final LoginUserDto userDto) {
+	public ResponseEntity<Integer> loginUser(@RequestBody final LoginUserDto userDto, final HttpServletRequest request, final HttpServletResponse response) {
 		try {
 			final Integer userId = userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())).getValue();
+			login(userDto, request, response);
 			return ResponseEntity.status(HttpStatus.OK).body(userId);
 		} catch (InvalidCredentialsException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 		}
+	}
+
+	private void login(final LoginUserDto userDto, final HttpServletRequest request, final HttpServletResponse response) {
+		final UsernamePasswordAuthenticationToken token = UsernamePasswordAuthenticationToken.unauthenticated(
+				userDto.getUsername(), userDto.getPassword());
+		final Authentication authentication = authenticationManager.authenticate(token);
+		final SecurityContext context = SecurityContextHolder.createEmptyContext();
+		context.setAuthentication(authentication);
+		SecurityContextHolder.setContext(context);
+		securityContextRepository.saveContext(context, request, response);
 	}
 
 	@PostMapping("/api/users")
@@ -42,7 +66,7 @@ public class UserRestController {
 		try {
 			final Integer value = userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()))).getValue();
 			return ResponseEntity.status(HttpStatus.CREATED).body(value);
-		} catch (UsernameIsTakenException e) {
+		} catch (UsernameIsTakenException | DataIntegrityViolationException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 	}

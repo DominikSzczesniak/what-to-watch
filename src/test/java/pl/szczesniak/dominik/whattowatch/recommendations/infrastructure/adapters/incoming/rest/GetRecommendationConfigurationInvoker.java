@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest;
 
 
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -9,20 +8,23 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import pl.szczesniak.dominik.whattowatch.infrastructure.adapters.incoming.rest.BaseRestInvoker;
+import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class GetRecommendationConfigurationInvoker {
+public class GetRecommendationConfigurationInvoker extends BaseRestInvoker {
 
 	private static final String URL = "/api/recommendations/configuration";
 
-	private final TestRestTemplate restTemplate;
+	GetRecommendationConfigurationInvoker(final TestRestTemplate restTemplate) {
+		super(restTemplate);
+	}
 
-	public ResponseEntity<RecommendationConfigurationDto> getRecommendationConfiguration(final Integer userId) {
+	public ResponseEntity<RecommendationConfigurationDto> getRecommendationConfiguration(final LoggedUser loggedUser) {
 		final HttpHeaders headers = new HttpHeaders();
-		headers.set("userId", String.valueOf(userId));
+		addSessionIdandUserIdHeaders(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,

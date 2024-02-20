@@ -1,6 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 
 import java.lang.reflect.Field;
@@ -41,8 +42,8 @@ public class InMemoryUserRepository implements UserRepository {
 	}
 
 	@Override
-	public Optional<User> findBy(final String username) {
-		return users.values().stream().filter(user -> user.getUsername().getValue().equals(username)).findFirst();
+	public Optional<User> findBy(final Username username) {
+		return users.values().stream().filter(user -> user.getUsername().equals(username)).findFirst();
 	}
 
 	private boolean usernameIsTaken(final String username) {

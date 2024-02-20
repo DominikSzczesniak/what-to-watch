@@ -1,8 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
@@ -11,6 +11,6 @@ public interface UserRepository {
 
 	boolean exists(UserId userId);
 
-	Optional<User> findBy(String username);
+	Optional<User> findBy(Username username);
 
 }

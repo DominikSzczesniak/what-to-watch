@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
@@ -136,4 +137,32 @@ class UserServiceTest {
 		assertThat(differentPassword).isInstanceOf(InvalidCredentialsException.class);
 	}
 
+	@Test
+	void created_user_should_have_user_role_by_default() {
+		// given
+		final Username username = createAnyUsername();
+		tut.createUser(CreateUserSample.builder().username(username).build());
+
+		// when
+		final User user = tut.findUserBy(username).get();
+
+		// then
+		assertThat(user.getRoles()).extracting(UserRole::getRoleName).containsExactlyInAnyOrder(RoleName.USER);
+	}
+
+	@Test
+	void created_users_default_roles_should_be_same() {
+		// given
+		final Username username1 = createAnyUsername();
+		tut.createUser(CreateUserSample.builder().username(username1).build());
+		final Username username2 = createAnyUsername();
+		tut.createUser(CreateUserSample.builder().username(username2).build());
+
+		// when
+		final User user1 = tut.findUserBy(username1).get();
+		final User user2 = tut.findUserBy(username2).get();
+
+		// then
+		assertThat(user1.getRoles().get(0)).isEqualTo(user2.getRoles().get(0));
+	}
 }
