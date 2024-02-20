@@ -95,7 +95,6 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 				}
 
 				fillTags(rs, result.getTags());
-
 				return result;
 			}, movieId.getValue(), userId.getValue());
 
