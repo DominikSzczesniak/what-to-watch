@@ -32,14 +32,9 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 	public List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
 		final String sql = "SELECT " +
 				"m.id AS movie_id, " +
-				"m.movie_title, " +
-				"mt.tag_id, " +
-				"mt.tag_label, " +
-				"mt.tag_user_id " +
+				"m.movie_title " +
 				"FROM " +
 				"movie m " +
-				"LEFT JOIN " +
-				"tags mt ON mt.tag_user_id = m.user_id " +
 				"WHERE " +
 				"m.user_id = ?";
 
