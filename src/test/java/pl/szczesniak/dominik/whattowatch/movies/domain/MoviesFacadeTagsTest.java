@@ -6,9 +6,9 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieQueryResult;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovie;

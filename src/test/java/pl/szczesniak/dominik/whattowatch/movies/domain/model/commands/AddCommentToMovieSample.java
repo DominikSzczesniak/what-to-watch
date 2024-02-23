@@ -14,10 +14,10 @@ public class AddCommentToMovieSample {
 	@Builder
 	private static AddCommentToMovie build(final UserId userId, final MovieId movieId, final String comment) {
 		return new AddCommentToMovie(
-						ofNullable(userId).orElse(createAnyUserId()),
-						ofNullable(movieId).orElse(createAnyMovieId()),
-						ofNullable(comment).orElse(createAnyComment())
-						);
+				ofNullable(userId).orElse(createAnyUserId()),
+				ofNullable(movieId).orElse(createAnyMovieId()),
+				ofNullable(comment).orElse(createAnyComment())
+		);
 	}
 
 }

@@ -17,9 +17,11 @@ import java.util.UUID;
 @EqualsAndHashCode
 class MovieCover {
 
-	@NonNull private String filename;
+	@NonNull
+	private String filename;
 
-	@NonNull private String coverContentType;
+	@NonNull
+	private String coverContentType;
 
 	private UUID coverId;
 

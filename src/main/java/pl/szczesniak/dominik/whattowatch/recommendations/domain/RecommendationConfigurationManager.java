@@ -4,12 +4,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendationConfigurationRequestResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfiguration;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfiguration;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-
-import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class RecommendationConfigurationManager {
