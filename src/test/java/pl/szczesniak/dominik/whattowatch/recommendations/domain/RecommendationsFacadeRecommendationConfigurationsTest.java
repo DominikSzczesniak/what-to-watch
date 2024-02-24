@@ -35,7 +35,7 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 
 		// when
 		final ConfigurationId configurationId = tut.create(CreateRecommendationConfigurationSample.builder().userId(userId).build());
-		final RecommendationConfigurationRequestResult configuration = tut.findBy(userId);
+		final RecommendationConfigurationRequestResult configuration = tut.getLatestRecommendationConfiguration(userId);
 
 		// then
 		assertThat(configuration.getUserId()).isEqualTo(userId.getValue());
@@ -51,11 +51,11 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 				.genreNames(Set.of(MovieGenre.ADVENTURE))
 				.build());
 
-		final RecommendationConfigurationRequestResult configuration = tut.findBy(userId);
+		final RecommendationConfigurationRequestResult configuration = tut.getLatestRecommendationConfiguration(userId);
 		tut.update(UpdateRecommendationConfigurationSample.builder().genreNames(Set.of(MovieGenre.ACTION)).userId(userId).build());
 
 		// when
-		final RecommendationConfigurationRequestResult updatedConfiguration = tut.findBy(userId);
+		final RecommendationConfigurationRequestResult updatedConfiguration = tut.getLatestRecommendationConfiguration(userId);
 
 		// then
 		assertThat(updatedConfiguration).isEqualTo(configuration);
@@ -80,7 +80,7 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 		final UserId userId = createAnyUserId();
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.findBy(userId));
+		final Throwable thrown = catchThrowable(() -> tut.getLatestRecommendationConfiguration(userId));
 
 		// then
 		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);

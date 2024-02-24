@@ -36,12 +36,9 @@ public class RecommendationFacade {
 
 	public RecommendedMoviesQueryResult getLatestRecommendedMovies(final UserId userId) {
 		return recommendedMoviesQueryService.findLatestRecommendedMoviesQueryResult(userId)
-				.orElseThrow(() -> new ObjectDoesNotExistException("No recommended movies for user")); // todo: nie wiem czy ja chce ten wyjatek rzucac
+				.orElseThrow(() -> new ObjectDoesNotExistException("No recommended movies for user"));
 	}
 
-	public boolean hasRecommendedMoviesForCurrentInterval(final UserId userId) {
-		return recommendationService.hasRecommendedMoviesForCurrentInterval(userId);
-	}
 
 	public ConfigurationId create(final CreateRecommendationConfiguration command) {
 		return configurationManager.create(command);
@@ -51,7 +48,7 @@ public class RecommendationFacade {
 		configurationManager.update(command);
 	}
 
-	public RecommendationConfigurationRequestResult findBy(final UserId userId) {
+	public RecommendationConfigurationRequestResult getLatestRecommendationConfiguration(final UserId userId) {
 		return recommendationConfigurationQueryService.findRecommendationConfigurationQueryResultBy(userId)
 				.orElseThrow(() -> new ObjectDoesNotExistException("No recommended movies for user with id " + userId.getValue()));
 	}

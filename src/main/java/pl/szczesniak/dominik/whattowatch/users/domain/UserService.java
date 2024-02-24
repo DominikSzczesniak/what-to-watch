@@ -4,13 +4,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -54,8 +57,20 @@ public class UserService {
 		return repository.findBy(username).isPresent();
 	}
 
-	public Optional<User> findUserBy(final Username username) {
+	Optional<User> findUserBy(final Username username) {
 		return repository.findBy(username);
+	}
+
+	public UserQueryResult getUserQueryResult(final Username username) {
+		final User user = repository.findBy(username).orElseThrow(
+				() -> new ObjectDoesNotExistException("User with username: " + username.getValue() + " does not exist"));
+
+		return toUserQueryResult(user);
+	}
+
+	private static UserQueryResult toUserQueryResult(final User user) {
+		final List<RoleName> roleNames = user.getRoles().stream().map(UserRole::getRoleName).toList();
+		return new UserQueryResult(user.getUsername().getValue(), user.getUserPassword().getValue(), roleNames);
 	}
 
 }

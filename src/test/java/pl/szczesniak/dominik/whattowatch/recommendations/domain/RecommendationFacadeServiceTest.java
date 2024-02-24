@@ -9,6 +9,7 @@ import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfigurationSample;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfigurationSample;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.Clock;
@@ -193,7 +194,7 @@ class RecommendationFacadeServiceTest {
 	}
 
 	@Test
-	void should_find_recommended_movies_for_current_interval() {
+	void should_not_recommend_when_already_recommended_movies_in_current_interval() {
 		// given
 		final UserId user = createAnyUserId();
 		tut.create(CreateRecommendationConfigurationSample.builder()
@@ -202,28 +203,24 @@ class RecommendationFacadeServiceTest {
 				.build());
 
 		tut.recommendMoviesByConfiguration(user);
+		final RecommendedMoviesQueryResult recommendedMovies = tut.getLatestRecommendedMovies(user);
 
-		// when
-		boolean hasRecommendedMoviesForCurrentInterval = tut.hasRecommendedMoviesForCurrentInterval(user);
+		final boolean genresMatch = recommendedMovies.getMovies().stream()
+				.map(MovieInfo::getGenres)
+				.allMatch(genres -> genres.contains(MovieGenre.FANTASY) && genres.contains(MovieGenre.ADVENTURE));
+		assertThat(genresMatch).isTrue();
 
-		// then
-		assertThat(hasRecommendedMoviesForCurrentInterval).isTrue();
-	}
-
-	@Test
-	void should_not_find_recommended_movies_for_current_interval() {
-		// given
-		final UserId user = createAnyUserId();
-		tut.create(CreateRecommendationConfigurationSample.builder()
+		tut.update(UpdateRecommendationConfigurationSample.builder()
 				.userId(user)
-				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
+				.genreNames(Set.of(MovieGenre.ACTION, MovieGenre.WAR))
 				.build());
 
 		// when
-		boolean hasRecommendedMoviesForCurrentInterval = tut.hasRecommendedMoviesForCurrentInterval(user);
+		tut.recommendMoviesByConfiguration(user);
+		final RecommendedMoviesQueryResult latestRecommendedMovies = tut.getLatestRecommendedMovies(user);
 
 		// then
-		assertThat(hasRecommendedMoviesForCurrentInterval).isFalse();
+		assertThat(latestRecommendedMovies.getRecommendedMoviesId()).isEqualTo(recommendedMovies.getRecommendedMoviesId());
 	}
 
 	static class FakeClock extends Clock {

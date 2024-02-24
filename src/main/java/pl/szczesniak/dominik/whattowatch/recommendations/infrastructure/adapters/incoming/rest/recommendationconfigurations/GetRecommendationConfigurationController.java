@@ -22,7 +22,7 @@ public class GetRecommendationConfigurationController {
 
 	@GetMapping("/api/recommendations/configuration")
 	public ResponseEntity<RecommendationConfigurationDto> getRecommendationConfiguration(@RequestHeader("userId") final Integer userId) {
-		final RecommendationConfigurationRequestResult config = facade.findBy(new UserId(userId));
+		final RecommendationConfigurationRequestResult config = facade.getLatestRecommendationConfiguration(new UserId(userId));
 		final RecommendationConfigurationDto configDto = new RecommendationConfigurationDto(
 				config.getConfigurationId(),
 				mapGenres(config.getGenres()),
