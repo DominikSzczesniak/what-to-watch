@@ -18,8 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
+import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
 
 import java.util.List;
 

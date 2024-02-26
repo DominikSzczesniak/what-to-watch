@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesQueryResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.LocalDateTime;

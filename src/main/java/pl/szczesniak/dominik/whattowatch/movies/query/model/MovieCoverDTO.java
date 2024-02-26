@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.movies.domain.model;
+package pl.szczesniak.dominik.whattowatch.movies.query.model;
 
 import lombok.NonNull;
 import lombok.Value;

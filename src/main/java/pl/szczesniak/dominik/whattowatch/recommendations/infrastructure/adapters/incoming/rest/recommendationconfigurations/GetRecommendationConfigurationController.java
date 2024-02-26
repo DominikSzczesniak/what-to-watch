@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendationConfigurationRequestResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;

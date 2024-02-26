@@ -4,13 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.WatchedMovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovieSample;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.WatchedMovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -219,7 +219,7 @@ public class MoviesFacadeListTest {
 				);
 
 		assertThat(tut.getWatchedMovies(userId))
-				.extracting(WatchedMovieQueryResult::getMovieId, WatchedMovieQueryResult::getTitle) // todo: dodac tu sprawdzenie userid?
+				.extracting(WatchedMovieQueryResult::getMovieId, WatchedMovieQueryResult::getTitle)
 				.containsExactlyInAnyOrder(tuple(movieTwoId.getValue(), movieTwo.getMovieTitle().getValue()));
 	}
 

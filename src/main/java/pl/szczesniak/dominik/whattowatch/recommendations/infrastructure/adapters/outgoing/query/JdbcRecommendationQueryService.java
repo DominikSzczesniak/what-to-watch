@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query;
+package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.query;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoApis;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendationConfigurationRequestResult;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesQueryResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendationConfigurationQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendedMoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.sql.ResultSet;
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
-public class RecommendationDataQueryService implements RecommendationConfigurationQueryService, RecommendedMoviesQueryService {
+public class JdbcRecommendationQueryService implements RecommendationConfigurationQueryService, RecommendedMoviesQueryService {
 
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -60,7 +62,8 @@ public class RecommendationDataQueryService implements RecommendationConfigurati
 
 	@Override
 	public List<UserId> findAllUsersWithRecommendationConfigurations() {
-		final String sql = "SELECT DISTINCT user_id FROM recommendation_configuration";
+		final String sql = "SELECT DISTINCT user_id " +
+				"FROM recommendation_configuration";
 
 		final List<Integer> userIds = namedParameterJdbcTemplate.queryForList(sql, Collections.emptyMap(), Integer.class);
 

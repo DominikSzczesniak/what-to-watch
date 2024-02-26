@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.files.domain.FilesStorage;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.StoredFileId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.InputStream;

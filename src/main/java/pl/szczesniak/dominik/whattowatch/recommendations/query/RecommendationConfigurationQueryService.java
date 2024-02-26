@@ -1,6 +1,6 @@
-package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query;
+package pl.szczesniak.dominik.whattowatch.recommendations.query;
 
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendationConfigurationRequestResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;

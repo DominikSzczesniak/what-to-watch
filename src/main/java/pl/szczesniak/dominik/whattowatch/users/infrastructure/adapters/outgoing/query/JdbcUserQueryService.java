@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.query;
+package pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.outgoing.query;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -6,8 +6,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
+import pl.szczesniak.dominik.whattowatch.users.query.UserQueryService;
+import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +18,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
-public class UserDataQueryService implements UserQueryService {
+public class JdbcUserQueryService implements UserQueryService {
 
 	private final NamedParameterJdbcTemplate jdbcTemplate;
 

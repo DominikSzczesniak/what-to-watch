@@ -1,8 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesId;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesQueryResult;
-import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query.RecommendedMoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendedMoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.lang.reflect.Field;

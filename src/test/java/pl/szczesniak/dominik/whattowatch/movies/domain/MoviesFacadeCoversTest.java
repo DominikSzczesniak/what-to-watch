@@ -3,7 +3,7 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;

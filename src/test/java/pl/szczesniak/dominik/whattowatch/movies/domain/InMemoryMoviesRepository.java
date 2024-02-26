@@ -1,12 +1,12 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCommentQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCommentQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagQueryResult;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.query.MoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieTagQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.query.MoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.lang.reflect.Field;

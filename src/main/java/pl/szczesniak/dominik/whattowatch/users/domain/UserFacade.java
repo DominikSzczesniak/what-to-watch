@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.query.UserQueryService;
+import pl.szczesniak.dominik.whattowatch.users.query.UserQueryService;
+import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class UserFacade {

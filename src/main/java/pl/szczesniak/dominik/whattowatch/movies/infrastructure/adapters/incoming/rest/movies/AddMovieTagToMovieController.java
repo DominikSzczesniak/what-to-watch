@@ -14,8 +14,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovie;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieTagQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.Optional;

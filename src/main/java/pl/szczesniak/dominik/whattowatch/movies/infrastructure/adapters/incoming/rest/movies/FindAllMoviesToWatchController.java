@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.Arrays;

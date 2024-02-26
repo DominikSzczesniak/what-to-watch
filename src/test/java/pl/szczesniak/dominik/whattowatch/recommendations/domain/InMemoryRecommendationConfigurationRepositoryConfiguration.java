@@ -4,8 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendationConfigurationRequestResult;
-import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query.RecommendationConfigurationQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendationConfigurationQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.lang.reflect.Field;

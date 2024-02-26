@@ -2,8 +2,8 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.query.MoviesQueryService;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.query.WatchedMoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.movies.query.MoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.movies.query.WatchedMoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
 
 @Configuration

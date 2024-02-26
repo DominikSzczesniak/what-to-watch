@@ -1,8 +1,8 @@
-package pl.szczesniak.dominik.whattowatch.users.infrastructure.query;
+package pl.szczesniak.dominik.whattowatch.users.query;
 
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
+import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
 
 import java.util.Optional;
 

@@ -1,8 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.WatchedMovieQueryResult;
-import pl.szczesniak.dominik.whattowatch.movies.infrastructure.query.WatchedMoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.WatchedMovieQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.query.WatchedMoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashMap;

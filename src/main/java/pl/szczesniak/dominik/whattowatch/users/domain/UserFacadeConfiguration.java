@@ -3,7 +3,7 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.szczesniak.dominik.whattowatch.users.infrastructure.query.UserQueryService;
+import pl.szczesniak.dominik.whattowatch.users.query.UserQueryService;
 
 @Configuration
 public class UserFacadeConfiguration {
