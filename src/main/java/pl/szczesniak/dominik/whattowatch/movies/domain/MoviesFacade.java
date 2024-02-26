@@ -50,7 +50,7 @@ public class MoviesFacade {
 	}
 
 	public List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
-		moviesWatchlistService.checkUserExists(userId); // todo: zapytac
+		moviesWatchlistService.checkUserExists(userId);
 		return moviesQueryService.getMoviesToWatch(userId);
 	}
 

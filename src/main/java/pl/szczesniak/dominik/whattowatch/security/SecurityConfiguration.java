@@ -17,7 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
+import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
@@ -55,9 +55,9 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
-	public UserDetailsService userDetailsService(final UserService userService) {
+	public UserDetailsService userDetailsService(final UserFacade userService) {
 		return username -> {
-			final UserQueryResult userQueryResult = userService.getUserQueryResult(new Username(username));
+			final UserQueryResult userQueryResult = userService.getUserBy(new Username(username));
 			return createUserDetails(userQueryResult);
 		};
 	}

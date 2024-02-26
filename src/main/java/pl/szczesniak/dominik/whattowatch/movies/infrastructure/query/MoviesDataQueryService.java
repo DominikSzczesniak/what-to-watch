@@ -1,8 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.query;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -25,9 +23,9 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQueryService {
+public class MoviesDataQueryService implements MoviesQueryService, WatchedMoviesQueryService {
 
-	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private final NamedParameterJdbcTemplate jdbcTemplate;
 
 	@Override
 	public List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
@@ -42,7 +40,7 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId.getValue());
 
-		return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
+		return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
 			final MovieInListQueryResult movieQueryResult = new MovieInListQueryResult(
 					rs.getInt("movie_id"),
 					rs.getString("movie_title")
@@ -66,8 +64,8 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 		params.addValue("movieId", movieId.getValue());
 		params.addValue("userId", userId.getValue());
 
-		try {
-			final MovieQueryResult movieQueryResult = namedParameterJdbcTemplate.queryForObject(sql, params, (rs, rowNum) -> {
+		return jdbcTemplate.query(sql, params, rs -> {
+			if (rs.next()) {
 				final MovieQueryResult result = new MovieQueryResult(
 						rs.getInt("movie_id"),
 						rs.getString("movie_title"),
@@ -77,13 +75,12 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 
 				fillComments(rs, result.getComments());
 				fillTags(rs, result.getTags());
-				return result;
-			});
 
-			return Optional.of(movieQueryResult);
-		} catch (EmptyResultDataAccessException e) {
-			return Optional.empty();
-		}
+				return Optional.of(result);
+			} else {
+				return Optional.empty();
+			}
+		});
 	}
 
 	private static void fillComments(final ResultSet rs, final Set<MovieCommentQueryResult> comments) throws SQLException {
@@ -108,6 +105,7 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 		}
 	}
 
+	@Override
 	public List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
 		final String sql = "SELECT m.id, m.movie_title, m.user_id " +
 				"FROM movie m " +
@@ -122,7 +120,7 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 		params.addValue("tagCount", tags.size());
 		params.addValue("tagIds", tags.stream().map(MovieTagId::getValue).collect(Collectors.toList()));
 
-		return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) ->
+		return jdbcTemplate.query(sql, params, (rs, rowNum) ->
 				new MovieInListQueryResult(
 						rs.getInt("id"),
 						rs.getString("movie_title"))
@@ -143,19 +141,19 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("tagId", tagId.getValue());
 
-		try {
-			final MovieTagQueryResult queryResult = namedParameterJdbcTemplate.queryForObject(sql, params, (rs, rowNum) -> {
-				final MovieTagQueryResult movieTagQueryResult = new MovieTagQueryResult(
+		return jdbcTemplate.query(sql, params, rs -> {
+			if (rs.next()) {
+				final MovieTagQueryResult result = new MovieTagQueryResult(
 						rs.getString("tag_id"),
 						rs.getString("tag_label"),
 						rs.getInt("tag_user_id")
 				);
-				return movieTagQueryResult;
-			});
-			return Optional.of(queryResult);
-		} catch (EmptyResultDataAccessException e) {
-			return Optional.empty();
-		}
+
+				return Optional.of(result);
+			} else {
+				return Optional.empty();
+			}
+		});
 	}
 
 	@Override
@@ -172,7 +170,7 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId);
 
-		return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
+		return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
 			final MovieTagQueryResult movieTagQueryResult = new MovieTagQueryResult(
 					rs.getString("tag_id"),
 					rs.getString("tag_label"),
@@ -196,7 +194,7 @@ public class DatabaseQueryService implements MoviesQueryService, WatchedMoviesQu
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId.getValue());
 
-		return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
+		return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
 			final WatchedMovieQueryResult watchedMovieQueryResult = new WatchedMovieQueryResult(
 					rs.getInt("movie_id"),
 					rs.getString("movie_title"),

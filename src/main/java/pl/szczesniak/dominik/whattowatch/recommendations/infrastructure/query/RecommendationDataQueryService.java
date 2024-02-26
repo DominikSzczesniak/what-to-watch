@@ -1,7 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.query;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
@@ -14,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -22,26 +24,31 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
-public class RecommendationQueryService implements RecommendationConfigurationQueryService, RecommendedMoviesQueryService {
+public class RecommendationDataQueryService implements RecommendationConfigurationQueryService, RecommendedMoviesQueryService {
 
-	private final JdbcTemplate jdbcTemplate;
+	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Override
 	public Optional<RecommendationConfigurationRequestResult> findRecommendationConfigurationQueryResultBy(final UserId userId) {
 		final String sql = "SELECT r.user_id, r.id, c.genre " +
 				"FROM recommendation_configuration r " +
 				"JOIN configuration_genres c ON r.id = c.configuration_id " +
-				"WHERE r.user_id = ?";
+				"WHERE r.user_id = :userId";
 
-		return jdbcTemplate.query(sql, new Object[]{userId.getValue()}, (rs, rowNum) -> {
-			final RecommendationConfigurationRequestResult result = new RecommendationConfigurationRequestResult(
+		final MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("userId", userId.getValue());
+
+		final List<RecommendationConfigurationRequestResult> results = namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
+			RecommendationConfigurationRequestResult result = new RecommendationConfigurationRequestResult(
 					rs.getInt("user_id"),
 					rs.getInt("id"),
 					new HashSet<>()
 			);
 			fillGenres(rs, result.getGenres());
 			return result;
-		}).stream().findFirst();
+		});
+
+		return results.stream().findFirst();
 	}
 
 	private void fillGenres(final ResultSet rs, final Set<MovieGenre> genres) throws SQLException {
@@ -55,7 +62,7 @@ public class RecommendationQueryService implements RecommendationConfigurationQu
 	public List<UserId> findAllUsersWithRecommendationConfigurations() {
 		final String sql = "SELECT DISTINCT user_id FROM recommendation_configuration";
 
-		final List<Integer> userIds = jdbcTemplate.queryForList(sql, Integer.class);
+		final List<Integer> userIds = namedParameterJdbcTemplate.queryForList(sql, Collections.emptyMap(), Integer.class);
 
 		final List<UserId> result = new ArrayList<>();
 		for (Integer userId : userIds) {
@@ -71,27 +78,30 @@ public class RecommendationQueryService implements RecommendationConfigurationQu
 				"mi.movie_info_id, mi.overview, mi.title, mi.external_id, mi.external_api " +
 				"FROM recommended_movies rm " +
 				"JOIN movie_info mi ON rm.id = mi.id " +
-				"WHERE rm.user_id = ? " +
+				"WHERE rm.user_id = :userId " +
 				"ORDER BY rm.creation_date DESC " +
 				"LIMIT 2";
 
-		return jdbcTemplate.query(sql, new Object[]{userId.getValue()}, (rs) -> {
+		final MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("userId", userId.getValue());
+
+		return namedParameterJdbcTemplate.query(sql, params, rs -> {
 			if (rs.next()) {
 				int recommendedMoviesId = rs.getInt("id");
-				final LocalDateTime creationDate = rs.getTimestamp("creation_date").toLocalDateTime();
-				final LocalDateTime endInterval = rs.getTimestamp("end_interval").toLocalDateTime();
+				LocalDateTime creationDate = rs.getTimestamp("creation_date").toLocalDateTime();
+				LocalDateTime endInterval = rs.getTimestamp("end_interval").toLocalDateTime();
 
-				final List<MovieInfo> movieInfoList = new ArrayList<>();
+				List<MovieInfo> movieInfoList = new ArrayList<>();
 				do {
-					final int movieInfoId = rs.getInt("movie_info_id");
-					final String overview = rs.getString("overview");
-					final String title = rs.getString("title");
-					final int externalId = rs.getInt("external_id");
-					final MovieInfoApis externalApi = MovieInfoApis.valueOf(rs.getString("external_api"));
+					int movieInfoId = rs.getInt("movie_info_id");
+					String overview = rs.getString("overview");
+					String title = rs.getString("title");
+					int externalId = rs.getInt("external_id");
+					MovieInfoApis externalApi = MovieInfoApis.valueOf(rs.getString("external_api"));
 
-					final List<MovieGenre> genres = fetchGenres(movieInfoId);
+					List<MovieGenre> genres = fetchGenres(movieInfoId);
 
-					final MovieInfo movieInfo = new MovieInfo(genres, overview, title, externalId, externalApi);
+					MovieInfo movieInfo = new MovieInfo(genres, overview, title, externalId, externalApi);
 					movieInfoList.add(movieInfo);
 				} while (rs.next());
 
@@ -103,10 +113,14 @@ public class RecommendationQueryService implements RecommendationConfigurationQu
 	}
 
 	private List<MovieGenre> fetchGenres(int movieInfoId) {
-		String sqlGenres = "SELECT genres " +
+		final String sqlGenres = "SELECT genres " +
 				"FROM movie_info_genres " +
-				"WHERE movie_info_movie_info_id = ?";
-		return jdbcTemplate.queryForList(sqlGenres, new Object[]{movieInfoId}, String.class)
+				"WHERE movie_info_movie_info_id = :movieInfoId";
+
+		final MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("movieInfoId", movieInfoId);
+
+		return namedParameterJdbcTemplate.queryForList(sqlGenres, params, String.class)
 				.stream()
 				.map(MovieGenre::valueOf)
 				.collect(Collectors.toList());

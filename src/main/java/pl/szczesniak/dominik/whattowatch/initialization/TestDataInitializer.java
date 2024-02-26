@@ -9,7 +9,7 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
+import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
@@ -21,11 +21,11 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 public class TestDataInitializer {
 
 	private final MoviesFacade moviesFacade;
-	private final UserService userService;
+	private final UserFacade userFacade;
 
 	@PostConstruct
 	public void fillDatabase() {
-		final UserId userId = userService.createUser(new CreateUser(new Username("Dominik"), new UserPassword("123")));
+		final UserId userId = userFacade.createUser(new CreateUser(new Username("Dominik"), new UserPassword("123")));
 
 		moviesFacade.addMovieToList(AddMovieToList.builder(new MovieTitle("Star Wars"), userId).build());
 		final MovieId parasite = moviesFacade.addMovieToList(AddMovieToList.builder(new MovieTitle("Parasite"), userId).build());

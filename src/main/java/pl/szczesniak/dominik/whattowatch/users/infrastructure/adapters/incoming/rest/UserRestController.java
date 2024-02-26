@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
+import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
@@ -34,7 +34,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameI
 @RestController
 public class UserRestController {
 
-	private final UserService userService;
+	private final UserFacade userFacade;
 
 	private final AuthenticationManager authenticationManager;
 	private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
@@ -42,7 +42,7 @@ public class UserRestController {
 	@PostMapping("/api/login")
 	public ResponseEntity<Integer> loginUser(@RequestBody final LoginUserDto userDto, final HttpServletRequest request, final HttpServletResponse response) {
 		try {
-			final Integer userId = userService.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())).getValue();
+			final Integer userId = userFacade.login(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword())).getValue();
 			login(userDto, request, response);
 			return ResponseEntity.status(HttpStatus.OK).body(userId);
 		} catch (InvalidCredentialsException e) {
@@ -64,7 +64,7 @@ public class UserRestController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Integer> createUser(@RequestBody final CreateUserDto userDto) {
 		try {
-			final Integer value = userService.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()))).getValue();
+			final Integer value = userFacade.createUser(new CreateUser(new Username(userDto.getUsername()), new UserPassword(userDto.getPassword()))).getValue();
 			return ResponseEntity.status(HttpStatus.CREATED).body(value);
 		} catch (UsernameIsTakenException | DataIntegrityViolationException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -73,7 +73,7 @@ public class UserRestController {
 
 	@GetMapping("/api/users/{username}")
 	public ResponseEntity<String> isUsernameTaken(@PathVariable final String username) {
-		boolean check = userService.isUsernameTaken(new Username(username));
+		boolean check = userFacade.isUsernameTaken(new Username(username));
 		return ResponseEntity.status(HttpStatus.OK).body("username is taken: " + check);
 	}
 

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUserSample;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
@@ -12,18 +13,18 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameI
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static pl.szczesniak.dominik.whattowatch.users.domain.TestUserServiceConfiguration.userService;
+import static pl.szczesniak.dominik.whattowatch.users.domain.TestUserFacadeConfiguration.userFacade;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserPasswordSample.createAnyUserPassword;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSample.createAnyUsername;
 
 class UserServiceTest {
 
-	private UserService tut;
+	private UserFacade tut;
 
 	@BeforeEach
 	void setUp() {
-		tut = userService();
+		tut = userFacade();
 	}
 
 	@Test
@@ -144,10 +145,10 @@ class UserServiceTest {
 		tut.createUser(CreateUserSample.builder().username(username).build());
 
 		// when
-		final User user = tut.findUserBy(username).get();
+		final UserQueryResult user = tut.getUserBy(username);
 
 		// then
-		assertThat(user.getRoles()).extracting(UserRole::getRoleName).containsExactlyInAnyOrder(RoleName.USER);
+		assertThat(user.getRoles()).containsExactlyInAnyOrder(RoleName.USER);
 	}
 
 	@Test
@@ -159,8 +160,8 @@ class UserServiceTest {
 		tut.createUser(CreateUserSample.builder().username(username2).build());
 
 		// when
-		final User user1 = tut.findUserBy(username1).get();
-		final User user2 = tut.findUserBy(username2).get();
+		final UserQueryResult user1 = tut.getUserBy(username1);
+		final UserQueryResult user2 = tut.getUserBy(username2);
 
 		// then
 		assertThat(user1.getRoles().get(0)).isEqualTo(user2.getRoles().get(0));

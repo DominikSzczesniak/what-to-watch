@@ -1,16 +1,20 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
+import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
+import pl.szczesniak.dominik.whattowatch.users.infrastructure.query.UserQueryService;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class InMemoryUserRepository implements UserRepository {
+public class InMemoryUserRepository implements UserRepository, UserQueryService {
 
 	private final Map<UserId, User> users = new HashMap<>();
 	public final AtomicInteger nextId = new AtomicInteger(0);
@@ -37,8 +41,29 @@ public class InMemoryUserRepository implements UserRepository {
 	}
 
 	@Override
+	public boolean isUsernameTaken(final Username username) {
+		return users.values().stream().anyMatch(user -> user.getUsername().equals(username));
+	}
+
+	@Override
 	public boolean exists(final UserId userId) {
 		return users.containsKey(userId);
+	}
+
+	@Override
+	public Optional<UserQueryResult> findUserQueryResult(final Username username) {
+		return users.values().stream()
+				.filter(user -> user.getUsername().equals(username)).findFirst()
+				.map(user -> new UserQueryResult(
+						user.getId(),
+						user.getUsername().getValue(),
+						user.getUserPassword().getValue(),
+						toRoleNames(user.getRoles()))
+				);
+	}
+
+	private static List<RoleName> toRoleNames(final List<UserRole> roles) {
+		return roles.stream().map(UserRole::getRoleName).toList();
 	}
 
 	@Override

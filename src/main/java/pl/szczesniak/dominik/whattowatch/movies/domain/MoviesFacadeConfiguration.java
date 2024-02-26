@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.query.MoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.movies.infrastructure.query.WatchedMoviesQueryService;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
+import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
 
 @Configuration
 public class MoviesFacadeConfiguration {
@@ -27,8 +27,8 @@ public class MoviesFacadeConfiguration {
 	}
 
 	@Bean
-	public UserProvider userProvider(final UserService userService) {
-		return userService::exists;
+	public UserProvider userProvider(final UserFacade userFacade) {
+		return userFacade::exists;
 	}
 
 }

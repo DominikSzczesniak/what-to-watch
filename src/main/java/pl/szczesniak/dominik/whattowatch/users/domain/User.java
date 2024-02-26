@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class User extends BaseEntity {
+public class User extends BaseEntity {
 
 	@AttributeOverride(name = "value", column = @Column(name = "user_name", unique = true))
 	private Username username;

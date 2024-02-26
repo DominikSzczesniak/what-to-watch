@@ -8,6 +8,8 @@ import java.util.List;
 @Value
 public class UserQueryResult {
 
+	@NonNull Integer id;
+
 	@NonNull String username;
 
 	@NonNull String userPassword;
