@@ -54,4 +54,5 @@ public class LoggedUserProvider {
 		@NonNull List<String> sessionId;
 
 	}
+
 }

@@ -60,10 +60,10 @@ class RecommendationsModuleIntegrationTest {
 
 		// then
 		assertThat(getMovieGenresResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(getMovieGenresResponse.getBody().getGenresNames()).contains("WAR");
+		assertThat(getMovieGenresResponse.getBody().getGenresNames()).containsAll(List.of("WAR", "ROMANCE"));
 
 		// given
-		final List<String> genreNames = List.of("WAR");
+		final List<String> genreNames = List.of("WAR", "ROMANCE");
 
 		// when
 		final ResponseEntity<Long> createRecommendationResponse = createRecommendationConfigurationRest.createRecommendationConfiguration(
@@ -79,7 +79,7 @@ class RecommendationsModuleIntegrationTest {
 		// then
 		assertThat(recommendationConfiguration.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(recommendationConfiguration.getBody().getConfigurationId()).isEqualTo(createRecommendationResponse.getBody());
-		assertThat(recommendationConfiguration.getBody().getGenreNames()).isEqualTo(genreNames);
+		assertThat(recommendationConfiguration.getBody().getGenreNames()).containsAll(genreNames);
 		assertThat(recommendationConfiguration.getBody().getUserId()).isEqualTo(loggedUser.getUserId());
 	}
 

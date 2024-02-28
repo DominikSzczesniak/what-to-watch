@@ -23,6 +23,7 @@ class MovieCover {
 	@NonNull
 	private String coverContentType;
 
+	@NonNull
 	private UUID coverId;
 
 	MovieCover(@NonNull final String filename, @NonNull final String coverContentType, @NonNull final UUID coverId) {

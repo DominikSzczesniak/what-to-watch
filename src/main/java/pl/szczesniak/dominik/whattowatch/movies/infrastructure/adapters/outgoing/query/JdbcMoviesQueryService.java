@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -31,21 +30,40 @@ public class JdbcMoviesQueryService implements MoviesQueryService, WatchedMovies
 
 	@Override
 	public List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
-		final String sql = "SELECT m.id AS movie_id, m.movie_title " +
+		final String sql = "SELECT m.id, m.movie_title " +
 				"FROM movie m " +
 				"WHERE m.user_id = :userId";
 
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId.getValue());
 
-		return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
-			final MovieInListQueryResult movieQueryResult = new MovieInListQueryResult(
-					rs.getInt("movie_id"),
-					rs.getString("movie_title")
-			);
+		return getMovies(sql, params);
+	}
 
-			return movieQueryResult;
-		});
+	@Override
+	public List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
+		final String sql = "SELECT m.id, m.movie_title, m.user_id " +
+				"FROM movie m " +
+				"JOIN movie_tags mt ON m.id = mt.movie_id " +
+				"JOIN tags t ON mt.tags_tag_id = t.tag_id " +
+				"WHERE t.tag_id IN (:tagIds) AND m.user_id = :userId " +
+				"GROUP BY m.id, m.movie_title, m.user_id " +
+				"HAVING COUNT(DISTINCT t.tag_id) = :tagCount";
+
+		final MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("userId", userId.getValue());
+		params.addValue("tagCount", tags.size());
+		params.addValue("tagIds", tags.stream().map(MovieTagId::getValue).toList());
+
+		return getMovies(sql, params);
+	}
+
+	private List<MovieInListQueryResult> getMovies(final String sql, final MapSqlParameterSource params) {
+		return jdbcTemplate.query(sql, params, (rs, rowNum) ->
+				new MovieInListQueryResult(
+						rs.getInt("id"),
+						rs.getString("movie_title"))
+		);
 	}
 
 	@Override
@@ -62,26 +80,37 @@ public class JdbcMoviesQueryService implements MoviesQueryService, WatchedMovies
 		params.addValue("movieId", movieId.getValue());
 		params.addValue("userId", userId.getValue());
 
-		return jdbcTemplate.query(sql, params, rs -> {
-			if (rs.next()) {
-				final MovieQueryResult result = new MovieQueryResult(
-						rs.getInt("movie_id"),
-						rs.getString("movie_title"),
-						new HashSet<>(),
-						new HashSet<>()
-				);
+		final Set<MovieCommentQueryResult> comments = new HashSet<>();
+		final Set<MovieTagQueryResult> tags = new HashSet<>();
 
-				fillComments(rs, result.getComments());
-				fillTags(rs, result.getTags());
+		final Optional<MovieQueryResult> query = jdbcTemplate.query(sql, params, rs -> {
+			MovieQueryResult result = null;
+			while (rs.next()) {
+				if (result == null) {
+					result = new MovieQueryResult(
+							rs.getInt("movie_id"),
+							rs.getString("movie_title"),
+							new HashSet<>(),
+							new HashSet<>()
+					);
+				}
 
-				return Optional.of(result);
-			} else {
-				return Optional.empty();
+				addComment(rs, comments);
+				addTag(rs, tags);
 			}
+
+			return Optional.ofNullable(result);
 		});
+
+		if (query.isPresent()) {
+			comments.forEach(comment -> query.get().getComments().add(comment));
+			tags.forEach(tag -> query.get().getTags().add(tag));
+		}
+
+		return query;
 	}
 
-	private static void fillComments(final ResultSet rs, final Set<MovieCommentQueryResult> comments) throws SQLException {
+	private static void addComment(final ResultSet rs, final Set<MovieCommentQueryResult> comments) throws SQLException {
 		if (rs.getString("comment_id") != null) {
 			comments.add(
 					new MovieCommentQueryResult(
@@ -91,7 +120,7 @@ public class JdbcMoviesQueryService implements MoviesQueryService, WatchedMovies
 		}
 	}
 
-	private static void fillTags(final ResultSet rs, final Set<MovieTagQueryResult> movieQueryResult) throws SQLException {
+	private static void addTag(final ResultSet rs, final Set<MovieTagQueryResult> movieQueryResult) throws SQLException {
 		if (rs.getString("tag_id") != null) {
 			movieQueryResult.add(
 					new MovieTagQueryResult(
@@ -101,28 +130,6 @@ public class JdbcMoviesQueryService implements MoviesQueryService, WatchedMovies
 					)
 			);
 		}
-	}
-
-	@Override
-	public List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
-		final String sql = "SELECT m.id, m.movie_title, m.user_id " +
-				"FROM movie m " +
-				"JOIN movie_tags mt ON m.id = mt.movie_id " +
-				"JOIN tags t ON mt.tags_tag_id = t.tag_id " +
-				"WHERE t.tag_id IN (:tagIds) AND m.user_id = :userId " +
-				"GROUP BY m.id, m.movie_title, m.user_id " +
-				"HAVING COUNT(DISTINCT t.tag_id) = :tagCount";
-
-		final MapSqlParameterSource params = new MapSqlParameterSource();
-		params.addValue("userId", userId.getValue());
-		params.addValue("tagCount", tags.size());
-		params.addValue("tagIds", tags.stream().map(MovieTagId::getValue).collect(Collectors.toList()));
-
-		return jdbcTemplate.query(sql, params, (rs, rowNum) ->
-				new MovieInListQueryResult(
-						rs.getInt("id"),
-						rs.getString("movie_title"))
-		);
 	}
 
 	@Override
@@ -143,9 +150,9 @@ public class JdbcMoviesQueryService implements MoviesQueryService, WatchedMovies
 				);
 
 				return Optional.of(result);
-			} else {
-				return Optional.empty();
 			}
+
+			return Optional.empty();
 		});
 	}
 
@@ -164,6 +171,7 @@ public class JdbcMoviesQueryService implements MoviesQueryService, WatchedMovies
 					rs.getString("tag_label"),
 					rs.getInt("tag_user_id")
 			);
+
 			return movieTagQueryResult;
 		});
 	}
@@ -183,6 +191,7 @@ public class JdbcMoviesQueryService implements MoviesQueryService, WatchedMovies
 					rs.getString("movie_title"),
 					rs.getInt("user_id")
 			);
+
 			return watchedMovieQueryResult;
 		});
 	}

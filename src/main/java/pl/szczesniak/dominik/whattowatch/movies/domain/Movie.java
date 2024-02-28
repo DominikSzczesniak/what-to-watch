@@ -9,7 +9,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -32,7 +31,7 @@ import static java.util.Objects.requireNonNull;
 @Getter
 @Table
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 class Movie extends BaseEntity {
 
 	@AttributeOverride(name = "value", column = @Column(name = "user_id"))

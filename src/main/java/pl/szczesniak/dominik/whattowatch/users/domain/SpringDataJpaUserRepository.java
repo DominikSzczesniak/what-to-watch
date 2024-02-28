@@ -11,6 +11,4 @@ public interface SpringDataJpaUserRepository extends JpaRepository<User, Integer
 
 	Optional<User> findUserByUsername(Username username);
 
-	Optional<User> findById(Integer id);
-
 }

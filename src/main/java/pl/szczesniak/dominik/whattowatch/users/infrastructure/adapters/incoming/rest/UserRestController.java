@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,11 +74,6 @@ public class UserRestController {
 	public ResponseEntity<String> isUsernameTaken(@PathVariable final String username) {
 		boolean check = userFacade.isUsernameTaken(new Username(username));
 		return ResponseEntity.status(HttpStatus.OK).body("username is taken: " + check);
-	}
-
-	@ExceptionHandler(UsernameIsTakenException.class)
-	public ResponseEntity<?> handleUsernameIsTakenException() {
-		return ResponseEntity.badRequest().build();
 	}
 
 	@Data

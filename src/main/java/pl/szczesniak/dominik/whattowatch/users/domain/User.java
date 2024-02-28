@@ -8,7 +8,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -26,8 +25,8 @@ import static java.util.Objects.requireNonNull;
 @Table(name = "app_user")
 @Getter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity {
+@NoArgsConstructor
+class User extends BaseEntity {
 
 	@AttributeOverride(name = "value", column = @Column(name = "user_name", unique = true))
 	private Username username;
