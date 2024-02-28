@@ -21,20 +21,20 @@ public class FindMovieToWatchRestInvoker extends BaseRestInvoker {
 		super(restTemplate);
 	}
 
-	public ResponseEntity<MovieDetailsDto> findMovieToWatch(final LoggedUser loggedUser, final Integer movieId) {
+	public ResponseEntity<MovieDetailsDTO> findMovieToWatch(final LoggedUser loggedUser, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
 		addSessionIdandUserIdHeaders(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,
 				new HttpEntity<>(headers),
-				MovieDetailsDto.class,
+				MovieDetailsDTO.class,
 				movieId
 		);
 	}
 
 	@Value
-	public static class MovieDetailsDto {
+	public static class MovieDetailsDTO {
 		String title;
 		Integer movieId;
 		Integer userId;
