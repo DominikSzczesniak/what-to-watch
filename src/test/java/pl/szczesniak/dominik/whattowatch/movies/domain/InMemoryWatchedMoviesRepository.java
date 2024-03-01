@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.query.WatchedMoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.PagedWatchedMovies;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.WatchedMovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -19,12 +20,12 @@ public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository,
 	}
 
 	@Override
-	public List<WatchedMovieQueryResult> getWatchedMovies(final UserId userId) {
+	public PagedWatchedMovies getWatchedMovies(final UserId userId, final Integer page, final Integer moviesPerPage) {
 		final List<WatchedMovie> foundMovies = watchedMovies.values().stream()
 				.filter(movie -> movie.getUserId().equals(userId))
 				.toList();
 
-		return mapToQueryResult(foundMovies);
+		return new PagedWatchedMovies(mapToQueryResult(foundMovies), page, 1, foundMovies.size());
 	}
 
 	private static List<WatchedMovieQueryResult> mapToQueryResult(final List<WatchedMovie> foundMovies) {

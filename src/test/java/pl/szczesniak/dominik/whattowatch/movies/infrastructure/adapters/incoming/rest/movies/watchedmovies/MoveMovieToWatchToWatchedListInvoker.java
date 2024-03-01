@@ -18,7 +18,7 @@ public class MoveMovieToWatchToWatchedListInvoker extends BaseRestInvoker {
 		super(restTemplate);
 	}
 
-	public ResponseEntity<Void> findMoviesToWatch(final LoggedUser loggedUser, final Integer movieId) {
+	public ResponseEntity<Void> moveMovieToWatchedMovies(final LoggedUser loggedUser, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
 		addSessionIdandUserIdHeaders(headers, loggedUser);
 		return restTemplate.exchange(

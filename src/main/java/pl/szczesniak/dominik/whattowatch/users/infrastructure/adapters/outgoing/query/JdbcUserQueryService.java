@@ -39,7 +39,7 @@ public class JdbcUserQueryService implements UserQueryService {
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId.getValue());
 
-		final Integer count = jdbcTemplate.queryForObject(sql, params, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, params, Integer.class);
 
 		return count != null && count > 0;
 	}
@@ -67,9 +67,9 @@ public class JdbcUserQueryService implements UserQueryService {
 				fillRoles(rs, result.getRoles());
 
 				return Optional.of(result);
+			} else {
+				return Optional.empty();
 			}
-
-			return Optional.empty();
 		});
 	}
 

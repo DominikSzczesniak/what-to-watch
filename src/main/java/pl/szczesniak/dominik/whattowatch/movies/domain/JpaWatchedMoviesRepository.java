@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class JpaWatchedMoviesRepository implements WatchedMoviesRepository {
+class JpaWatchedMoviesRepository implements WatchedMoviesRepository {
 
 	private final SpringDataJpaWatchedMoviesRepository springDataJpaWatchedMoviesRepository;
 

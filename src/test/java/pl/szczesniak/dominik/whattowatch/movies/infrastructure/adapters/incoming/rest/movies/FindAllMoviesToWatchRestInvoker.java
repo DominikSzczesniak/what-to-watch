@@ -1,5 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incoming.rest.movies;
 
+import lombok.Builder;
+import lombok.Data;
+import lombok.NonNull;
 import lombok.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -22,11 +25,12 @@ public class FindAllMoviesToWatchRestInvoker extends BaseRestInvoker {
 		super(restTemplate);
 	}
 
-	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(final LoggedUser loggedUser) {
+	public ResponseEntity<PagedMoviesDto> findAllMoviesToWatch(final LoggedUser loggedUser, final PaginationRequestDto paginationRequestDto) {
 		final HttpHeaders headers = new HttpHeaders();
 		addSessionIdandUserIdHeaders(headers, loggedUser);
+		final String urlWithParams = URL + "?page=" + paginationRequestDto.getPage() + "&moviesPerPage=" + paginationRequestDto.getMoviesPerPage();
 		return restTemplate.exchange(
-				URL,
+				urlWithParams,
 				HttpMethod.GET,
 				new HttpEntity<>(headers),
 				new ParameterizedTypeReference<>() {
@@ -34,10 +38,12 @@ public class FindAllMoviesToWatchRestInvoker extends BaseRestInvoker {
 		);
 	}
 
-	public ResponseEntity<List<MovieDetailsDto>> findAllMoviesToWatch(final LoggedUser loggedUser, final String tags) {
+	public ResponseEntity<PagedMoviesDto> findAllMoviesToWatch(final LoggedUser loggedUser,
+															   final String tags,
+															   final PaginationRequestDto paginationRequestDto) {
 		final HttpHeaders headers = new HttpHeaders();
 		addSessionIdandUserIdHeaders(headers, loggedUser);
-		final String urlWithParams = URL + "?tags=" + tags;
+		final String urlWithParams = URL + "?tags=" + tags + "&page=" + paginationRequestDto.getPage() + "&moviesPerPage=" + paginationRequestDto.getMoviesPerPage();
 		return restTemplate.exchange(
 				urlWithParams,
 				HttpMethod.GET,
@@ -48,10 +54,27 @@ public class FindAllMoviesToWatchRestInvoker extends BaseRestInvoker {
 	}
 
 	@Value
+	public static class PagedMoviesDto {
+		@NonNull List<MovieDetailsDto> movies;
+
+		@NonNull Integer page;
+
+		@NonNull Integer totalPages;
+
+		@NonNull Integer totalMovies;
+	}
+
+	@Value
 	public static class MovieDetailsDto {
 		String title;
 		Integer movieId;
 		Integer userId;
 	}
 
+	@Data
+	@Builder
+	public static class PaginationRequestDto {
+		private Integer page;
+		private Integer moviesPerPage;
+	}
 }

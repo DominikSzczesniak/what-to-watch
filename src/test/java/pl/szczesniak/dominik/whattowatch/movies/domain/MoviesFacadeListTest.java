@@ -7,13 +7,14 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetMoviesToWatchSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetWatchedMoviesToWatchSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.PagedMovies;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.WatchedMovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -38,13 +39,15 @@ public class MoviesFacadeListTest {
 	void user_should_add_movie_to_his_list() {
 		// given
 		final UserId userId = userProvider.addUser(createAnyUserId());
-		assertThat(tut.getMoviesToWatch(userId)).hasSize(0);
+		final PagedMovies moviesToWatch1 = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userId).build());
+		assertThat(moviesToWatch1.getMovies()).hasSize(0);
 
 		// when
 		tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
 
 		// then
-		assertThat(tut.getMoviesToWatch(userId)).hasSize(1);
+		final PagedMovies moviesToWatch2 = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userId).build());
+		assertThat(moviesToWatch2.getMovies()).hasSize(1);
 	}
 
 	@Test
@@ -70,7 +73,8 @@ public class MoviesFacadeListTest {
 		tut.removeMovieFromList(movieToRemove, userId);
 
 		// then
-		assertThat(tut.getMoviesToWatch(userId)).hasSize(1)
+		final PagedMovies moviesToWatch = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userId).build());
+		assertThat(moviesToWatch.getMovies()).hasSize(1)
 				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactly(addedMovieId.getValue());
 	}
@@ -78,7 +82,7 @@ public class MoviesFacadeListTest {
 	@Test
 	void should_not_be_able_to_get_movies_to_watch_list_when_user_does_not_exist() {
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.getMoviesToWatch(createAnyUserId()));
+		final Throwable thrown = catchThrowable(() -> tut.getMoviesToWatch(GetMoviesToWatchSample.builder().build()));
 
 		// then
 		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
@@ -96,7 +100,8 @@ public class MoviesFacadeListTest {
 		tut.addMovieToList(movieWithSameTitle);
 
 		// then
-		assertThat(tut.getMoviesToWatch(userId)).hasSize(2)
+		final PagedMovies moviesToWatch = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userId).build());
+		assertThat(moviesToWatch.getMovies()).hasSize(2)
 				.extracting(MovieInListQueryResult::getTitle)
 				.containsExactlyInAnyOrder(createdMovie.getMovieTitle().getValue(), movieWithSameTitle.getMovieTitle().getValue());
 	}
@@ -114,7 +119,8 @@ public class MoviesFacadeListTest {
 		tut.removeMovieFromList(duplicatedTitleMovieId, userId);
 
 		// then
-		assertThat(tut.getMoviesToWatch(userId)).hasSize(1)
+		final PagedMovies moviesToWatch = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userId).build());
+		assertThat(moviesToWatch.getMovies()).hasSize(1)
 				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactlyInAnyOrder(movieId.getValue());
 	}
@@ -131,11 +137,13 @@ public class MoviesFacadeListTest {
 		final MovieId firstUserMovieTwo = tut.addMovieToList(AddMovieToListSample.builder().userId(userIdOne).build());
 
 		// then
-		assertThat(tut.getMoviesToWatch(userIdOne))
+		final PagedMovies userOneMovies = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userIdOne).build());
+		assertThat(userOneMovies.getMovies())
 				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactlyInAnyOrder(firstUserMovieOne.getValue(), firstUserMovieTwo.getValue());
 
-		assertThat(tut.getMoviesToWatch(userIdTwo))
+		final PagedMovies userTwoMovies = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userIdTwo).build());
+		assertThat(userTwoMovies.getMovies())
 				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactlyInAnyOrder(secondUserMovie.getValue());
 	}
@@ -154,8 +162,11 @@ public class MoviesFacadeListTest {
 		tut.removeMovieFromList(movieToDelete, userIdOne);
 
 		// then
-		assertThat(tut.getMoviesToWatch(userIdOne)).hasSize(2);
-		assertThat(tut.getMoviesToWatch(userIdTwo)).hasSize(1);
+		final PagedMovies userOneMovies = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userIdOne).build());
+		final PagedMovies userTwoMovies = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userIdTwo).build());
+
+		assertThat(userOneMovies.getMovies()).hasSize(2);
+		assertThat(userTwoMovies.getMovies()).hasSize(1);
 	}
 
 	@Test
@@ -172,11 +183,14 @@ public class MoviesFacadeListTest {
 		tut.removeMovieFromList(movieToDelete, userIdOne);
 
 		// then
-		assertThat(tut.getMoviesToWatch(userIdOne))
+		final PagedMovies userOneMovies = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userIdOne).build());
+		final PagedMovies userTwoMovies = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userIdTwo).build());
+
+		assertThat(userOneMovies.getMovies())
 				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactlyInAnyOrder(firstUserMovie.getValue());
 
-		assertThat(tut.getMoviesToWatch(userIdTwo))
+		assertThat(userTwoMovies.getMovies())
 				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactlyInAnyOrder(secondUserMovie.getValue());
 	}
@@ -187,10 +201,10 @@ public class MoviesFacadeListTest {
 		final UserId userId = userProvider.addUser(createAnyUserId());
 
 		// when
-		final List<MovieInListQueryResult> movies = tut.getMoviesToWatch(userId);
+		final PagedMovies movies = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userId).build());
 
 		// then
-		assertThat(movies.isEmpty()).isTrue();
+		assertThat(movies.getMovies().isEmpty()).isTrue();
 	}
 
 	@Test
@@ -211,14 +225,16 @@ public class MoviesFacadeListTest {
 		tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().movieId(movieTwoId).userId(userId).build());
 
 		// then
-		assertThat(tut.getMoviesToWatch(userId))
+		final PagedMovies movies = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userId).build());
+
+		assertThat(movies.getMovies())
 				.extracting(MovieInListQueryResult::getMovieId, MovieInListQueryResult::getTitle)
 				.containsExactlyInAnyOrder(
 						tuple(movieOneId.getValue(), movieOne.getMovieTitle().getValue()),
 						tuple(movieThreeId.getValue(), movieThree.getMovieTitle().getValue())
 				);
 
-		assertThat(tut.getWatchedMovies(userId))
+		assertThat(tut.getWatchedMovies(GetWatchedMoviesToWatchSample.builder().userId(userId).build()).getMovies())
 				.extracting(WatchedMovieQueryResult::getMovieId, WatchedMovieQueryResult::getTitle)
 				.containsExactlyInAnyOrder(tuple(movieTwoId.getValue(), movieTwo.getMovieTitle().getValue()));
 	}
@@ -288,7 +304,8 @@ public class MoviesFacadeListTest {
 		tut.updateMovie(UpdateMovieSample.builder().movieId(movieId).userId(userId).movieTitle(changedTitle).build());
 
 		// then
-		assertThat(tut.getMoviesToWatch(userId))
+		final PagedMovies movies = tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userId).build());
+		assertThat(movies.getMovies())
 				.extracting(MovieInListQueryResult::getTitle)
 				.containsExactly(changedTitle.getValue());
 	}

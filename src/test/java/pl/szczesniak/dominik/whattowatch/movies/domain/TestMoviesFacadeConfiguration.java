@@ -5,7 +5,7 @@ import pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.outgoing
 public class TestMoviesFacadeConfiguration {
 
 	static MoviesFacade moviesFacade(final UserProvider userProvider) {
-		final InMemoryMoviesRepository repository = new InMemoryMoviesRepository();
+		final InMemoryMoviesToWatchRepository repository = new InMemoryMoviesToWatchRepository();
 		final InMemoryWatchedMoviesRepository watchedRepository = new InMemoryWatchedMoviesRepository();
 		return new MoviesFacadeConfiguration()
 				.moviesFacade(
