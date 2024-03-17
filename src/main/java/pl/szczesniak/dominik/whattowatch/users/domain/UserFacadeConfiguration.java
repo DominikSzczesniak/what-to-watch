@@ -6,7 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.szczesniak.dominik.whattowatch.users.query.UserQueryService;
 
 @Configuration
-public class UserFacadeConfiguration {
+class UserFacadeConfiguration {
 
 	@Bean
 	public UserFacade userFacade(final UserRepository userRepository,

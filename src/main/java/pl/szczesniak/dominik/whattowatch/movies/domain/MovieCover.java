@@ -32,7 +32,7 @@ class MovieCover {
 		this.coverId = coverId;
 	}
 
-	public StoredFileId getCoverId() {
+	StoredFileId getCoverId() {
 		return new StoredFileId(coverId);
 	}
 

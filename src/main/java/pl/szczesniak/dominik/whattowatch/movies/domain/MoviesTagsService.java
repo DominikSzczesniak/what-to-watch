@@ -16,8 +16,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 class MoviesTagsService {
 
-	private final MoviesRepository moviesRepository;
-	private final TagsQuery tagsQuery;
+	private final MoviesToWatchRepository moviesRepository;
+	private final TagsRepository tagsRepository;
 
 	MovieTagId addTagToMovie(final AddTagToMovie command) {
 		final MovieTagId tagId = command.getTagId().orElse(new MovieTagId(UUID.randomUUID()));
@@ -32,7 +32,7 @@ class MoviesTagsService {
 	}
 
 	private Optional<MovieTag> checkMovieTagBelongsToUser(final UserId userId, final MovieTagId tagId) {
-		final Optional<MovieTag> tagByTagId = tagsQuery.findTagByTagId(tagId.getValue());
+		final Optional<MovieTag> tagByTagId = tagsRepository.findTagByTagId(tagId.getValue());
 		if (tagByTagId.isPresent() && !tagByTagId.get().getUserId().equals(userId)) {
 			throw new ObjectDoesNotExistException("MovieTag does not belong to user");
 		}

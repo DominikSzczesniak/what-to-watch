@@ -19,7 +19,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class InMemoryMoviesRepository implements MoviesRepository, TagsQuery, MoviesQueryService {
+public class InMemoryMoviesRepository implements MoviesToWatchRepository, TagsRepository, MoviesQueryService {
 
 	private final AtomicInteger nextId = new AtomicInteger(0);
 	private final Map<MovieId, Movie> movies = new HashMap<>();

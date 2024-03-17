@@ -62,33 +62,33 @@ class Movie extends BaseEntity {
 		return new WatchedMovie(new MovieId(getId()), userId, title);
 	}
 
-	public void updateMovieTitle(final MovieTitle title) {
+	void updateMovieTitle(final MovieTitle title) {
 		this.title = title;
 	}
 
-	public void updateCover(final MovieCover cover) {
+	void updateCover(final MovieCover cover) {
 		this.cover = cover;
 	}
 
-	public UUID addComment(final String comment) {
+	UUID addComment(final String comment) {
 		final UUID commentId = UUID.randomUUID();
 		this.comments.add(new MovieComment(new CommentId(commentId), getId(), comment));
 		return commentId;
 	}
 
-	public void deleteComment(final CommentId commentId) {
+	void deleteComment(final CommentId commentId) {
 		comments.removeIf(movieComment -> movieComment.getCommentId().equals(commentId));
 	}
 
-	public MovieId getMovieId() {
+	MovieId getMovieId() {
 		return new MovieId(getId());
 	}
 
-	public Optional<MovieCover> getCover() {
+	Optional<MovieCover> getCover() {
 		return Optional.ofNullable(cover);
 	}
 
-	public MovieTagId addTag(final MovieTagId tagId, final MovieTagLabel tagLabel, final UserId userId) {
+	MovieTagId addTag(final MovieTagId tagId, final MovieTagLabel tagLabel, final UserId userId) {
 		tags.add(new MovieTag(tagId, tagLabel, userId));
 		return tagId;
 	}
@@ -97,7 +97,7 @@ class Movie extends BaseEntity {
 		tags.removeIf(movieTag -> movieTag.getTagId().equals(tagId));
 	}
 
-	public Set<MovieTag> getTags() {
+	Set<MovieTag> getTags() {
 		return tags;
 	}
 

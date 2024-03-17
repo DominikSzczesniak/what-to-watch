@@ -7,7 +7,7 @@ import pl.szczesniak.dominik.whattowatch.movies.query.WatchedMoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
 
 @Configuration
-public class MoviesFacadeConfiguration {
+class MoviesFacadeConfiguration {
 
 	@Bean
 	public MoviesFacade moviesFacade(final MoviesWatchlistService moviesWatchlistService,

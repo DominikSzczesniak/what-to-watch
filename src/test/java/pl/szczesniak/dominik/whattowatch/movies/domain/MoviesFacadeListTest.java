@@ -18,7 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
-import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesToWatchFacadeConfiguration.moviesToWatchService;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesFacadeConfiguration.moviesFacade;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitleSample.createAnyMovieTitle;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
@@ -31,7 +31,7 @@ public class MoviesFacadeListTest {
 	@BeforeEach
 	void setUp() {
 		userProvider = new InMemoryUserProvider();
-		tut = moviesToWatchService(userProvider);
+		tut = moviesFacade(userProvider);
 	}
 
 	@Test

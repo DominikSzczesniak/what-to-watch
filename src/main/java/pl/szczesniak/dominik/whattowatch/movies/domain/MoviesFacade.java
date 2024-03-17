@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
@@ -15,7 +16,6 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCo
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
 import pl.szczesniak.dominik.whattowatch.movies.query.MoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.movies.query.WatchedMoviesQueryService;
-import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieTagQueryResult;
@@ -30,15 +30,10 @@ import java.util.UUID;
 public class MoviesFacade {
 
 	private final MoviesWatchlistService moviesWatchlistService;
-
 	private final MoviesCoverService movieListService;
-
 	private final MoviesCommentsService moviesCommentsService;
-
 	private final MoviesTagsService moviesTagsService;
-
 	private final MoviesQueryService moviesQueryService;
-
 	private final WatchedMoviesQueryService watchedMoviesQueryService;
 
 	public MovieId addMovieToList(final AddMovieToList command) {

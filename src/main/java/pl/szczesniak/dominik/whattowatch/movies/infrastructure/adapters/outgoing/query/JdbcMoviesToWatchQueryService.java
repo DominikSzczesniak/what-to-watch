@@ -7,12 +7,10 @@ import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.query.MoviesQueryService;
-import pl.szczesniak.dominik.whattowatch.movies.query.WatchedMoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCommentQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieTagQueryResult;
-import pl.szczesniak.dominik.whattowatch.movies.query.model.WatchedMovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.sql.ResultSet;
@@ -24,7 +22,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
-public class JdbcMoviesQueryService implements MoviesQueryService, WatchedMoviesQueryService {
+public class JdbcMoviesToWatchQueryService implements MoviesQueryService {
 
 	private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -173,26 +171,6 @@ public class JdbcMoviesQueryService implements MoviesQueryService, WatchedMovies
 			);
 
 			return movieTagQueryResult;
-		});
-	}
-
-	@Override
-	public List<WatchedMovieQueryResult> getWatchedMovies(final UserId userId) {
-		final String sql = "SELECT m.movie_id, m.movie_title, m.user_id " +
-				"FROM watched_movie m " +
-				"WHERE m.user_id = :userId";
-
-		final MapSqlParameterSource params = new MapSqlParameterSource();
-		params.addValue("userId", userId.getValue());
-
-		return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
-			final WatchedMovieQueryResult watchedMovieQueryResult = new WatchedMovieQueryResult(
-					rs.getInt("movie_id"),
-					rs.getString("movie_title"),
-					rs.getInt("user_id")
-			);
-
-			return watchedMovieQueryResult;
 		});
 	}
 

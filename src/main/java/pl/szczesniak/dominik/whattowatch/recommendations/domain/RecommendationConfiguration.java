@@ -45,7 +45,7 @@ class RecommendationConfiguration extends BaseEntity {
 		this.genres = genres;
 	}
 
-	public ConfigurationId getConfigurationId() {
+	ConfigurationId getConfigurationId() {
 		return new ConfigurationId(getId());
 	}
 

@@ -53,7 +53,7 @@ class RecommendedMovies extends BaseEntity {
 				.withNano(999999999);
 	}
 
-	public RecommendedMoviesId getRecommendedMoviesId() {
+	RecommendedMoviesId getRecommendedMoviesId() {
 		return new RecommendedMoviesId(getId());
 	}
 

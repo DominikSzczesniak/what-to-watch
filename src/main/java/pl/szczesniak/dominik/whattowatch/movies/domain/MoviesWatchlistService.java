@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
@@ -13,14 +14,14 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 @RequiredArgsConstructor
 class MoviesWatchlistService {
 
-	private final MoviesRepository repository;
+	private final MoviesToWatchRepository moviesToWatchRepository;
 	private final UserProvider userProvider;
-	private final WatchedMoviesRepository watchedRepository;
+	private final WatchedMoviesRepository watchedMoviesRepository;
 
-	public MovieId addMovieToList(final AddMovieToList command) {
+	MovieId addMovieToList(final AddMovieToList command) {
 		checkUserExists(command.getUserId());
 		final Movie movie = new Movie(command.getUserId(), command.getMovieTitle());
-		repository.create(movie);
+		moviesToWatchRepository.create(movie);
 		return movie.getMovieId();
 	}
 
@@ -30,26 +31,28 @@ class MoviesWatchlistService {
 		}
 	}
 
-	void removeMovieFromList(final MovieId movieId, final UserId userId) {
-		repository.removeMovie(movieId, userId);
+	@Transactional
+	public void removeMovieFromList(final MovieId movieId, final UserId userId) {
+		moviesToWatchRepository.removeMovie(movieId, userId);
 	}
 
-	void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
+	@Transactional
+	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
 		checkUserExists(command.getUserId());
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		final WatchedMovie watchedMovie = movie.markAsWatched();
-		watchedRepository.add(watchedMovie);
-		repository.removeMovie(command.getMovieId(), command.getUserId());
+		watchedMoviesRepository.add(watchedMovie);
+		moviesToWatchRepository.removeMovie(command.getMovieId(), command.getUserId());
 	}
 
 	void updateMovie(final UpdateMovie command) {
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		movie.updateMovieTitle(command.getTitle());
-		repository.update(movie);
+		moviesToWatchRepository.update(movie);
 	}
 
 	private Movie getMovie(final MovieId movieId, final UserId userId) {
-		return repository.findBy(movieId, userId).orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
+		return moviesToWatchRepository.findBy(movieId, userId).orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 
 }

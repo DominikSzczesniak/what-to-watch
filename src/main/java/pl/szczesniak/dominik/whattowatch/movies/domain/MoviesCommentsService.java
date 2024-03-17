@@ -11,7 +11,7 @@ import java.util.UUID;
 @Service
 class MoviesCommentsService {
 
-	private final MoviesRepository repository;
+	private final MoviesToWatchRepository repository;
 
 	UUID addCommentToMovie(final AddCommentToMovie command) {
 		final Movie movie = repository.getMovie(command.getMovieId(), command.getUserId());
