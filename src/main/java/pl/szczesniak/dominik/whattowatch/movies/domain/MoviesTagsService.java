@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 class MoviesTagsService {
 
-	private final MoviesToWatchRepository moviesRepository;
+	private final MoviesToWatchRepository moviesToWatchRepository;
 	private final TagsRepository tagsRepository;
 
 	MovieTagId addTagToMovie(final AddTagToMovie command) {
@@ -24,10 +24,10 @@ class MoviesTagsService {
 		final Optional<MovieTag> movieTag = checkMovieTagBelongsToUser(command.getUserId(), tagId);
 		final MovieTagLabel tagLabel = movieTag.map(MovieTag::getLabel).orElse(command.getTagLabel());
 
-		final Movie movie = moviesRepository.getMovie(command.getMovieId(), command.getUserId());
+		final Movie movie = moviesToWatchRepository.getMovie(command.getMovieId(), command.getUserId());
 		movie.addTag(tagId, tagLabel, command.getUserId());
 
-		moviesRepository.update(movie);
+		moviesToWatchRepository.update(movie);
 		return tagId;
 	}
 
@@ -40,9 +40,9 @@ class MoviesTagsService {
 	}
 
 	void deleteTagFromMovie(final DeleteTagFromMovie command) {
-		final Movie movie = moviesRepository.getMovie(command.getMovieId(), command.getUserId());
+		final Movie movie = moviesToWatchRepository.getMovie(command.getMovieId(), command.getUserId());
 		movie.deleteTag(command.getTagId());
-		moviesRepository.update(movie);
+		moviesToWatchRepository.update(movie);
 	}
 
 }

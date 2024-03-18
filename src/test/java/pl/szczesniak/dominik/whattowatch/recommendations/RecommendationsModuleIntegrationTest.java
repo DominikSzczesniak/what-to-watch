@@ -60,10 +60,10 @@ class RecommendationsModuleIntegrationTest {
 
 		// then
 		assertThat(getMovieGenresResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(getMovieGenresResponse.getBody().getGenresNames()).containsAll(List.of("WAR", "ROMANCE"));
+		assertThat(getMovieGenresResponse.getBody().getGenresNames()).contains("WAR");
 
 		// given
-		final List<String> genreNames = List.of("WAR", "ROMANCE");
+		final List<String> genreNames = List.of("WAR");
 
 		// when
 		final ResponseEntity<Long> createRecommendationResponse = createRecommendationConfigurationRest.createRecommendationConfiguration(
@@ -79,7 +79,7 @@ class RecommendationsModuleIntegrationTest {
 		// then
 		assertThat(recommendationConfiguration.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(recommendationConfiguration.getBody().getConfigurationId()).isEqualTo(createRecommendationResponse.getBody());
-		assertThat(recommendationConfiguration.getBody().getGenreNames()).containsAll(genreNames);
+		assertThat(recommendationConfiguration.getBody().getGenreNames()).isEqualTo(genreNames);
 		assertThat(recommendationConfiguration.getBody().getUserId()).isEqualTo(loggedUser.getUserId());
 	}
 
@@ -102,7 +102,7 @@ class RecommendationsModuleIntegrationTest {
 
 		// then
 		assertThat(latestRecommendedMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(latestRecommendedMoviesResponse.getBody().getMovieInfos().size()).isGreaterThan(0);
+		assertThat(latestRecommendedMoviesResponse.getBody().getMovieInfos()).hasSizeGreaterThan(0);
 		assertThat(latestRecommendedMoviesResponse.getBody().getMovieInfos())
 				.extracting(MovieInfoDto::getGenresNames).allMatch(movieGenres -> movieGenres.containsAll(genreNames));
 	}

@@ -3,7 +3,6 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
@@ -16,10 +15,14 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCo
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
 import pl.szczesniak.dominik.whattowatch.movies.query.MoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.movies.query.WatchedMoviesQueryService;
-import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.GetMoviesByTags;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.GetMoviesToWatch;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.GetWatchedMoviesToWatch;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieTagQueryResult;
-import pl.szczesniak.dominik.whattowatch.movies.query.model.WatchedMovieQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.PagedMovies;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.PagedWatchedMovies;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -44,13 +47,12 @@ public class MoviesFacade {
 		moviesWatchlistService.removeMovieFromList(movieId, userId);
 	}
 
-	public List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
-		moviesWatchlistService.checkUserExists(userId);
-		return moviesQueryService.getMoviesToWatch(userId);
+	public PagedMovies getMoviesToWatch(final GetMoviesToWatch command) {
+		return moviesQueryService.getMoviesToWatch(command.getUserId(), command.getPage(), command.getMoviesPerPage());
 	}
 
-	public List<WatchedMovieQueryResult> getWatchedMovies(final UserId userId) {
-		return watchedMoviesQueryService.getWatchedMovies(userId);
+	public PagedWatchedMovies getWatchedMovies(final GetWatchedMoviesToWatch command) {
+		return watchedMoviesQueryService.getWatchedMovies(command.getUserId(), command.getPage(), command.getMoviesPerPage());
 	}
 
 	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
@@ -98,8 +100,8 @@ public class MoviesFacade {
 		moviesTagsService.deleteTagFromMovie(command);
 	}
 
-	public List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
-		return moviesQueryService.getMoviesByTags(tags, userId);
+	public PagedMovies getMoviesByTags(final GetMoviesByTags command) {
+		return moviesQueryService.getMoviesByTags(command.getTags(), command.getUserId(), command.getPage(), command.getMoviesPerPage());
 	}
 
 	public List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {

@@ -102,7 +102,7 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 		final List<UserId> allUsersWithRecommendationConfiguration = tut.findAllUsersWithRecommendationConfiguration();
 
 		// then
-		assertThat(allUsersWithRecommendationConfiguration.size()).isEqualTo(3);
+		assertThat(allUsersWithRecommendationConfiguration).hasSize(3);
 	}
 
 }

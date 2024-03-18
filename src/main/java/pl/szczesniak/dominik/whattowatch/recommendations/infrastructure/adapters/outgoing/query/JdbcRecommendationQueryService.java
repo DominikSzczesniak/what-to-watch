@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Component
 public class JdbcRecommendationQueryService implements RecommendationConfigurationQueryService, RecommendedMoviesQueryService {
 
-	private final NamedParameterJdbcTemplate jdbcTemplate;
+	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Override
 	public Optional<RecommendationConfigurationRequestResult> findRecommendationConfigurationQueryResultBy(final UserId userId) {
@@ -40,27 +40,24 @@ public class JdbcRecommendationQueryService implements RecommendationConfigurati
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId.getValue());
 
-		return jdbcTemplate.query(sql, params, rs -> {
-			if (rs.next()) {
-				final RecommendationConfigurationRequestResult result = new RecommendationConfigurationRequestResult(
-						rs.getInt("user_id"),
-						rs.getInt("id"),
-						new HashSet<>()
-				);
-				fillGenres(rs, result.getGenres());
+		final List<RecommendationConfigurationRequestResult> results = namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
+			final RecommendationConfigurationRequestResult result = new RecommendationConfigurationRequestResult(
+					rs.getInt("user_id"),
+					rs.getInt("id"),
+					new HashSet<>()
+			);
+			fillGenres(rs, result.getGenres());
 
-				return Optional.of(result);
-			}
-
-			return Optional.empty();
+			return result;
 		});
+
+		return results.stream().findFirst();
 	}
 
 	private void fillGenres(final ResultSet rs, final Set<MovieGenre> genres) throws SQLException {
-		do {
-			final String genre = rs.getString("genre");
-			genres.add(MovieGenre.valueOf(genre));
-		} while (rs.next());
+		if (rs.getString("genre") != null) {
+			genres.add(MovieGenre.valueOf(rs.getString("genre")));
+		}
 	}
 
 
@@ -69,12 +66,11 @@ public class JdbcRecommendationQueryService implements RecommendationConfigurati
 		final String sql = "SELECT DISTINCT user_id " +
 				"FROM recommendation_configuration";
 
-		final List<UserId> result = jdbcTemplate.queryForList(sql, Collections.emptyMap(), Integer.class)
-				.stream()
-				.map(UserId::new)
-				.toList();
+		final List<Integer> result = namedParameterJdbcTemplate.queryForList(sql, Collections.emptyMap(), Integer.class);
 
-		return result;
+		final List<UserId> users = result.stream().map(UserId::new).toList();
+
+		return users;
 	}
 
 	@Override
@@ -90,37 +86,31 @@ public class JdbcRecommendationQueryService implements RecommendationConfigurati
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId.getValue());
 
-		return jdbcTemplate.query(sql, params, rs -> {
+		return namedParameterJdbcTemplate.query(sql, params, rs -> {
 			if (rs.next()) {
-				int recommendedMoviesId = rs.getInt("id");
+				final int recommendedMoviesId = rs.getInt("id");
 				final LocalDateTime creationDate = rs.getTimestamp("creation_date").toLocalDateTime();
 				final LocalDateTime endInterval = rs.getTimestamp("end_interval").toLocalDateTime();
 
-				final List<MovieInfo> movieInfoList = getMovieInfos(rs);
+				final List<MovieInfo> movieInfoList = new ArrayList<>();
+				do {
+					final int movieInfoId = rs.getInt("movie_info_id");
+					final String overview = rs.getString("overview");
+					final String title = rs.getString("title");
+					final int externalId = rs.getInt("external_id");
+					final MovieInfoApis externalApi = MovieInfoApis.valueOf(rs.getString("external_api"));
+
+					final List<MovieGenre> genres = fetchGenres(movieInfoId);
+
+					final MovieInfo movieInfo = new MovieInfo(genres, overview, title, externalId, externalApi);
+					movieInfoList.add(movieInfo);
+				} while (rs.next());
 
 				return Optional.of(new RecommendedMoviesQueryResult(recommendedMoviesId, movieInfoList, creationDate, endInterval));
 			}
+
 			return Optional.empty();
-
 		});
-	}
-
-	private List<MovieInfo> getMovieInfos(final ResultSet rs) throws SQLException {
-		final List<MovieInfo> movieInfoList = new ArrayList<>();
-		do {
-			final int movieInfoId = rs.getInt("movie_info_id");
-			final String overview = rs.getString("overview");
-			final String title = rs.getString("title");
-			final int externalId = rs.getInt("external_id");
-			final MovieInfoApis externalApi = MovieInfoApis.valueOf(rs.getString("external_api"));
-
-			final List<MovieGenre> genres = fetchGenres(movieInfoId);
-
-			final MovieInfo movieInfo = new MovieInfo(genres, overview, title, externalId, externalApi);
-			movieInfoList.add(movieInfo);
-		} while (rs.next());
-
-		return movieInfoList;
 	}
 
 	private List<MovieGenre> fetchGenres(int movieInfoId) {
@@ -131,7 +121,7 @@ public class JdbcRecommendationQueryService implements RecommendationConfigurati
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("movieInfoId", movieInfoId);
 
-		return jdbcTemplate.queryForList(sqlGenres, params, String.class)
+		return namedParameterJdbcTemplate.queryForList(sqlGenres, params, String.class)
 				.stream()
 				.map(MovieGenre::valueOf)
 				.collect(Collectors.toList());

@@ -2,10 +2,10 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 import pl.szczesniak.dominik.whattowatch.users.query.UserQueryService;
-import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

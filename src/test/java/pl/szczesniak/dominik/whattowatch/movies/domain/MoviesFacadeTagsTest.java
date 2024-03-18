@@ -10,6 +10,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieTo
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovieSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.queries.GetMoviesByTagsSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.queries.GetMoviesToWatchSample;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieTagQueryResult;
@@ -70,7 +72,7 @@ public class MoviesFacadeTagsTest {
 		final List<MovieTagQueryResult> tags = tut.getMovieTagsByUserId(user.getValue());
 
 		// then
-		assertThat(tags.size()).isEqualTo(4);
+		assertThat(tags).hasSize(4);
 		assertThat(tags).extracting(MovieTagQueryResult::getTagId)
 				.containsExactlyInAnyOrder(firstTagId.getValue(), secondTagId.getValue(), thirdTagId.getValue(), fourthTagId.getValue());
 		assertThat(tags).extracting(MovieTagQueryResult::getLabel)
@@ -145,8 +147,8 @@ public class MoviesFacadeTagsTest {
 		tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieWithDifferentTag).userId(user).build());
 
 		// then
-		assertThat(tut.getMoviesToWatch(user)).hasSize(5);
-		assertThat(tut.getMoviesByTags(List.of(tagId), user)).hasSize(4);
+		assertThat(tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(user).build()).getMovies()).hasSize(5);
+		assertThat(tut.getMoviesByTags(GetMoviesByTagsSample.builder().tags(List.of(tagId)).userId(user).build()).getMovies()).hasSize(4);
 	}
 
 	@Test
@@ -161,10 +163,14 @@ public class MoviesFacadeTagsTest {
 		tut.addTagToMovie(AddTagToMovieSample.builder().tagId(movieTag1).movieId(movie2).userId(user).build());
 		final MovieTagId movieTag2 = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(createAnyTagLabel()).movieId(movie2).userId(user).build());
 
-		final List<MovieInListQueryResult> foundMovies = tut.getMoviesByTags(List.of(movieTag1, movieTag2), user);
+		final List<MovieInListQueryResult> foundMovies = tut.getMoviesByTags(
+				GetMoviesByTagsSample.builder()
+						.tags(List.of(movieTag1, movieTag2))
+						.userId(user)
+						.build()).getMovies();
 
 		// then
-		assertThat(foundMovies.size()).isEqualTo(1);
+		assertThat(foundMovies).hasSize(1);
 	}
 
 	@Test

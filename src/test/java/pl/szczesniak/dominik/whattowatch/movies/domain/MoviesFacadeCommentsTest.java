@@ -81,7 +81,7 @@ public class MoviesFacadeCommentsTest {
 
 		// then
 		final Set<MovieCommentQueryResult> comments = tut.getMovie(movieId, user).getComments();
-		assertThat(comments.size()).isEqualTo(1);
+		assertThat(comments).hasSize(1);
 	}
 
 	@Test

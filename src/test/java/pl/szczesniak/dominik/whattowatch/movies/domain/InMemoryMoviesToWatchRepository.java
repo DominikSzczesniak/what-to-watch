@@ -7,6 +7,7 @@ import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCommentQueryRes
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieTagQueryResult;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.PagedMovies;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.lang.reflect.Field;
@@ -19,7 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class InMemoryMoviesRepository implements MoviesToWatchRepository, TagsRepository, MoviesQueryService {
+public class InMemoryMoviesToWatchRepository implements MoviesToWatchRepository, TagsRepository, MoviesQueryService {
 
 	private final AtomicInteger nextId = new AtomicInteger(0);
 	private final Map<MovieId, Movie> movies = new HashMap<>();
@@ -75,11 +76,11 @@ public class InMemoryMoviesRepository implements MoviesToWatchRepository, TagsRe
 	}
 
 	@Override
-	public List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
+	public PagedMovies getMoviesToWatch(final UserId userId, final Integer page, final Integer moviesPerPage) {
 		final List<Movie> foundMovies = movies.values().stream()
 				.filter(movie -> movie.getUserId().equals(userId))
 				.toList();
-		return toDto(foundMovies);
+		return new PagedMovies(toDto(foundMovies), page, 1, foundMovies.size());
 	}
 
 	private static List<MovieInListQueryResult> toDto(final List<Movie> foundMovies) {
@@ -124,14 +125,15 @@ public class InMemoryMoviesRepository implements MoviesToWatchRepository, TagsRe
 	}
 
 	@Override
-	public List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
+	public PagedMovies getMoviesByTags(final List<MovieTagId> tags, final UserId userId, final Integer page, final Integer moviesPerPage) {
 		final List<Movie> foundMovies = movies.values().stream()
 				.filter(movie -> tags.stream().allMatch(tag ->
 						movie.getTags().stream().anyMatch(movieTag -> tag.equals(movieTag.getTagId()))
 				))
 				.filter(movie -> movie.getUserId().equals(userId))
 				.collect(Collectors.toList());
-		return toDto(foundMovies);
+
+		return new PagedMovies(toDto(foundMovies), page, 1, foundMovies.size());
 	}
 
 	@Override
