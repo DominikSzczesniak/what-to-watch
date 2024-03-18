@@ -57,20 +57,6 @@ public class JdbcMoviesToWatchQueryService implements MoviesQueryService {
 
 	@Override
 	public PagedMovies getMoviesByTags(final List<MovieTagId> tags, final UserId userId, final Integer page, final Integer moviesPerPage) {
-		final String selectMoviesSql = "SELECT m.id, m.movie_title, m.user_id " +
-	public List<MovieInListQueryResult> getMoviesToWatch(final UserId userId) {
-		final String sql = "SELECT m.id, m.movie_title " +
-				"FROM movie m " +
-				"WHERE m.user_id = :userId";
-
-		final MapSqlParameterSource params = new MapSqlParameterSource();
-		params.addValue("userId", userId.getValue());
-
-		return getMovies(sql, params);
-	}
-
-	@Override
-	public List<MovieInListQueryResult> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
 		final String sql = "SELECT m.id, m.movie_title, m.user_id " +
 				"FROM movie m " +
 				"JOIN movie_tags mt ON m.id = mt.movie_id " +
@@ -94,7 +80,7 @@ public class JdbcMoviesToWatchQueryService implements MoviesQueryService {
 		params.addValue("limit", moviesPerPage);
 		params.addValue("offset", (page - 1) * moviesPerPage);
 
-		final List<MovieInListQueryResult> movies = getMovieInListQueryResults(selectMoviesSql, params);
+		final List<MovieInListQueryResult> movies = getMovieInListQueryResults(sql, params);
 
 		final PaginationInfo paginationInfo = getPaginationInfo(moviesPerPage, countMoviesSql, params);
 

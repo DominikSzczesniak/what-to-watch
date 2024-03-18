@@ -122,7 +122,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(addMovieResponse.getBody()).isGreaterThan(0);
 
 		// when
-		final ResponseEntity<PagedMoviesDto> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, noPagination());
+		final ResponseEntity<PagedMoviesDto> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, allMoviesOnOnePage());
 
 		// then
 		final List<MovieDetailsDto> movies = findMoviesResponse.getBody().getMovies();
@@ -157,7 +157,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(deleteMovieResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
 		// when
-		final ResponseEntity<PagedMoviesDto> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, noPagination());
+		final ResponseEntity<PagedMoviesDto> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, allMoviesOnOnePage());
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -191,7 +191,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(updateMovieResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		// when
-		final ResponseEntity<PagedMoviesDto> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, noPagination());
+		final ResponseEntity<PagedMoviesDto> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, allMoviesOnOnePage());
 
 		// then
 		final List<MovieDetailsDto> movies = findMoviesResponse.getBody().getMovies();
@@ -226,14 +226,14 @@ class MoviesModuleIntegrationTest {
 		// then
 		assertThat(moveMovieToWatchedListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-		final ResponseEntity<PagedMoviesDto> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, noPagination());
+		final ResponseEntity<PagedMoviesDto> findMoviesResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, allMoviesOnOnePage());
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(findMoviesResponse.getBody().getMovies()).isEmpty();
 
 		// when
-		final ResponseEntity<PagedWatchedMoviesDto> getWatchedMoviesResponse = findWatchedMoviesRest.findWatchedMovies(loggedUser, noPagination());
+		final ResponseEntity<PagedWatchedMoviesDto> getWatchedMoviesResponse = findWatchedMoviesRest.findWatchedMovies(loggedUser, allMoviesOnOnePage());
 
 		// then
 		assertThat(getWatchedMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -509,11 +509,11 @@ class MoviesModuleIntegrationTest {
 		final ResponseEntity<PagedMoviesDto> findAllMoviesByTwoTagsResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(
 				loggedUser,
 				addTagToMovieOneResponse1.getBody() + "," + addTagToMovieOneResponse2.getBody(),
-				noPagination()
+				allMoviesOnOnePage()
 		);
 
 		final ResponseEntity<PagedMoviesDto> findAllMoviesByOneTagResponse =
-				findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, addTagToMovieOneResponse1.getBody(), noPagination());
+				findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, addTagToMovieOneResponse1.getBody(), allMoviesOnOnePage());
 
 		// then
 		assertThat(findAllMoviesByTwoTagsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -524,7 +524,7 @@ class MoviesModuleIntegrationTest {
 	}
 
 	@Test
-	void should_find_movies_and_paginate_them() {
+	void should_find_paginated_movies() {
 		// given
 		final LoggedUser loggedUser = loggedUserProvider.getLoggedUser();
 
@@ -584,7 +584,7 @@ class MoviesModuleIntegrationTest {
 	}
 
 	@Test
-	void should_find_watched_movies_and_paginate_them() {
+	void should_find_paginated_watched_movies() {
 		// given
 		final LoggedUser loggedUser = loggedUserProvider.getLoggedUser();
 
@@ -707,7 +707,7 @@ class MoviesModuleIntegrationTest {
 				notLoggedUser, addMovieResponse.getBody());
 
 		final ResponseEntity<PagedMoviesDto> findMoviesResponse =
-				findAllMoviesToWatchRest.findAllMoviesToWatch(notLoggedUser, noPagination());
+				findAllMoviesToWatchRest.findAllMoviesToWatch(notLoggedUser, allMoviesOnOnePage());
 
 		final ResponseEntity<Void> deleteMovieResponse = removeMovieFromListRest.removeMovie(notLoggedUser, addMovieResponse.getBody());
 
@@ -721,7 +721,7 @@ class MoviesModuleIntegrationTest {
 		);
 
 		final ResponseEntity<PagedWatchedMoviesDto> getWatchedMoviesResponse =
-				findWatchedMoviesRest.findWatchedMovies(notLoggedUser, noPagination());
+				findWatchedMoviesRest.findWatchedMovies(notLoggedUser, allMoviesOnOnePage());
 
 		// then
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -770,7 +770,7 @@ class MoviesModuleIntegrationTest {
 		assertThat(addMovieResponse.getBody()).isGreaterThan(0);
 	}
 
-	private static PaginationRequestDto noPagination() {
+	private static PaginationRequestDto allMoviesOnOnePage() {
 		return PaginationRequestDto.builder().page(1).moviesPerPage(10000).build();
 	}
 
