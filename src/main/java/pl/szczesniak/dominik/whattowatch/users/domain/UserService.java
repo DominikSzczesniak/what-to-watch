@@ -4,11 +4,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.szczesniak.dominik.whattowatch.commons.domain.DomainEventsPublisher;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.events.UserDeleted;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 
 @RequiredArgsConstructor
@@ -20,6 +22,8 @@ class UserService {
 	private final UserRoleRepository roleRepository;
 
 	private final PasswordEncoder passwordEncoder;
+
+	private final DomainEventsPublisher domainEventsPublisher;
 
 	@Transactional
 	public UserId createUser(final CreateUser command) {
@@ -42,6 +46,12 @@ class UserService {
 		return repository.findBy(username)
 				.filter(user -> passwordEncoder.matches(userPassword.getValue(), user.getUserPassword().getValue()))
 				.orElseThrow(() -> new InvalidCredentialsException("Invalid credentials, could not log in.")).getUserId();
+	}
+
+	@Transactional
+	public void deleteUser(final UserId userId) {
+		repository.deleteUser(userId);
+		domainEventsPublisher.publish(new UserDeleted(userId));
 	}
 
 }

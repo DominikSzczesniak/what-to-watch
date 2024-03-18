@@ -2,9 +2,13 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.szczesniak.dominik.whattowatch.commons.domain.DomainEvent;
+import pl.szczesniak.dominik.whattowatch.commons.domain.DomainEventsPublisher;
+import pl.szczesniak.dominik.whattowatch.commons.infrastructure.adapters.outgoing.publishers.InMemoryEventPublisher;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.events.UserDeleted;
 import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUserSample;
@@ -21,10 +25,12 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSampl
 class UserServiceTest {
 
 	private UserFacade tut;
+	private DomainEventsPublisher eventPublisher;
 
 	@BeforeEach
 	void setUp() {
-		tut = userFacade();
+		eventPublisher = new InMemoryEventPublisher();
+		tut = userFacade(eventPublisher);
 	}
 
 	@Test
@@ -166,4 +172,20 @@ class UserServiceTest {
 		// then
 		assertThat(user1.getRoles().get(0)).isEqualTo(user2.getRoles().get(0));
 	}
+
+	@Test
+	void should_delete_user() {
+		// given
+		final UserId userId = tut.createUser(CreateUserSample.builder().build());
+
+		// when
+		tut.deleteUser(userId);
+
+		// then
+		assertThat(tut.exists(userId)).isFalse();
+
+		final DomainEvent publishedUser = eventPublisher.getPublishedEvents().get(0);
+		assertThat(publishedUser.getClass()).isEqualTo(UserDeleted.class);
+	}
+
 }

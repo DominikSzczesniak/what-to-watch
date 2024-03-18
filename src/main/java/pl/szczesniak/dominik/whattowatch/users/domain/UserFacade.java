@@ -38,4 +38,8 @@ public class UserFacade {
 				() -> new ObjectDoesNotExistException("User with username: " + username.getValue() + " does not exist"));
 	}
 
+	void deleteUser(final UserId userId) {
+		userService.deleteUser(userId);
+	}
+
 }
