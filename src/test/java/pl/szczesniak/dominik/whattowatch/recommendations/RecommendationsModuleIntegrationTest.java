@@ -102,7 +102,7 @@ class RecommendationsModuleIntegrationTest {
 
 		// then
 		assertThat(latestRecommendedMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(latestRecommendedMoviesResponse.getBody().getMovieInfos().size()).isGreaterThan(0);
+		assertThat(latestRecommendedMoviesResponse.getBody().getMovieInfos()).hasSizeGreaterThan(0);
 		assertThat(latestRecommendedMoviesResponse.getBody().getMovieInfos())
 				.extracting(MovieInfoDto::getGenresNames).allMatch(movieGenres -> movieGenres.containsAll(genreNames));
 	}

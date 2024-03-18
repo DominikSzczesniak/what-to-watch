@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetMoviesByTags;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetMoviesToWatch;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.GetMoviesByTags;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.GetMoviesToWatch;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.PagedMovies;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
@@ -33,8 +33,8 @@ public class FindAllMoviesToWatchController {
 															   @RequestParam(value = "page") final Integer page,
 															   @RequestParam(value = "moviesPerPage") final Integer moviesPerPage) {
 		final PagedMovies pagedMovies = getPagedMovies(userId, tags, page, moviesPerPage);
-		final List<MovieDetailsDto> movies = createMovieDetailsDto(userId, pagedMovies.getMovies());
-		final PagedMoviesDto pagedMoviesDto = new PagedMoviesDto(movies, pagedMovies.getPage(), pagedMovies.getTotalPages(), pagedMovies.getTotalMovies());
+		final PagedMoviesDto pagedMoviesDto = new PagedMoviesDto(
+				pagedMovies.getMovies(), pagedMovies.getPage(), pagedMovies.getTotalPages(), pagedMovies.getTotalMovies());
 		return ResponseEntity.status(200).body(pagedMoviesDto);
 	}
 
@@ -52,38 +52,12 @@ public class FindAllMoviesToWatchController {
 		return foundMovies;
 	}
 
-	private static List<MovieDetailsDto> createMovieDetailsDto(final Integer userId, final List<MovieInListQueryResult> foundMovies) {
-		return foundMovies.stream().map(movie ->
-				new MovieDetailsDto(
-						movie.getTitle(),
-						movie.getMovieId(),
-						userId
-				)).toList();
-	}
-
 	@Value
 	public static class PagedMoviesDto {
-		@NonNull List<MovieDetailsDto> movies;
-
+		@NonNull List<MovieInListQueryResult> movies;
 		@NonNull Integer page;
-
 		@NonNull Integer totalPages;
-
 		@NonNull Integer totalMovies;
-	}
-
-
-	@Value
-	public static class MovieDetailsDto {
-		String title;
-		Integer movieId;
-		Integer userId;
-	}
-
-	@Value
-	public static class MovieTagDto {
-		String tagId;
-		String tagLabel;
 	}
 
 }

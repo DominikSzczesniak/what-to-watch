@@ -32,7 +32,7 @@ public class FindWatchedMoviesRestInvoker extends BaseRestInvoker {
 																   final PaginationRequestDto paginationRequestDto) {
 		final HttpHeaders headers = new HttpHeaders();
 		addSessionIdandUserIdHeaders(headers, loggedUser);
-		final String urlWithParams = URL + "?page=" + paginationRequestDto.getPage() + "&moviesPerPage=" + paginationRequestDto.getMoviesPerPage();
+		final String urlWithParams = URL + "?page=" + paginationRequestDto.getPage() + "&moviesPerPage=" + paginationRequestDto.getPageSize();
 		return restTemplate.exchange(
 				urlWithParams,
 				HttpMethod.GET,

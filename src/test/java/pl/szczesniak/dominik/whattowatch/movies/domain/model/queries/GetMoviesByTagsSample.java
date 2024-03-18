@@ -1,7 +1,8 @@
-package pl.szczesniak.dominik.whattowatch.movies.domain.model.commands;
+package pl.szczesniak.dominik.whattowatch.movies.domain.model.queries;
 
 import lombok.Builder;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.GetMoviesByTags;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;

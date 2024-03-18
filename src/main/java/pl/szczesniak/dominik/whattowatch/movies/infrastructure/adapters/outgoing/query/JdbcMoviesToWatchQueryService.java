@@ -31,42 +31,53 @@ public class JdbcMoviesToWatchQueryService implements MoviesQueryService {
 
 	@Override
 	public PagedMovies getMoviesToWatch(final UserId userId, final Integer page, final Integer moviesPerPage) {
-		final String sql = "SELECT m.id AS movie_id, m.movie_title " +
-				"FROM movie m " +
-				"WHERE m.user_id = :userId " +
-				"ORDER BY m.id " +
-				"LIMIT :limit OFFSET :offset";
+		final PaginationInfo paginationInfo = getMoviesCount(userId, moviesPerPage);
+		final List<MovieInListQueryResult> movies = getMovies(userId, moviesPerPage, page);
 
+		return new PagedMovies(movies, page, paginationInfo.getTotalPages(), paginationInfo.getTotalMovies());
+	}
+
+	private PaginationInfo getMoviesCount(final UserId userId, final Integer moviesPerPage) {
 		final String countMoviesSql = "SELECT COUNT(*) " +
 				"FROM movie " +
 				"WHERE user_id = :userId";
 
+		final MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("userId", userId.getValue());
+
+		return getPaginationInfo(moviesPerPage, countMoviesSql, params);
+	}
+
+	private List<MovieInListQueryResult> getMovies(final UserId userId, final Integer moviesPerPage, Integer page) {
+		final String sql = "SELECT m.id AS movie_id, m.movie_title " +
+				"FROM movie m " +
+				"WHERE m.user_id = :userId " +
+				"ORDER BY m.id " +
+				"LIMIT :limit " +
+				"OFFSET :offset";
 
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId.getValue());
 		params.addValue("limit", moviesPerPage);
 		params.addValue("offset", (page - 1) * moviesPerPage);
 
-		final PaginationInfo paginationInfo = getPaginationInfo(moviesPerPage, countMoviesSql, params);
-
-		final List<MovieInListQueryResult> movies = getMovieInListQueryResults(sql, params);
-
-
-		return new PagedMovies(movies, page, paginationInfo.getTotalPages(), paginationInfo.getTotalMovies());
+		final List<MovieInListQueryResult> movies = jdbcTemplate.query(sql, params, (rs, rowNum) ->
+				new MovieInListQueryResult(
+						rs.getInt("id"),
+						rs.getString("movie_title"))
+		);
+		return movies;
 	}
 
 	@Override
 	public PagedMovies getMoviesByTags(final List<MovieTagId> tags, final UserId userId, final Integer page, final Integer moviesPerPage) {
-		final String sql = "SELECT m.id, m.movie_title, m.user_id " +
-				"FROM movie m " +
-				"JOIN movie_tags mt ON m.id = mt.movie_id " +
-				"JOIN tags t ON mt.tags_tag_id = t.tag_id " +
-				"WHERE t.tag_id IN (:tagIds) AND m.user_id = :userId " +
-				"GROUP BY m.id, m.movie_title, m.user_id " +
-				"HAVING COUNT(DISTINCT t.tag_id) = :tagCount " +
-				"ORDER BY m.id " +
-				"LIMIT :limit OFFSET :offset";
+		final List<MovieInListQueryResult> movies = countMoviesByTags(userId, tags, page, moviesPerPage);
+		final PaginationInfo paginationInfo = getMoviesByTags(userId, moviesPerPage, tags);
 
+		return new PagedMovies(movies, page, paginationInfo.getTotalPages(), paginationInfo.getTotalMovies());
+	}
+
+	private PaginationInfo getMoviesByTags(final UserId userId, final Integer moviesPerPage, final List<MovieTagId> tags) {
 		final String countMoviesSql = "SELECT COUNT(DISTINCT m.id) " +
 				"FROM movie m " +
 				"JOIN movie_tags mt ON m.id = mt.movie_id " +
@@ -75,16 +86,49 @@ public class JdbcMoviesToWatchQueryService implements MoviesQueryService {
 
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId.getValue());
-		params.addValue("tagCount", tags.size());
 		params.addValue("tagIds", tags.stream().map(MovieTagId::getValue).collect(Collectors.toList()));
+
+		return getPaginationInfo(moviesPerPage, countMoviesSql, params);
+	}
+
+	private List<MovieInListQueryResult> countMoviesByTags(final UserId userId, final List<MovieTagId> tags, final Integer page, final Integer moviesPerPage) {
+		final String sql = "SELECT m.id, m.movie_title, m.user_id " +
+				"FROM movie m " +
+				"JOIN movie_tags mt ON m.id = mt.movie_id " +
+				"JOIN tags t ON mt.tags_tag_id = t.tag_id " +
+				"WHERE t.tag_id IN (:tagIds) AND m.user_id = :userId " +
+				"GROUP BY m.id, m.movie_title, m.user_id " +
+				"HAVING COUNT(DISTINCT t.tag_id) = :tagCount " +
+				"ORDER BY m.id " +
+				"LIMIT :limit " +
+				"OFFSET :offset";
+
+		final MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("userId", userId.getValue());
+		params.addValue("tagIds", tags.stream().map(MovieTagId::getValue).collect(Collectors.toList()));
+		params.addValue("tagCount", tags.size());
 		params.addValue("limit", moviesPerPage);
 		params.addValue("offset", (page - 1) * moviesPerPage);
 
-		final List<MovieInListQueryResult> movies = getMovieInListQueryResults(sql, params);
+		final List<MovieInListQueryResult> movies = jdbcTemplate.query(sql, params, (rs, rowNum) ->
+				new MovieInListQueryResult(
+						rs.getInt("id"),
+						rs.getString("movie_title"))
+		);
+		return movies;
+	}
 
-		final PaginationInfo paginationInfo = getPaginationInfo(moviesPerPage, countMoviesSql, params);
+	private PaginationInfo getPaginationInfo(final Integer moviesPerPage, final String countMoviesSql, final MapSqlParameterSource params) {
+		int totalMovies = 0;
+		int totalPages = 0;
 
-		return new PagedMovies(movies, page, paginationInfo.getTotalPages(), paginationInfo.getTotalMovies());
+		final List<Integer> result = jdbcTemplate.query(countMoviesSql, params, (resultSet, i) -> resultSet.getInt(1));
+		if (!result.isEmpty()) {
+			totalMovies = result.get(0);
+			totalPages = (int) Math.ceil((double) totalMovies / moviesPerPage);
+		}
+
+		return new PaginationInfo(totalMovies, totalPages);
 	}
 
 	@Override
@@ -183,28 +227,6 @@ public class JdbcMoviesToWatchQueryService implements MoviesQueryService {
 			);
 			return movieTagQueryResult;
 		});
-	}
-
-	private List<MovieInListQueryResult> getMovieInListQueryResults(final String sql, final MapSqlParameterSource params) {
-		final List<MovieInListQueryResult> movies = jdbcTemplate.query(sql, params, (rs, rowNum) ->
-				new MovieInListQueryResult(
-						rs.getInt("id"),
-						rs.getString("movie_title"))
-		);
-		return movies;
-	}
-
-	private PaginationInfo getPaginationInfo(final Integer moviesPerPage, final String countMoviesSql, final MapSqlParameterSource params) {
-		int totalMovies = 0;
-		int totalPages = 0;
-
-		final List<Integer> result = jdbcTemplate.query(countMoviesSql, params, (resultSet, i) -> resultSet.getInt(1));
-		if (!result.isEmpty()) {
-			totalMovies = result.get(0);
-			totalPages = (int) Math.ceil((double) totalMovies / moviesPerPage);
-		}
-
-		return new PaginationInfo(totalMovies, totalPages);
 	}
 
 	@Value

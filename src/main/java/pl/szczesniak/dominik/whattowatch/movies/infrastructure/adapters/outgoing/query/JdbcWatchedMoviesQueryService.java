@@ -25,30 +25,27 @@ public class JdbcWatchedMoviesQueryService implements WatchedMoviesQueryService 
 				"WHERE m.user_id = :userId " +
 				"LIMIT :limit OFFSET :offset";
 
-		final String countMoviesSql = "SELECT COUNT(*) " +
-				"FROM watched_movie m " +
-				"WHERE m.user_id = :userId";
-
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId.getValue());
 		params.addValue("limit", moviesPerPage);
 		params.addValue("offset", (page - 1) * moviesPerPage);
 
-		final List<WatchedMovieQueryResult> movies = jdbcTemplate.query(selectMoviesSql, params, (rs, rowNum) -> {
-			final WatchedMovieQueryResult watchedMovieQueryResult = new WatchedMovieQueryResult(
-					rs.getInt("movie_id"),
-					rs.getString("movie_title"),
-					rs.getInt("user_id")
-			);
-			return watchedMovieQueryResult;
-		});
+		final List<WatchedMovieQueryResult> movies = jdbcTemplate.query(selectMoviesSql, params, (rs, rowNum) -> new WatchedMovieQueryResult(
+				rs.getInt("movie_id"),
+				rs.getString("movie_title"),
+				rs.getInt("user_id")
+		));
 
-		final PaginationInfo paginationInfo = getPaginationInfo(moviesPerPage, countMoviesSql, params);
+		final PaginationInfo paginationInfo = countMovies(moviesPerPage, params);
 
 		return new PagedWatchedMovies(movies, page, paginationInfo.getTotalPages(), paginationInfo.getTotalMovies());
 	}
 
-	private PaginationInfo getPaginationInfo(final Integer moviesPerPage, final String countMoviesSql, final MapSqlParameterSource params) {
+	private PaginationInfo countMovies(final Integer moviesPerPage, final MapSqlParameterSource params) {
+		final String countMoviesSql = "SELECT COUNT(*) " +
+				"FROM watched_movie m " +
+				"WHERE m.user_id = :userId";
+
 		int totalMovies = 0;
 		int totalPages = 0;
 

@@ -128,8 +128,8 @@ class MoviesModuleIntegrationTest {
 		final List<MovieDetailsDto> movies = findMoviesResponse.getBody().getMovies();
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(movies)
-				.extracting(MovieDetailsDto::getTitle, MovieDetailsDto::getUserId, MovieDetailsDto::getMovieId)
-				.containsExactly(tuple(movieTitle.getValue(), loggedUser.getUserId(), addMovieResponse.getBody()));
+				.extracting(MovieDetailsDto::getTitle, MovieDetailsDto::getMovieId)
+				.containsExactly(tuple(movieTitle.getValue(), addMovieResponse.getBody()));
 	}
 
 	@Test
@@ -197,8 +197,8 @@ class MoviesModuleIntegrationTest {
 		final List<MovieDetailsDto> movies = findMoviesResponse.getBody().getMovies();
 		assertThat(findMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(movies)
-				.extracting(MovieDetailsDto::getTitle, MovieDetailsDto::getUserId, MovieDetailsDto::getMovieId)
-				.containsExactly(tuple(changedTitle.getValue(), loggedUser.getUserId(), movieId));
+				.extracting(MovieDetailsDto::getTitle, MovieDetailsDto::getMovieId)
+				.containsExactly(tuple(changedTitle.getValue(), movieId));
 	}
 
 	@Test
@@ -482,11 +482,7 @@ class MoviesModuleIntegrationTest {
 		// given
 		final LoggedUser loggedUser = loggedUserProvider.getLoggedUser();
 
-		final ResponseEntity<Integer> addMovieResponse1 = addMovieRest.addMovie(
-				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
-				loggedUser,
-				Integer.class
-		);
+		final ResponseEntity<Integer> addMovieResponse1 = userAddsMovieToList(loggedUser);
 
 		final ResponseEntity<Integer> addMovieResponse2 = addMovieRest.addMovie(
 				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
@@ -528,31 +524,44 @@ class MoviesModuleIntegrationTest {
 		// given
 		final LoggedUser loggedUser = loggedUserProvider.getLoggedUser();
 
-		final ResponseEntity<Integer> addMovieResponse_1 = addMovieRest.addMovie(
-				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
-				loggedUser,
-				Integer.class
-		);
-		final ResponseEntity<Integer> addMovieResponse_2 = addMovieRest.addMovie(
-				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
-				loggedUser,
-				Integer.class
-		);
-		final ResponseEntity<Integer> addMovieResponse_3 = addMovieRest.addMovie(
-				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
-				loggedUser,
-				Integer.class
-		);
-		final ResponseEntity<Integer> addMovieResponse_4 = addMovieRest.addMovie(
-				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
-				loggedUser,
-				Integer.class
-		);
-		final ResponseEntity<Integer> addMovieResponse_5 = addMovieRest.addMovie(
-				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
-				loggedUser,
-				Integer.class
-		);
+		final ResponseEntity<Integer> addMovieResponse_1 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_2 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_3 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_4 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_5 = userAddsMovieToList(loggedUser);
+
+		// when
+		final ResponseEntity<PagedMoviesDto> moviesPage1Response =
+				findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, PaginationRequestDto.builder().page(1).pageSize(2).build());
+
+		final ResponseEntity<PagedMoviesDto> moviesPage2Response =
+				findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, PaginationRequestDto.builder().page(2).pageSize(2).build());
+
+		final ResponseEntity<PagedMoviesDto> moviesPage3Response =
+				findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, PaginationRequestDto.builder().page(3).pageSize(2).build());
+
+		// then
+		assertThat(moviesPage1Response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(moviesPage1Response.getBody().getTotalMovies()).isEqualTo(5);
+		assertThat(moviesPage1Response.getBody().getTotalPages()).isEqualTo(3);
+
+		assertThat(moviesPage1Response.getBody().getMovies()).extracting(MovieDetailsDto::getMovieId)
+				.containsExactly(addMovieResponse_1.getBody(), addMovieResponse_2.getBody());
+		assertThat(moviesPage2Response.getBody().getMovies()).extracting(MovieDetailsDto::getMovieId)
+				.containsExactly(addMovieResponse_3.getBody(), addMovieResponse_4.getBody());
+		assertThat(moviesPage3Response.getBody().getMovies()).extracting(MovieDetailsDto::getMovieId)
+				.containsExactly(addMovieResponse_5.getBody());
+	}
+
+	@Test
+	void should_find_paginated_movies_by_tags() {
+		final LoggedUser loggedUser = loggedUserProvider.getLoggedUser();
+
+		final ResponseEntity<Integer> addMovieResponse_1 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_2 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_3 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_4 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_5 = userAddsMovieToList(loggedUser);
 
 		final ResponseEntity<String> addTagResponse = addMovieTagToMovieRest.addTagToMovie(
 				MovieTagDto.builder().tagLabel(createAnyTagLabel().getValue()).build(), loggedUser, addMovieResponse_1.getBody());
@@ -560,26 +569,15 @@ class MoviesModuleIntegrationTest {
 		addMovieTagToMovieRest.addTagToMovie(MovieTagDto.builder().tagId(addTagResponse.getBody()).build(), loggedUser, addMovieResponse_5.getBody());
 
 		// when
-		final ResponseEntity<PagedMoviesDto> allMoviesToWatchResponse =
-				findAllMoviesToWatchRest.findAllMoviesToWatch(loggedUser, PaginationRequestDto.builder().page(2).moviesPerPage(2).build());
-
-		// then
-		assertThat(allMoviesToWatchResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(allMoviesToWatchResponse.getBody().getMovies()).extracting(MovieDetailsDto::getMovieId)
-				.containsExactly(addMovieResponse_3.getBody(), addMovieResponse_4.getBody());
-		assertThat(allMoviesToWatchResponse.getBody().getTotalMovies()).isEqualTo(5);
-		assertThat(allMoviesToWatchResponse.getBody().getTotalPages()).isEqualTo(3);
-
-		// when
 		final ResponseEntity<PagedMoviesDto> getMoviesByTagResponse = findAllMoviesToWatchRest.findAllMoviesToWatch(
 				loggedUser,
 				addTagResponse.getBody(),
-				PaginationRequestDto.builder().page(2).moviesPerPage(2).build()
+				PaginationRequestDto.builder().page(2).pageSize(2).build()
 		);
 
 		// then
 		assertThat(getMoviesByTagResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(getMoviesByTagResponse.getBody().getMovies().size()).isEqualTo(1);
+		assertThat(getMoviesByTagResponse.getBody().getMovies()).hasSize(1);
 		assertThat(getMoviesByTagResponse.getBody().getTotalMovies()).isEqualTo(3);
 	}
 
@@ -588,26 +586,10 @@ class MoviesModuleIntegrationTest {
 		// given
 		final LoggedUser loggedUser = loggedUserProvider.getLoggedUser();
 
-		final ResponseEntity<Integer> addMovieResponse_1 = addMovieRest.addMovie(
-				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
-				loggedUser,
-				Integer.class
-		);
-		final ResponseEntity<Integer> addMovieResponse_2 = addMovieRest.addMovie(
-				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
-				loggedUser,
-				Integer.class
-		);
-		final ResponseEntity<Integer> addMovieResponse_3 = addMovieRest.addMovie(
-				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
-				loggedUser,
-				Integer.class
-		);
-		final ResponseEntity<Integer> addMovieResponse_4 = addMovieRest.addMovie(
-				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
-				loggedUser,
-				Integer.class
-		);
+		final ResponseEntity<Integer> addMovieResponse_1 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_2 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_3 = userAddsMovieToList(loggedUser);
+		final ResponseEntity<Integer> addMovieResponse_4 = userAddsMovieToList(loggedUser);
 
 		moveMovieToWatchToWatchedListRest.moveMovieToWatchedMovies(loggedUser, addMovieResponse_1.getBody());
 		moveMovieToWatchToWatchedListRest.moveMovieToWatchedMovies(loggedUser, addMovieResponse_2.getBody());
@@ -617,15 +599,23 @@ class MoviesModuleIntegrationTest {
 		// when
 		final ResponseEntity<PagedWatchedMoviesDto> watchedMoviesResponse = findWatchedMoviesRest.findWatchedMovies(
 				loggedUser,
-				PaginationRequestDto.builder().page(1).moviesPerPage(3).build()
+				PaginationRequestDto.builder().page(1).pageSize(3).build()
 		);
 
 		// then
 		assertThat(watchedMoviesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(watchedMoviesResponse.getBody().getMovies().size()).isEqualTo(3);
+		assertThat(watchedMoviesResponse.getBody().getMovies()).hasSize(3);
 		assertThat(watchedMoviesResponse.getBody().getTotalMovies()).isEqualTo(4);
 		assertThat(watchedMoviesResponse.getBody().getPage()).isEqualTo(1);
 		assertThat(watchedMoviesResponse.getBody().getTotalPages()).isEqualTo(2);
+	}
+
+	private ResponseEntity<Integer> userAddsMovieToList(final LoggedUser loggedUser) {
+		return addMovieRest.addMovie(
+				AddMovieDto.builder().userId(loggedUser.getUserId()).build(),
+				loggedUser,
+				Integer.class
+		);
 	}
 
 	@Test
@@ -771,7 +761,7 @@ class MoviesModuleIntegrationTest {
 	}
 
 	private static PaginationRequestDto allMoviesOnOnePage() {
-		return PaginationRequestDto.builder().page(1).moviesPerPage(10000).build();
+		return PaginationRequestDto.builder().page(1).pageSize(10000).build();
 	}
 
 }

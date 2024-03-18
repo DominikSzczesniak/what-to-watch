@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
-import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfigurationSample;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfigurationSample;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.Clock;
@@ -102,7 +102,7 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 		final List<UserId> allUsersWithRecommendationConfiguration = tut.findAllUsersWithRecommendationConfiguration();
 
 		// then
-		assertThat(allUsersWithRecommendationConfiguration.size()).isEqualTo(3);
+		assertThat(allUsersWithRecommendationConfiguration).hasSize(3);
 	}
 
 }

@@ -10,14 +10,14 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieTo
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteCommentFromMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovie;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetMoviesByTags;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetMoviesToWatch;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetWatchedMoviesToWatch;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchedMoviesList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
 import pl.szczesniak.dominik.whattowatch.movies.query.MoviesQueryService;
 import pl.szczesniak.dominik.whattowatch.movies.query.WatchedMoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.GetMoviesByTags;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.GetMoviesToWatch;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.GetWatchedMoviesToWatch;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieTagQueryResult;
@@ -48,7 +48,6 @@ public class MoviesFacade {
 	}
 
 	public PagedMovies getMoviesToWatch(final GetMoviesToWatch command) {
-		moviesWatchlistService.checkUserExists(command.getUserId());
 		return moviesQueryService.getMoviesToWatch(command.getUserId(), command.getPage(), command.getMoviesPerPage());
 	}
 

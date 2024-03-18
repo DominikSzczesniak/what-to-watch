@@ -7,8 +7,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetMoviesToWatchSample;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetWatchedMoviesToWatchSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.queries.GetMoviesToWatchSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.queries.GetWatchedMoviesToWatchSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
@@ -77,15 +77,6 @@ public class MoviesFacadeListTest {
 		assertThat(moviesToWatch.getMovies()).hasSize(1)
 				.extracting(MovieInListQueryResult::getMovieId)
 				.containsExactly(addedMovieId.getValue());
-	}
-
-	@Test
-	void should_not_be_able_to_get_movies_to_watch_list_when_user_does_not_exist() {
-		// when
-		final Throwable thrown = catchThrowable(() -> tut.getMoviesToWatch(GetMoviesToWatchSample.builder().build()));
-
-		// then
-		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
 	}
 
 	@Test

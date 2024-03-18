@@ -38,7 +38,7 @@ class RecommendedMoviesFactoryTest {
 		final RecommendedMovies newRecommendedMovies = tut.createNewRecommendedMovies(genres, fromApi, emptyList(), userId);
 
 		// then
-		assertThat(newRecommendedMovies.getMovies().size()).isEqualTo(1);
+		assertThat(newRecommendedMovies.getMovies()).hasSize(1);
 	}
 
 	@Test

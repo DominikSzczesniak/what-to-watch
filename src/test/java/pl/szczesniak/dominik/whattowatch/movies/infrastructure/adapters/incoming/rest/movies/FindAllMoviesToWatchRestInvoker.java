@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 import pl.szczesniak.dominik.whattowatch.infrastructure.adapters.incoming.rest.BaseRestInvoker;
 import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 
@@ -26,26 +27,28 @@ public class FindAllMoviesToWatchRestInvoker extends BaseRestInvoker {
 	}
 
 	public ResponseEntity<PagedMoviesDto> findAllMoviesToWatch(final LoggedUser loggedUser, final PaginationRequestDto paginationRequestDto) {
-		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
-		final String urlWithParams = URL + "?page=" + paginationRequestDto.getPage() + "&moviesPerPage=" + paginationRequestDto.getMoviesPerPage();
-		return restTemplate.exchange(
-				urlWithParams,
-				HttpMethod.GET,
-				new HttpEntity<>(headers),
-				new ParameterizedTypeReference<>() {
-				}
-		);
+		final UriComponentsBuilder builder = UriComponentsBuilder.fromPath(URL)
+				.queryParam("page", paginationRequestDto.getPage())
+				.queryParam("moviesPerPage", paginationRequestDto.getPageSize());
+		return executeRequest(loggedUser, builder);
 	}
 
 	public ResponseEntity<PagedMoviesDto> findAllMoviesToWatch(final LoggedUser loggedUser,
 															   final String tags,
 															   final PaginationRequestDto paginationRequestDto) {
+		final UriComponentsBuilder builder = UriComponentsBuilder.fromPath(URL)
+				.queryParam("tags", tags)
+				.queryParam("page", paginationRequestDto.getPage())
+				.queryParam("moviesPerPage", paginationRequestDto.getPageSize());
+		return executeRequest(loggedUser, builder);
+	}
+
+	private ResponseEntity<PagedMoviesDto> executeRequest(final LoggedUser loggedUser, final UriComponentsBuilder builder) {
 		final HttpHeaders headers = new HttpHeaders();
 		addSessionIdandUserIdHeaders(headers, loggedUser);
-		final String urlWithParams = URL + "?tags=" + tags + "&page=" + paginationRequestDto.getPage() + "&moviesPerPage=" + paginationRequestDto.getMoviesPerPage();
+		final String url = builder.toUriString();
 		return restTemplate.exchange(
-				urlWithParams,
+				url,
 				HttpMethod.GET,
 				new HttpEntity<>(headers),
 				new ParameterizedTypeReference<>() {
@@ -56,11 +59,8 @@ public class FindAllMoviesToWatchRestInvoker extends BaseRestInvoker {
 	@Value
 	public static class PagedMoviesDto {
 		@NonNull List<MovieDetailsDto> movies;
-
 		@NonNull Integer page;
-
 		@NonNull Integer totalPages;
-
 		@NonNull Integer totalMovies;
 	}
 
@@ -68,13 +68,12 @@ public class FindAllMoviesToWatchRestInvoker extends BaseRestInvoker {
 	public static class MovieDetailsDto {
 		String title;
 		Integer movieId;
-		Integer userId;
 	}
 
 	@Data
 	@Builder
 	public static class PaginationRequestDto {
 		private Integer page;
-		private Integer moviesPerPage;
+		private Integer pageSize;
 	}
 }

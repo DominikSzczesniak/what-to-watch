@@ -10,8 +10,8 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieTo
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovieSample;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetMoviesByTagsSample;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.GetMoviesToWatchSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.queries.GetMoviesByTagsSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.queries.GetMoviesToWatchSample;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieTagQueryResult;
@@ -72,7 +72,7 @@ public class MoviesFacadeTagsTest {
 		final List<MovieTagQueryResult> tags = tut.getMovieTagsByUserId(user.getValue());
 
 		// then
-		assertThat(tags.size()).isEqualTo(4);
+		assertThat(tags).hasSize(4);
 		assertThat(tags).extracting(MovieTagQueryResult::getTagId)
 				.containsExactlyInAnyOrder(firstTagId.getValue(), secondTagId.getValue(), thirdTagId.getValue(), fourthTagId.getValue());
 		assertThat(tags).extracting(MovieTagQueryResult::getLabel)
@@ -170,7 +170,7 @@ public class MoviesFacadeTagsTest {
 						.build()).getMovies();
 
 		// then
-		assertThat(foundMovies.size()).isEqualTo(1);
+		assertThat(foundMovies).hasSize(1);
 	}
 
 	@Test
