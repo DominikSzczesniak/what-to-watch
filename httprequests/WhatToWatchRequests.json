@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "4ef56cb2-9baf-417c-b583-7fc93ca65d1a",
 		"name": "spring-boot-learning",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "27198920"
 	},
 	"item": [
@@ -23,18 +23,7 @@
 										"type": "text"
 									}
 								],
-								"url": {
-									"raw": "localhost:8080/api/movies/watched",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"movies",
-										"watched"
-									]
-								}
+								"url": "localhost:8080/api/movies/watched"
 							},
 							"response": []
 						},
@@ -49,19 +38,143 @@
 										"type": "text"
 									}
 								],
+								"url": "localhost:8080/api/movies/1/watched"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "info",
+					"item": [
+						{
+							"name": "recommendation configuration",
+							"item": [
+								{
+									"name": "create recommendation configuration",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "userId",
+												"value": "1",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"genres\": [\"THRILLER\"]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/recommendations/configuration"
+									},
+									"response": []
+								},
+								{
+									"name": "update recommendation configuration",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "userId",
+												"value": "1",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"genres\": [\"FANTASY\"]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/recommendations/configuration"
+									},
+									"response": []
+								},
+								{
+									"name": "get recommendation configuration",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "userId",
+												"value": "1",
+												"type": "text"
+											}
+										],
+										"url": "localhost:8080/api/recommendations/configuration"
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "get popular movies",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "userId",
+										"value": "1",
+										"type": "text"
+									}
+								],
+								"url": "localhost:8080/api/movies/info"
+							},
+							"response": []
+						},
+						{
+							"name": "get genres",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "userId",
+										"value": "1",
+										"type": "text"
+									}
+								],
 								"url": {
-									"raw": "localhost:8080/api/movies/1/watched",
+									"raw": "localhost:8080/api/genres",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
 										"api",
-										"movies",
-										"1",
-										"watched"
+										"genres"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null,
+											"disabled": true
+										}
 									]
 								}
+							},
+							"response": []
+						},
+						{
+							"name": "get latest recommended movies",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "TMDB",
+							"request": {
+								"method": "GET",
+								"header": []
 							},
 							"response": []
 						}
@@ -90,17 +203,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "localhost:8080/api/movies",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"movies"
-							]
-						}
+						"url": "localhost:8080/api/movies"
 					},
 					"response": []
 				},
@@ -118,17 +221,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "localhost:8080/api/movies",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"movies"
-							]
-						}
+						"url": "localhost:8080/api/movies"
 					},
 					"response": []
 				},
@@ -152,18 +245,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "localhost:8080/api/movies/1",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"movies",
-								"1"
-							]
-						}
+						"url": "localhost:8080/api/movies/1"
 					},
 					"response": []
 				},
@@ -190,19 +272,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "localhost:8080/api/movies/1/watched",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"movies",
-								"1",
-								"watched"
-							]
-						}
+						"url": "localhost:8080/api/movies/1"
 					},
 					"response": []
 				},
@@ -226,19 +296,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "localhost:8080/api/movies/1/comments",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"movies",
-								"1",
-								"comments"
-							]
-						}
+						"url": "localhost:8080/api/movies/1/comments"
 					},
 					"response": []
 				},
@@ -262,19 +320,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "localhost:8080/api/movies/1/comments",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"movies",
-								"1",
-								"comments"
-							]
-						}
+						"url": "localhost:8080/api/movies/1/comments"
 					},
 					"response": []
 				},
@@ -311,6 +357,45 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Add tag to movie",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "localhost:8080/api/movies/1/watched"
+					},
+					"response": []
+				},
+				{
+					"name": "get movie tags",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": "localhost:8080/api/movies/tags"
+					},
+					"response": []
+				},
+				{
+					"name": "delete tag from movie",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": "localhost:8080/api/movies/1/tags/f67ea130-a85a-4212-a854-b4e0ade7ed54"
+					},
+					"response": []
 				}
 			]
 		},
@@ -331,17 +416,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "localhost:8080/api/users",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"users"
-							]
-						}
+						"url": "localhost:8080/api/users"
 					},
 					"response": []
 				},
@@ -359,22 +434,28 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "localhost:8080/api/login",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"login"
-							]
-						}
+						"url": "localhost:8080/api/login"
 					},
 					"response": []
 				},
 				{
-					"name": "check if username is taken",
+					"name": "add role",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "delete user",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "username available",
 					"request": {
 						"method": "GET",
 						"header": []
@@ -402,19 +483,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "localhost:8080/api/movies/1/cover",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"movies",
-								"1",
-								"cover"
-							]
-						}
+						"url": "localhost:8080/api/movies/1/cover"
 					},
 					"response": []
 				},
@@ -439,19 +508,7 @@
 								}
 							]
 						},
-						"url": {
-							"raw": "localhost:8080/api/movies/1/cover",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"movies",
-								"1",
-								"cover"
-							]
-						}
+						"url": "localhost:8080/api/movies/1/cover"
 					},
 					"response": []
 				},
@@ -466,19 +523,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "localhost:8080/api/movies/1/cover",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"movies",
-								"1",
-								"cover"
-							]
-						}
+						"url": "localhost:8080/api/movies/1/cover"
 					},
 					"response": []
 				}
