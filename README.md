@@ -21,6 +21,7 @@ also tv shows).
 - Project architecture focused on ports and adapters.
 - Application works on Hibernate, tests are ran on H2 database.
 - Integrates with external API.
+- The project implements the Command Query Responsibility Segregation pattern.
 
 ## Technologies Used
 
