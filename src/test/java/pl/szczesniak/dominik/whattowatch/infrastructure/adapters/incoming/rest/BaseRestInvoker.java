@@ -12,9 +12,8 @@ public class BaseRestInvoker {
 
 	public final TestRestTemplate restTemplate;
 
-	public void addSessionIdandUserIdHeaders(final HttpHeaders headers, final LoggedUser loggedUser) {
+	public void addSessionIdHeader(final HttpHeaders headers, final LoggedUser loggedUser) {
 		headers.put(HttpHeaders.COOKIE, loggedUser.getSessionId());
-		headers.set("userId", String.valueOf(loggedUser.getUserId()));
 	}
 
 }

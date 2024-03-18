@@ -3,15 +3,18 @@ package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapter
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfiguration;
+import pl.szczesniak.dominik.whattowatch.security.LoggedInUserProvider;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,12 +29,14 @@ import static java.util.Optional.ofNullable;
 public class CreateRecommendationConfigurationController {
 
 	private final RecommendationFacade facade;
+	private final LoggedInUserProvider loggedInUserProvider;
 
 	@PostMapping("/api/users/recommendations/configuration")
-	public ResponseEntity<?> createRecommendationConfiguration(@RequestHeader("userId") final Integer userId,
+	public ResponseEntity<?> createRecommendationConfiguration(@AuthenticationPrincipal final UserDetails userDetails,
 															   @RequestBody final RecommendationConfigurationDto dto) {
+		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));
 		final ConfigurationId configurationId = facade.create(
-				new CreateRecommendationConfiguration(toSet(ofNullable(dto.getLimitToGenres())), new UserId(userId)));
+				new CreateRecommendationConfiguration(toSet(ofNullable(dto.getLimitToGenres())), userId));
 		return ResponseEntity.status(201).body(configurationId.getValue());
 	}
 

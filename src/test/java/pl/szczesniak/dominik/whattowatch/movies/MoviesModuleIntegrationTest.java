@@ -433,29 +433,29 @@ class MoviesModuleIntegrationTest {
 
 		final MovieTitle movieTitle = createAnyMovieTitle();
 
-		final ResponseEntity<Integer> addMovieResponse = addMovieRest.addMovie(
+		final ResponseEntity<Integer> userOneAddMovieResponse = addMovieRest.addMovie(
 				AddMovieDto.builder().title(movieTitle.getValue()).userId(loggedUser1.getUserId()).build(),
 				loggedUser1,
 				Integer.class
 		);
 
-		final ResponseEntity<Integer> differentMovieAddMovieResponse = addMovieRest.addMovie(
+		final ResponseEntity<Integer> userTwoAddMovieResponse = addMovieRest.addMovie(
 				AddMovieDto.builder().userId(loggedUser2.getUserId()).build(),
-				loggedUser1,
+				loggedUser2,
 				Integer.class
 		);
 
 		// then
-		assertMovieWasAdded(addMovieResponse);
+		assertMovieWasAdded(userOneAddMovieResponse);
 
 		// when
 		final String tagLabel = createAnyTagLabel().getValue();
 		final ResponseEntity<String> addMovieTagToMovieResponse = addMovieTagToMovieRest.addTagToMovie(
-				MovieTagDto.builder().tagLabel(tagLabel).build(), loggedUser1, addMovieResponse.getBody());
+				MovieTagDto.builder().tagLabel(tagLabel).build(), loggedUser1, userOneAddMovieResponse.getBody());
 
 
 		final ResponseEntity<String> addingSameTagLabelToMovieByDifferentUserResponse = addMovieTagToMovieRest.addTagToMovie(
-				MovieTagDto.builder().tagLabel(tagLabel).build(), loggedUser2, differentMovieAddMovieResponse.getBody()
+				MovieTagDto.builder().tagLabel(tagLabel).build(), loggedUser2, userTwoAddMovieResponse.getBody()
 		);
 
 		// then
@@ -463,7 +463,7 @@ class MoviesModuleIntegrationTest {
 
 		// when
 		final ResponseEntity<String> addingUnauthorizedUserMovieTagToMovie = addMovieTagToMovieRest.addTagToMovie(
-				MovieTagDto.builder().tagId(addMovieTagToMovieResponse.getBody()).build(), loggedUser2, differentMovieAddMovieResponse.getBody()
+				MovieTagDto.builder().tagId(addMovieTagToMovieResponse.getBody()).build(), loggedUser2, userTwoAddMovieResponse.getBody()
 		);
 
 		// then
@@ -471,7 +471,7 @@ class MoviesModuleIntegrationTest {
 
 		// when
 		final ResponseEntity<FindMovieToWatchRestInvoker.MovieDetailsDto> secondUsersMovieToWatchResponse = findMovieToWatchRest.findMovieToWatch(
-				loggedUser2, differentMovieAddMovieResponse.getBody());
+				loggedUser2, userTwoAddMovieResponse.getBody());
 
 		// then
 		assertThat(secondUsersMovieToWatchResponse.getBody().getTags()).hasSize(1);

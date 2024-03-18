@@ -25,7 +25,7 @@ public class CreateRecommendationConfigurationInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<Long> createRecommendationConfiguration(final LoggedUser loggedUser, final CreateRecommendationConfigurationDto dto) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.POST,

@@ -63,7 +63,7 @@ public class JdbcMoviesToWatchQueryService implements MoviesQueryService {
 
 		final List<MovieInListQueryResult> movies = jdbcTemplate.query(sql, params, (rs, rowNum) ->
 				new MovieInListQueryResult(
-						rs.getInt("id"),
+						rs.getInt("movie_id"),
 						rs.getString("movie_title"))
 		);
 		return movies;

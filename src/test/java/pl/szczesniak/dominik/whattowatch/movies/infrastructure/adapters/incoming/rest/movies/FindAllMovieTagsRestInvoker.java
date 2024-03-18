@@ -24,7 +24,7 @@ public class FindAllMovieTagsRestInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<List<FoundMovieTagDto>> getMovieTagsByUserId(final LoggedUser loggedUser) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,

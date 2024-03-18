@@ -20,7 +20,7 @@ public class RemoveMovieToWatchFromListRestInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<Void> removeMovie(final LoggedUser loggedUser, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.DELETE,

@@ -24,7 +24,7 @@ public class UpdateMovieToWatchRestInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<Void> updateMovie(final UpdateMovieDto updateMovieDto, final LoggedUser loggedUser, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		final HttpEntity<UpdateMovieDto> requestEntity = new HttpEntity<>(updateMovieDto, headers);
 		return restTemplate.exchange(
 				URL,

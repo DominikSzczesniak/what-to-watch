@@ -23,7 +23,7 @@ public class AddCommentToMovieRestInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<String> addCommentToMovie(final LoggedUser loggedUser, final Integer movieId, final CommentDto commentDto) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		final HttpEntity<CommentDto> requestEntity = new HttpEntity<>(commentDto, headers);
 		return restTemplate.exchange(
 				URL,

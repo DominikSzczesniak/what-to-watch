@@ -24,7 +24,7 @@ public class AddMovieToWatchRestInvoker extends BaseRestInvoker {
 
 	public <T> ResponseEntity<T> addMovie(final AddMovieDto addMovieDto, final LoggedUser loggedUser, final Class<T> responseType) {
 		final HttpHeaders headers = new HttpHeaders();
-		headers.put(HttpHeaders.COOKIE, loggedUser.getSessionId());
+		addSessionIdHeader(headers, loggedUser);
 
 		return restTemplate.exchange(
 				URL,
