@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker.CreateUserDto;
+import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.DeleteUserRestInvoker;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.LoginUserRestInvoker;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.LoginUserRestInvoker.LoginUserDto;
 
@@ -23,6 +24,9 @@ class UserModuleIntegrationTest {
 
 	@Autowired
 	private LoginUserRestInvoker loginUserRest;
+
+	@Autowired
+	private DeleteUserRestInvoker deleteUserRest;
 
 	@Test
 	void should_create_user_and_login_on_him() {
@@ -87,6 +91,38 @@ class UserModuleIntegrationTest {
 
 		// then
 		assertThat(user.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+
+	@Test
+	void should_create_user_and_fail_to_login_after_deleting_user() {
+		// given
+		final CreateUserDto userToCreate = createAnyUser();
+		final LoginUserDto userDto = LoginUserDto.builder().username(userToCreate.getUsername()).password(userToCreate.getPassword()).build();
+
+		// when
+		final ResponseEntity<Integer> createUserResponse = createUserRest.createUser(userToCreate, Integer.class);
+
+		// then
+		assertThat(createUserResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+		// when
+		final ResponseEntity<Integer> loginUserResponse = loginUserRest.loginUser(userDto, Integer.class);
+
+		// then
+		assertThat(loginUserResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(loginUserResponse.getBody()).isEqualTo(createUserResponse.getBody());
+
+		// when
+		final ResponseEntity<Void> deleteUserResponse = deleteUserRest.deleteUser(getLoggedUser(loginUserResponse));
+
+		// then
+		assertThat(deleteUserResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+		// when
+		final ResponseEntity<Integer> failedLoginUserResponse = loginUserRest.loginUser(userDto, Integer.class);
+
+		// then
+		assertThat(failedLoginUserResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
 
 	private static CreateUserDto createAnyUser() {
