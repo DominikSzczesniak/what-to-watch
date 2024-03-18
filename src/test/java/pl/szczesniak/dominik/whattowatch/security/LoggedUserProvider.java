@@ -48,7 +48,7 @@ public class LoggedUserProvider {
 	}
 
 	@Value
-	public static class LoggedUser {
+	public static class LoggedUser { // todo: usunac to chyba
 
 		@NonNull Integer userId;
 		@NonNull List<String> sessionId;

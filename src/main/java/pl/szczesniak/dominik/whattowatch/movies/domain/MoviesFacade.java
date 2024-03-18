@@ -38,6 +38,7 @@ public class MoviesFacade {
 	private final MoviesTagsService moviesTagsService;
 	private final MoviesQueryService moviesQueryService;
 	private final WatchedMoviesQueryService watchedMoviesQueryService;
+	private final UserDeletedService userDeletedService;
 
 	public MovieId addMovieToList(final AddMovieToList command) {
 		return moviesWatchlistService.addMovieToList(command);
@@ -106,6 +107,10 @@ public class MoviesFacade {
 
 	public List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {
 		return moviesQueryService.getMovieTagsByUserId(userId);
+	}
+
+	public void handleUserDeleted(final UserId userId) {
+		userDeletedService.removeAllDeletedUsersData(userId);
 	}
 
 }

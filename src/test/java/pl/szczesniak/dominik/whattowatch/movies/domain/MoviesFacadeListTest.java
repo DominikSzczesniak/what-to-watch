@@ -7,10 +7,10 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTitle;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.queries.GetMoviesToWatchSample;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.queries.GetWatchedMoviesToWatchSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieToWatchListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovieSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.queries.GetMoviesToWatchSample;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.queries.GetWatchedMoviesToWatchSample;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieInListQueryResult;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.PagedMovies;
 import pl.szczesniak.dominik.whattowatch.movies.query.model.WatchedMovieQueryResult;
@@ -350,6 +350,42 @@ public class MoviesFacadeListTest {
 
 		// then
 		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
+	}
+
+	@Test
+	void should_delete_all_user_movies() {
+		// given
+		final UserId userId = userProvider.addUser(createAnyUserId());
+
+		tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
+		tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
+		tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
+
+		// when
+		tut.handleUserDeleted(userId);
+
+		// then
+		assertThat(tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userId).build()).getMovies()).hasSize(0);
+	}
+
+	@Test
+	void should_delete_all_user_watched_movies() {
+		// given
+		final UserId userId = userProvider.addUser(createAnyUserId());
+
+		final MovieId movie_1 = tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
+		final MovieId movie_2 = tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
+		final MovieId movie_3 = tut.addMovieToList(AddMovieToListSample.builder().userId(userId).build());
+
+		tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().userId(userId).movieId(movie_1).build());
+		tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().userId(userId).movieId(movie_2).build());
+		tut.moveMovieToWatchedList(MoveMovieToWatchListSample.builder().userId(userId).movieId(movie_3).build());
+
+		// when
+		tut.handleUserDeleted(userId);
+
+		// then
+		assertThat(tut.getMoviesToWatch(GetMoviesToWatchSample.builder().userId(userId).build()).getMovies()).hasSize(0);
 	}
 
 }

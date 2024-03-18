@@ -21,7 +21,7 @@ public class DeleteUserRestInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<Void> deleteUser(final LoggedUser loggedUser) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.DELETE,
