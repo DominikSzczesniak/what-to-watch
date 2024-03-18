@@ -23,7 +23,7 @@ public class FindMovieToWatchRestInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<MovieDetailsDto> findMovieToWatch(final LoggedUser loggedUser, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,

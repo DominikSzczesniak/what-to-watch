@@ -25,7 +25,7 @@ public class AddMovieTagToMovieRestInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<String> addTagToMovie(final MovieTagDto movieTagDto, final LoggedUser loggedUser, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		final HttpEntity<MovieTagDto> requestEntity = new HttpEntity<>(movieTagDto, headers);
 
 		return getAddTagToMovieResponse(movieTagDto, movieId, requestEntity);

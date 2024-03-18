@@ -3,13 +3,16 @@ package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapter
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
+import pl.szczesniak.dominik.whattowatch.security.LoggedInUserProvider;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
 import java.util.List;
 import java.util.Set;
@@ -19,10 +22,12 @@ import java.util.Set;
 public class GetRecommendationConfigurationController {
 
 	private final RecommendationFacade facade;
+	private final LoggedInUserProvider loggedInUserProvider;
 
 	@GetMapping("/api/recommendations/configuration")
-	public ResponseEntity<RecommendationConfigurationDto> getRecommendationConfiguration(@RequestHeader("userId") final Integer userId) {
-		final RecommendationConfigurationRequestResult config = facade.getLatestRecommendationConfiguration(new UserId(userId));
+	public ResponseEntity<RecommendationConfigurationDto> getRecommendationConfiguration(@AuthenticationPrincipal final UserDetails userDetails) {
+		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));
+		final RecommendationConfigurationRequestResult config = facade.getLatestRecommendationConfiguration(userId);
 		final RecommendationConfigurationDto configDto = new RecommendationConfigurationDto(
 				config.getConfigurationId(),
 				mapGenres(config.getGenres()),

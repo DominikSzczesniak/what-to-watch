@@ -25,7 +25,7 @@ public class GetLatestRecommendedMoviesInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<RecommendedMoviesDto> getLatestRecommendedMovies(final LoggedUser loggedUser) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,

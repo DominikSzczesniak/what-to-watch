@@ -35,7 +35,6 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameI
 public class UserRestController {
 
 	private final UserFacade userFacade;
-
 	private final AuthenticationManager authenticationManager;
 	private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 

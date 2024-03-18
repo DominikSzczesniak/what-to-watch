@@ -26,7 +26,7 @@ public class SetMovieToWatchCoverRestInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<?> setCover(final LoggedUser loggedUser, final Integer movieId, MultipartFile image) throws IOException {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 
 		final MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 		body.add("image", new ByteArrayResource(image.getBytes()) {

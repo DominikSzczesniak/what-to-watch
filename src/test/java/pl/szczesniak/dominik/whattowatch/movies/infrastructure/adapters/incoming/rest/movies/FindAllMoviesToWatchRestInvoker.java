@@ -45,7 +45,7 @@ public class FindAllMoviesToWatchRestInvoker extends BaseRestInvoker {
 
 	private ResponseEntity<PagedMoviesDto> executeRequest(final LoggedUser loggedUser, final UriComponentsBuilder builder) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		final String url = builder.toUriString();
 		return restTemplate.exchange(
 				url,

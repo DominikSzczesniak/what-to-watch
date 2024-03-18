@@ -20,7 +20,7 @@ public class DeleteMovieTagFromMovieRestInvoker extends BaseRestInvoker {
 
 	public ResponseEntity<Void> deleteTagFromMovie(final String tagId, final LoggedUser loggedUser, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
-		addSessionIdandUserIdHeaders(headers, loggedUser);
+		addSessionIdHeader(headers, loggedUser);
 		final HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
 		return restTemplate.exchange(
 				URL,

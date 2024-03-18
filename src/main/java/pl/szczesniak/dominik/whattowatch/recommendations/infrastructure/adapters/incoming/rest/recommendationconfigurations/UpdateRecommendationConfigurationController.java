@@ -3,14 +3,17 @@ package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapter
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfiguration;
+import pl.szczesniak.dominik.whattowatch.security.LoggedInUserProvider;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,12 +28,14 @@ import static java.util.Optional.ofNullable;
 public class UpdateRecommendationConfigurationController {
 
 	private final RecommendationFacade facade;
+	private final LoggedInUserProvider loggedInUserProvider;
 
 	@PutMapping("/api/users/recommendations/configuration")
-	public ResponseEntity<?> updateRecommendationConfiguration(@RequestHeader("userId") final Integer userId,
+	public ResponseEntity<?> updateRecommendationConfiguration(@AuthenticationPrincipal final UserDetails userDetails,
 															   @RequestBody final UpdateRecommendationConfigurationDto dto) {
+		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));
 		facade.update(
-				new UpdateRecommendationConfiguration(toSet(ofNullable(dto.getLimitToGenres())), new UserId(userId)));
+				new UpdateRecommendationConfiguration(toSet(ofNullable(dto.getLimitToGenres())), userId));
 		return ResponseEntity.status(200).build();
 	}
 
