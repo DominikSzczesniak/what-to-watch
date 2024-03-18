@@ -10,7 +10,6 @@ also tv shows).
 * [General Info](#general-information)
 * [Technologies Used](#technologies-used)
 * [Features](#Features)
-* [Planned improvements](#Planned-improvements)
 * [Project Status](#project-status)
 * [Movie Recommendation Module Summary](#movie-recommendation-module-summary)
 
@@ -28,6 +27,7 @@ also tv shows).
 - Java - version 17.0.5
 - Maven
 - Spring Boot
+- Spring Security
 - REST
 - Hibernate
 - Lombok
@@ -44,10 +44,6 @@ also tv shows).
 - Saves cover files in "files" folder in project's directory.
 - Recommending movies based on configuration using external API.
 
-## Planned improvements
-
-- Spring security
-
 ## Project Status
 
 Project is still under development. I am currently using it to learn new technologies and gain practice in coding.
@@ -62,7 +58,9 @@ endpoints handled in the app.
 
 Created user's credentials are:
 
-Username: Dominik Password: 123
+**Username: Dominik** 
+
+**Password: 123**
 
 User's repository is filled with 10 movies, 2 of them already moved to watchedMovies.
 
