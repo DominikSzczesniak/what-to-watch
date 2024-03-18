@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesToWatchFacadeConfiguration.moviesToWatchService;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesFacadeConfiguration.moviesFacade;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CoverContentSample.createAnyCoverContent;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CoverContentTypeSample.createAnyContentType;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CoverFilenameSample.createAnyCoverFilename;
@@ -29,7 +29,7 @@ public class MoviesFacadeCoversTest {
 	@BeforeEach
 	void setUp() {
 		userProvider = new InMemoryUserProvider();
-		tut = moviesToWatchService(userProvider);
+		tut = moviesFacade(userProvider);
 	}
 
 	@Test

@@ -11,11 +11,9 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @Slf4j
-public class UserService {
+class UserService {
 
 	private final UserRepository repository;
 
@@ -40,22 +38,10 @@ public class UserService {
 		user.addRole(userRole);
 	}
 
-	public boolean exists(final UserId userId) {
-		return repository.exists(userId);
-	}
-
-	public UserId login(final Username username, final UserPassword userPassword) {
+	UserId login(final Username username, final UserPassword userPassword) {
 		return repository.findBy(username)
 				.filter(user -> passwordEncoder.matches(userPassword.getValue(), user.getUserPassword().getValue()))
 				.orElseThrow(() -> new InvalidCredentialsException("Invalid credentials, could not log in.")).getUserId();
-	}
-
-	public boolean isUsernameTaken(final Username username) {
-		return repository.findBy(username).isPresent();
-	}
-
-	public Optional<User> findUserBy(final Username username) {
-		return repository.findBy(username);
 	}
 
 }

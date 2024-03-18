@@ -5,18 +5,15 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class InMemoryUserRoleRepository implements UserRoleRepository {
 
 	private final HashMap<Integer, UserRole> roles = new HashMap<>();
+	private final AtomicInteger nextId = new AtomicInteger(1);
 
 	InMemoryUserRoleRepository() {
-		addDefaultRoles(List.of(RoleName.USER));
-	}
-
-	@Override
-	public void create(final UserRole role) {
-		roles.put(role.getId(), role);
+		create(List.of(RoleName.USER));
 	}
 
 	@Override
@@ -27,10 +24,9 @@ class InMemoryUserRoleRepository implements UserRoleRepository {
 	}
 
 	@Override
-	public void addDefaultRoles(final List<RoleName> roles) {
-		int id = 1;
+	public void create(final List<RoleName> roles) {
 		for (RoleName roleName : roles) {
-			this.roles.put(id++, new UserRole(roleName));
+			this.roles.put(nextId.getAndIncrement(), new UserRole(roleName));
 		}
 	}
 

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendedMovies;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ public class GetLatestRecommendedMoviesController {
 	@GetMapping("/api/recommendations/latest")
 	public ResponseEntity<?> getLatestRecommendedMovies(@RequestHeader("userId") final Integer userId) {
 		try {
-			final RecommendedMovies recommendedMovies = facade.getLatestRecommendedMovies(new UserId(userId));
+			final RecommendedMoviesQueryResult recommendedMovies = facade.getLatestRecommendedMovies(new UserId(userId));
 			final RecommendedMoviesDto recommendedMoviesDto = new RecommendedMoviesDto(
 					mapToMovieInfoDto(recommendedMovies.getMovies()),
 					recommendedMovies.getCreationDate(),
@@ -37,7 +37,6 @@ public class GetLatestRecommendedMoviesController {
 			return ResponseEntity.status(204).body(e.getMessage());
 		}
 	}
-
 
 	@Value
 	private static class RecommendedMoviesDto {

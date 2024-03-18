@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserRoleRepository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -15,8 +16,10 @@ class UserRolesDataInitializer {
 	private final UserRoleRepository roleRepository;
 
 	@PostConstruct
-	void addDefaultRoles() {
-		roleRepository.addDefaultRoles(List.of(RoleName.USER));
+	void createRoles() {
+		final List<RoleName> roles = new ArrayList<>();
+		roles.add(RoleName.USER);
+		roleRepository.create(roles);
 	}
 
 }

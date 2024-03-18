@@ -24,7 +24,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @ToString
-public class RecommendedMovies extends BaseEntity {
+class RecommendedMovies extends BaseEntity {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id")
@@ -53,7 +53,7 @@ public class RecommendedMovies extends BaseEntity {
 				.withNano(999999999);
 	}
 
-	public RecommendedMoviesId getRecommendedMoviesId() {
+	RecommendedMoviesId getRecommendedMoviesId() {
 		return new RecommendedMoviesId(getId());
 	}
 

@@ -17,14 +17,14 @@ public class FindWatchedMoviesController {
 	private final MoviesFacade moviesFacade;
 
 	@GetMapping("/api/movies/watched")
-	public List<MovieDto> findWatchedMovies(@RequestHeader("userId") Integer userId) {
+	public List<WatchedMovieDto> findWatchedMovies(@RequestHeader("userId") Integer userId) {
 		return moviesFacade.getWatchedMovies(new UserId(userId)).stream()
-				.map(movie -> new MovieDto(movie.getTitle().getValue(), movie.getMovieId().getValue(), movie.getUserId().getValue()))
+				.map(movie -> new WatchedMovieDto(movie.getTitle(), movie.getMovieId(), movie.getUserId()))
 				.toList();
 	}
 
 	@Value
-	private static class MovieDto {
+	private static class WatchedMovieDto {
 		String title;
 		Integer movieId;
 		Integer userId;

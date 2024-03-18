@@ -6,7 +6,6 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,10 +21,10 @@ import static java.util.Objects.requireNonNull;
 		@UniqueConstraint(columnNames = {"tag_user_id", "tag_label"})
 })
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @ToString
 @EqualsAndHashCode(of = {"tagId"})
-public class MovieTag {
+class MovieTag {
 
 	@EmbeddedId
 	@AttributeOverride(name = "value", column = @Column(name = "tag_id"))

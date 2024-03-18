@@ -9,16 +9,15 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddTagToMo
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteTagFromMovie;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class MoviesTagsService {
+class MoviesTagsService {
 
-	private final MoviesRepository moviesRepository;
-	private final TagsQuery tagsQuery;
+	private final MoviesToWatchRepository moviesRepository;
+	private final TagsRepository tagsRepository;
 
 	MovieTagId addTagToMovie(final AddTagToMovie command) {
 		final MovieTagId tagId = command.getTagId().orElse(new MovieTagId(UUID.randomUUID()));
@@ -33,30 +32,17 @@ public class MoviesTagsService {
 	}
 
 	private Optional<MovieTag> checkMovieTagBelongsToUser(final UserId userId, final MovieTagId tagId) {
-		final Optional<MovieTag> tagByTagId = getTagByTagId(tagId);
+		final Optional<MovieTag> tagByTagId = tagsRepository.findTagByTagId(tagId.getValue());
 		if (tagByTagId.isPresent() && !tagByTagId.get().getUserId().equals(userId)) {
 			throw new ObjectDoesNotExistException("MovieTag does not belong to user");
 		}
 		return tagByTagId;
 	}
 
-	Optional<MovieTag> getTagByTagId(final MovieTagId tagId) {
-		return tagsQuery.findTagByTagId(tagId.getValue());
-	}
-
 	void deleteTagFromMovie(final DeleteTagFromMovie command) {
 		final Movie movie = moviesRepository.getMovie(command.getMovieId(), command.getUserId());
 		movie.deleteTag(command.getTagId());
 		moviesRepository.update(movie);
-	}
-
-	List<Movie> getMoviesByTags(final List<MovieTagId> tags, final UserId userId) {
-		return moviesRepository.findAllMoviesByTagIds(tags, userId);
-	}
-
-
-	List<MovieTag> getMovieTagsByUserId(final Integer userId) {
-		return tagsQuery.findByUserId(userId);
 	}
 
 }

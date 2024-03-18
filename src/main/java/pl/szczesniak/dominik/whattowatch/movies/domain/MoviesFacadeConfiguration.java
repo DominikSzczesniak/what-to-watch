@@ -2,22 +2,33 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
+import pl.szczesniak.dominik.whattowatch.movies.query.MoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.movies.query.WatchedMoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
 
 @Configuration
-public class MoviesFacadeConfiguration {
+class MoviesFacadeConfiguration {
 
 	@Bean
-	public MoviesFacade moviesService(final MoviesListService moviesListService,
-									  final MoviesCoverService movieListService,
-									  final MoviesCommentsService moviesCommentsService,
-									  final MoviesTagsService moviesTagsService) {
-		return new MoviesFacade(moviesListService, movieListService, moviesCommentsService, moviesTagsService);
+	public MoviesFacade moviesFacade(final MoviesWatchlistService moviesWatchlistService,
+									 final MoviesCoverService movieListService,
+									 final MoviesCommentsService moviesCommentsService,
+									 final MoviesTagsService moviesTagsService,
+									 final MoviesQueryService moviesQueryService,
+									 final WatchedMoviesQueryService watchedMoviesQueryService) {
+		return new MoviesFacade(
+				moviesWatchlistService,
+				movieListService,
+				moviesCommentsService,
+				moviesTagsService,
+				moviesQueryService,
+				watchedMoviesQueryService
+		);
 	}
 
 	@Bean
-	public UserProvider userProvider(final UserService userService) {
-		return userService::exists;
+	public UserProvider userProvider(final UserFacade userFacade) {
+		return userFacade::exists;
 	}
 
 }

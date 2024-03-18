@@ -9,9 +9,9 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class MoviesCommentsService {
+class MoviesCommentsService {
 
-	private final MoviesRepository repository;
+	private final MoviesToWatchRepository repository;
 
 	UUID addCommentToMovie(final AddCommentToMovie command) {
 		final Movie movie = repository.getMovie(command.getMovieId(), command.getUserId());

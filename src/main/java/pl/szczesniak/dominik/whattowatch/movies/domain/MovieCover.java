@@ -17,10 +17,13 @@ import java.util.UUID;
 @EqualsAndHashCode
 class MovieCover {
 
-	@NonNull private String filename;
+	@NonNull
+	private String filename;
 
-	@NonNull private String coverContentType;
+	@NonNull
+	private String coverContentType;
 
+	@NonNull
 	private UUID coverId;
 
 	MovieCover(@NonNull final String filename, @NonNull final String coverContentType, @NonNull final UUID coverId) {
@@ -29,7 +32,7 @@ class MovieCover {
 		this.coverId = coverId;
 	}
 
-	public StoredFileId getCoverId() {
+	StoredFileId getCoverId() {
 		return new StoredFileId(coverId);
 	}
 

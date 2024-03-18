@@ -9,7 +9,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -25,8 +24,8 @@ import java.util.Set;
 @Table
 @Getter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RecommendationConfiguration extends BaseEntity {
+@NoArgsConstructor
+class RecommendationConfiguration extends BaseEntity {
 
 	@ElementCollection(targetClass = MovieGenre.class)
 	@Enumerated(EnumType.STRING)
@@ -46,7 +45,7 @@ public class RecommendationConfiguration extends BaseEntity {
 		this.genres = genres;
 	}
 
-	public ConfigurationId getConfigurationId() {
+	ConfigurationId getConfigurationId() {
 		return new ConfigurationId(getId());
 	}
 

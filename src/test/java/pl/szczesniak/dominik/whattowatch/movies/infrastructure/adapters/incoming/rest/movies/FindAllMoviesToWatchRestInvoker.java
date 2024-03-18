@@ -52,20 +52,6 @@ public class FindAllMoviesToWatchRestInvoker extends BaseRestInvoker {
 		String title;
 		Integer movieId;
 		Integer userId;
-		List<MovieCommentDto> comments;
-		List<MovieTagDto> tags;
-	}
-
-	@Value
-	public static class MovieCommentDto {
-		String commentId;
-		String value;
-	}
-
-	@Value
-	public static class MovieTagDto {
-		String tagId;
-		String tagLabel;
 	}
 
 }

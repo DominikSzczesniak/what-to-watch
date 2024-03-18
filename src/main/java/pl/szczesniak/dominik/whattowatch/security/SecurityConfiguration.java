@@ -13,17 +13,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import pl.szczesniak.dominik.whattowatch.users.domain.User;
-import pl.szczesniak.dominik.whattowatch.users.domain.UserService;
+import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
+import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
 
 import java.util.List;
-import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
@@ -57,21 +55,20 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
-	public UserDetailsService userDetailsService(final UserService userService) {
+	public UserDetailsService userDetailsService(final UserFacade userService) {
 		return username -> {
-			Optional<User> user = userService.findUserBy(new Username(username));
-			return user.map(this::createUserDetails)
-					.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+			final UserQueryResult userQueryResult = userService.getUserBy(new Username(username));
+			return createUserDetails(userQueryResult);
 		};
 	}
 
-	private UserDetails createUserDetails(final User user) {
+	private UserDetails createUserDetails(final UserQueryResult user) {
 		final List<SimpleGrantedAuthority> grantedAuthorities = user.getRoles().stream()
-				.map(userRole -> new SimpleGrantedAuthority(userRole.getRoleName().toString()))
+				.map(userRole -> new SimpleGrantedAuthority(userRole.toString()))
 				.toList();
 		return new org.springframework.security.core.userdetails.User(
-				user.getUsername().getValue(),
-				user.getUserPassword().getValue(),
+				user.getUsername(),
+				user.getUserPassword(),
 				true,
 				true,
 				true,

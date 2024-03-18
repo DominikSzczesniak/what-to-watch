@@ -1,13 +1,22 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 
-import java.util.List;
-
-public interface WatchedMoviesRepository {
+interface WatchedMoviesRepository {
 
 	void add(WatchedMovie watchedMovie);
 
-	List<WatchedMovie> findAllBy(UserId userId);
+}
+
+
+@Repository
+interface SpringDataJpaWatchedMoviesRepository extends WatchedMoviesRepository, JpaRepository<WatchedMovie, MovieId> {
+
+	@Override
+	default void add(WatchedMovie watchedMovie) {
+		save(watchedMovie);
+	}
 
 }

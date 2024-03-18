@@ -4,11 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentId;
-import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieComment;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovieSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteCommentFromMovieSample;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCommentQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.Set;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesToWatchFacadeConfiguration.moviesToWatchService;
+import static pl.szczesniak.dominik.whattowatch.movies.domain.TestMoviesFacadeConfiguration.moviesFacade;
 import static pl.szczesniak.dominik.whattowatch.movies.domain.model.CommentSample.createAnyComment;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
@@ -28,7 +28,7 @@ public class MoviesFacadeCommentsTest {
 	@BeforeEach
 	void setUp() {
 		userProvider = new InMemoryUserProvider();
-		tut = moviesToWatchService(userProvider);
+		tut = moviesFacade(userProvider);
 	}
 
 	@Test
@@ -42,8 +42,8 @@ public class MoviesFacadeCommentsTest {
 		tut.addCommentToMovie(AddCommentToMovieSample.builder().userId(user).movieId(movieId).comment(comment).build());
 
 		// then
-		final Set<MovieComment> comments = tut.getMovie(movieId, user).getComments();
-		assertThat(comments).extracting(MovieComment::getText).containsExactly(comment);
+		final Set<MovieCommentQueryResult> comments = tut.getMovie(movieId, user).getComments();
+		assertThat(comments).extracting(MovieCommentQueryResult::getText).containsExactly(comment);
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class MoviesFacadeCommentsTest {
 				.build());
 
 		// then
-		final Set<MovieComment> comments = tut.getMovie(movieId, user).getComments();
+		final Set<MovieCommentQueryResult> comments = tut.getMovie(movieId, user).getComments();
 		assertThat(comments.size()).isEqualTo(1);
 	}
 

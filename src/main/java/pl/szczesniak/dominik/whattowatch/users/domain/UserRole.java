@@ -18,7 +18,7 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserRole extends BaseEntity {
+class UserRole extends BaseEntity {
 
 	@Column(unique = true)
 	@Enumerated(value = EnumType.STRING)

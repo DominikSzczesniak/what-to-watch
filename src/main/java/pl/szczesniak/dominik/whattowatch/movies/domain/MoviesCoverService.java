@@ -14,9 +14,9 @@ import java.io.InputStream;
 
 @RequiredArgsConstructor
 @Service
-public class MoviesCoverService {
+class MoviesCoverService {
 
-	private final MoviesRepository repository;
+	private final MoviesToWatchRepository moviesRepository;
 	private final UserProvider userProvider;
 	private final FilesStorage filesStorage;
 
@@ -27,7 +27,7 @@ public class MoviesCoverService {
 
 	MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId user) {
 		checkUserExists(user);
-		final Movie movie = repository.getMovie(movieId, user);
+		final Movie movie = moviesRepository.getMovie(movieId, user);
 		final MovieCover movieCover = getMovieCover(movie);
 		final InputStream coverContent = filesStorage.findStoredFileContent(movieCover.getCoverId())
 				.orElseThrow(() -> new ObjectDoesNotExistException("Cover content is empty"));
@@ -38,20 +38,20 @@ public class MoviesCoverService {
 	void setMovieCover(final SetMovieCover command) {
 		checkUserExists(command.getUserId());
 		final StoredFileId storedFileId = filesStorage.store(command.getCoverContent());
-		final Movie movie = repository.getMovie(command.getMovieId(), command.getUserId());
+		final Movie movie = moviesRepository.getMovie(command.getMovieId(), command.getUserId());
 		movie.updateCover(
 				new MovieCover(command.getCoverFilename(), command.getCoverContentType(), storedFileId.getValue())
 		);
-		repository.update(movie);
+		moviesRepository.update(movie);
 	}
 
 	void deleteCover(final MovieId movieId, final UserId userId) {
 		checkUserExists(userId);
-		final Movie movie = repository.getMovie(movieId, userId);
+		final Movie movie = moviesRepository.getMovie(movieId, userId);
 		final MovieCover movieCover = getMovieCover(movie);
 		filesStorage.deleteFile(movieCover.getCoverId());
 		movie.updateCover(null);
-		repository.update(movie);
+		moviesRepository.update(movie);
 	}
 
 	private void checkUserExists(final UserId userId) {

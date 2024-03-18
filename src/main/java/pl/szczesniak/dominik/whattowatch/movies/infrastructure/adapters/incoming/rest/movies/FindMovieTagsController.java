@@ -5,8 +5,8 @@ import lombok.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import pl.szczesniak.dominik.whattowatch.movies.domain.MovieTag;
 import pl.szczesniak.dominik.whattowatch.movies.domain.MoviesFacade;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieTagQueryResult;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,12 +19,12 @@ public class FindMovieTagsController {
 
 	@GetMapping("/api/movies/tags")
 	public List<MovieTagDto> findTagByUserId(@RequestHeader final Integer userId) {
-		List<MovieTag> movieTagsByUserId = moviesFacade.getMovieTagsByUserId(userId);
+		List<MovieTagQueryResult> movieTagsByUserId = moviesFacade.getMovieTagsByUserId(userId);
 		return movieTagsByUserId.stream()
 				.map(movieTag -> new MovieTagDto(
-						movieTag.getTagId().getValue(),
-						movieTag.getLabel().getValue(),
-						movieTag.getUserId().getValue()))
+						movieTag.getTagId(),
+						movieTag.getLabel(),
+						movieTag.getUserId()))
 				.collect(Collectors.toList());
 	}
 
