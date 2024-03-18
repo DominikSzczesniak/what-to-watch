@@ -3,11 +3,11 @@ package pl.szczesniak.dominik.whattowatch.movies.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
-import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToListSample;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCover;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.SetMovieCoverSample;
+import pl.szczesniak.dominik.whattowatch.movies.query.model.MovieCoverDTO;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.io.ByteArrayInputStream;
@@ -116,6 +116,26 @@ public class MoviesFacadeCoversTest {
 		final byte[] actual = secondCover.getCoverContent().readAllBytes();
 
 		assertThat(actual).containsExactly(expected);
+	}
+
+	@Test
+	void should_delete_all_users_movie_covers() {
+		// given
+		final UserId user = userProvider.addUser(createAnyUserId());
+		final MovieId movieId_1 = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+		final MovieId movieId_2 = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+
+		tut.setMovieCover(SetMovieCoverSample.builder().movieId(movieId_1).userId(user).build());
+		tut.setMovieCover(SetMovieCoverSample.builder().movieId(movieId_2).userId(user).build());
+
+		// when
+		tut.handleUserDeleted(user);
+
+		// then
+		final Throwable thrown_1 = catchThrowable(() -> tut.getCoverForMovie(movieId_1, user));
+		final Throwable thrown_2 = catchThrowable(() -> tut.getCoverForMovie(movieId_2, user));
+		assertThat(thrown_1).isInstanceOf(ObjectDoesNotExistException.class);
+		assertThat(thrown_2).isInstanceOf(ObjectDoesNotExistException.class);
 	}
 
 }

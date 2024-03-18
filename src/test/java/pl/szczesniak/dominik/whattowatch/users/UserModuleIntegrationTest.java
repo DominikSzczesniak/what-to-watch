@@ -5,11 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.CreateUserRestInvoker.CreateUserDto;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.DeleteUserRestInvoker;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.LoginUserRestInvoker;
 import pl.szczesniak.dominik.whattowatch.users.infrastructure.adapters.incoming.rest.LoginUserRestInvoker.LoginUserDto;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -123,6 +126,15 @@ class UserModuleIntegrationTest {
 
 		// then
 		assertThat(failedLoginUserResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+	}
+
+	private LoggedUser getLoggedUser(final ResponseEntity<Integer> loggedUserResponse) { // todo
+		final List<String> cookies = loggedUserResponse
+				.getHeaders()
+				.get("Set-Cookie");
+		final Integer userId = loggedUserResponse.getBody();
+
+		return new LoggedUser(userId, cookies);
 	}
 
 	private static CreateUserDto createAnyUser() {

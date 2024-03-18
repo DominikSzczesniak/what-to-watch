@@ -71,8 +71,18 @@ public class InMemoryMoviesToWatchRepository implements MoviesToWatchRepository,
 	}
 
 	@Override
+	public void removeAllBy(final UserId userId) {
+		movies.values().removeIf(movie -> movie.getUserId().equals(userId));
+	}
+
+	@Override
 	public Optional<MovieTag> findTagByTagId(final String tagId) {
 		return Optional.ofNullable(tags.get(new MovieTagId(UUID.fromString(tagId))));
+	}
+
+	@Override
+	public void deleteAllMovieTagsBy(final UserId userId) {
+		tags.values().removeIf(movieTag -> movieTag.getUserId().equals(userId));
 	}
 
 	@Override

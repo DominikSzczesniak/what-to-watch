@@ -8,7 +8,7 @@ public class TestUserFacadeConfiguration {
 	static UserFacade userFacade(final DomainEventsPublisher eventPublisher) {
 		final InMemoryUserRepository repository = new InMemoryUserRepository();
 		return new UserFacade(
-				new UserService(repository, new InMemoryUserRoleRepository(), new BCryptPasswordEncoder()),
+				new UserService(repository, new InMemoryUserRoleRepository(), new BCryptPasswordEncoder(), eventPublisher),
 				repository
 		);
 	}

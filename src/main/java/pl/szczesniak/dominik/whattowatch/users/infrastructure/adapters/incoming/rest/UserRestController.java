@@ -12,10 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +26,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import pl.szczesniak.dominik.whattowatch.security.LoggedInUserProvider;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
+import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.commands.CreateUser;
@@ -36,6 +41,7 @@ public class UserRestController {
 
 	private final UserFacade userFacade;
 	private final AuthenticationManager authenticationManager;
+	private final LoggedInUserProvider loggedInUserProvider;
 	private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
 	@PostMapping("/api/login")
@@ -70,7 +76,14 @@ public class UserRestController {
 		}
 	}
 
-	@GetMapping("/api/users/{username}")
+	@DeleteMapping("api/users")
+	public ResponseEntity<?> deleteUser(@AuthenticationPrincipal final UserDetails userDetails) {
+		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));
+		userFacade.deleteUser(userId);
+		return ResponseEntity.status(204).build();
+	}
+
+	@GetMapping("/api/username-availability/{username}")
 	public ResponseEntity<String> isUsernameTaken(@PathVariable final String username) {
 		boolean check = userFacade.isUsernameTaken(new Username(username));
 		return ResponseEntity.status(HttpStatus.OK).body("username is taken: " + check);
