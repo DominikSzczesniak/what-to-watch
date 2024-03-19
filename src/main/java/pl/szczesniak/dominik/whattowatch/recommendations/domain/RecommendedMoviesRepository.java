@@ -17,10 +17,17 @@ interface RecommendedMoviesRepository {
 
 	boolean existsByUserIdAndRecommendationDateBetween(UserId userId, LocalDateTime intervalStart, LocalDateTime intervalEnd);
 
+	void removeAllBy(UserId userId);
+
 }
 
 @Repository
 interface SpringDataJpaRecommendedMoviesRepository extends RecommendedMoviesRepository, JpaRepository<RecommendedMovies, Long> {
+
+	@Override
+	default void removeAllBy(UserId userId) {
+		removeAllByUserId(userId);
+	}
 
 	@Override
 	default RecommendedMoviesId create(RecommendedMovies recommendedMovies) {
@@ -45,5 +52,7 @@ interface SpringDataJpaRecommendedMoviesRepository extends RecommendedMoviesRepo
 	boolean existsByUserIdAndStartDateAndEndInterval(UserId userId,
 													 LocalDateTime startDate,
 													 LocalDateTime endInterval);
+
+	void removeAllByUserId(final UserId userId);
 
 }

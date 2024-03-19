@@ -35,7 +35,7 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 
 		// when
 		final ConfigurationId configurationId = tut.create(CreateRecommendationConfigurationSample.builder().userId(userId).build());
-		final RecommendationConfigurationRequestResult configuration = tut.getLatestRecommendationConfiguration(userId);
+		final RecommendationConfigurationRequestResult configuration = tut.getRecommendationConfiguration(userId);
 
 		// then
 		assertThat(configuration.getUserId()).isEqualTo(userId.getValue());
@@ -51,11 +51,11 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 				.genreNames(Set.of(MovieGenre.ADVENTURE))
 				.build());
 
-		final RecommendationConfigurationRequestResult configuration = tut.getLatestRecommendationConfiguration(userId);
+		final RecommendationConfigurationRequestResult configuration = tut.getRecommendationConfiguration(userId);
 		tut.update(UpdateRecommendationConfigurationSample.builder().genreNames(Set.of(MovieGenre.ACTION)).userId(userId).build());
 
 		// when
-		final RecommendationConfigurationRequestResult updatedConfiguration = tut.getLatestRecommendationConfiguration(userId);
+		final RecommendationConfigurationRequestResult updatedConfiguration = tut.getRecommendationConfiguration(userId);
 
 		// then
 		assertThat(updatedConfiguration).isEqualTo(configuration);
@@ -80,7 +80,7 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 		final UserId userId = createAnyUserId();
 
 		// when
-		final Throwable thrown = catchThrowable(() -> tut.getLatestRecommendationConfiguration(userId));
+		final Throwable thrown = catchThrowable(() -> tut.getRecommendationConfiguration(userId));
 
 		// then
 		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
@@ -103,6 +103,20 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 
 		// then
 		assertThat(allUsersWithRecommendationConfiguration).hasSize(3);
+	}
+
+	@Test
+	void should_remove_recommendation_configuration() {
+		// given
+		final UserId userId = createAnyUserId();
+		tut.create(CreateRecommendationConfigurationSample.builder().userId(userId).build());
+
+		// when
+		tut.handleUserDeleted(userId);
+
+		// then
+		final Throwable thrown = catchThrowable(() -> tut.getRecommendationConfiguration(userId));
+		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
 	}
 
 }

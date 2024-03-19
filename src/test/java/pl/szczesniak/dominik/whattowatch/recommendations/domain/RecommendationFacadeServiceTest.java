@@ -7,9 +7,9 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
-import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfigurationSample;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfigurationSample;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.Clock;
@@ -221,6 +221,27 @@ class RecommendationFacadeServiceTest {
 
 		// then
 		assertThat(latestRecommendedMovies.getRecommendedMoviesId()).isEqualTo(recommendedMovies.getRecommendedMoviesId());
+	}
+
+	@Test
+	void should_delete_all_recommended_movies() {
+		// given
+		final UserId user = createAnyUserId();
+		tut.create(CreateRecommendationConfigurationSample.builder()
+				.userId(user)
+				.genreNames(Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE))
+				.build());
+
+		tut.recommendMoviesByConfiguration(user);
+		FakeClock.simulateWeeksIntoFuture(1);
+		tut.recommendMoviesByConfiguration(user);
+
+		// when
+		tut.handleUserDeleted(user);
+
+		// then
+		final Throwable thrown = catchThrowable(() -> tut.getLatestRecommendedMovies(user));
+		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
 	}
 
 	static class FakeClock extends Clock {

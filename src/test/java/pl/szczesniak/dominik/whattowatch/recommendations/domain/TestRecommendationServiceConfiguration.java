@@ -19,7 +19,8 @@ class TestRecommendationServiceConfiguration {
 						clock
 				),
 				inMemoryRecommendationConfigurationRepository,
-				repository
+				repository,
+				new UserDeletedRecommendationsService(inMemoryRecommendationConfigurationRepository, repository)
 		);
 	}
 

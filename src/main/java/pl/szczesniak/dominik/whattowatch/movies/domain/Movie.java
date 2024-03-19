@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -41,6 +42,8 @@ class Movie extends BaseEntity {
 	@AttributeOverride(name = "value", column = @Column(name = "movie_title"))
 	private MovieTitle title;
 
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "cover_id")
 	private MovieCover cover;
 
 	@OneToMany(cascade = CascadeType.ALL)

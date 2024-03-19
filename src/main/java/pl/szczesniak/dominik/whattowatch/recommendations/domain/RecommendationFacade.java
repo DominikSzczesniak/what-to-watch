@@ -19,12 +19,10 @@ import java.util.List;
 public class RecommendationFacade {
 
 	private final RecommendationConfigurationManager configurationManager;
-
 	private final RecommendationService recommendationService;
-
 	private final RecommendationConfigurationQueryService recommendationConfigurationQueryService;
-
 	private final RecommendedMoviesQueryService recommendedMoviesQueryService;
+	private final UserDeletedRecommendationsService userDeletedRecommendationsService;
 
 	public MovieInfoResponse recommendPopularMovies() {
 		return recommendationService.recommendPopularMovies();
@@ -48,13 +46,17 @@ public class RecommendationFacade {
 		configurationManager.update(command);
 	}
 
-	public RecommendationConfigurationRequestResult getLatestRecommendationConfiguration(final UserId userId) {
+	public RecommendationConfigurationRequestResult getRecommendationConfiguration(final UserId userId) {
 		return recommendationConfigurationQueryService.findRecommendationConfigurationQueryResultBy(userId)
 				.orElseThrow(() -> new ObjectDoesNotExistException("No recommended movies for user with id " + userId.getValue()));
 	}
 
 	public List<UserId> findAllUsersWithRecommendationConfiguration() {
 		return recommendationConfigurationQueryService.findAllUsersWithRecommendationConfigurations();
+	}
+
+	public void handleUserDeleted(final UserId userId) {
+		userDeletedRecommendationsService.removeAllDeletedUsersData(userId);
 	}
 
 }

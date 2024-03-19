@@ -1,6 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,20 +11,21 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.StoredFileId;
 
 import java.util.UUID;
 
-@Embeddable
+@Entity
 @Getter
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
 class MovieCover {
 
+	@Id
+	private UUID coverId;
+
 	@NonNull
 	private String filename;
 
 	@NonNull
 	private String coverContentType;
-
-	private UUID coverId;
 
 	MovieCover(@NonNull final String filename, @NonNull final String coverContentType, @NonNull final UUID coverId) {
 		this.filename = filename;

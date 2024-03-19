@@ -42,6 +42,11 @@ class InMemoryRecommendationConfigurationRepositoryConfiguration implements Reco
 		return Optional.ofNullable(configurations.get(userId)).map(PersistedRecommendationConfiguration::fromPersisted);
 	}
 
+	@Override
+	public void removeAllBy(final UserId userId) {
+		configurations.values().removeIf(config -> config.getUserId().equals(userId));
+	}
+
 	private static void setId(final RecommendationConfiguration configuration, final Integer idAsLong) {
 		final Class<RecommendationConfiguration> recommendationConfigurationClass = RecommendationConfiguration.class;
 		final Class<? super RecommendationConfiguration> baseEntityClass = recommendationConfigurationClass.getSuperclass();

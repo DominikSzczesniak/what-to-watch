@@ -27,7 +27,7 @@ public class GetRecommendationConfigurationController {
 	@GetMapping("/api/recommendations/configuration")
 	public ResponseEntity<RecommendationConfigurationDto> getRecommendationConfiguration(@AuthenticationPrincipal final UserDetails userDetails) {
 		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));
-		final RecommendationConfigurationRequestResult config = facade.getLatestRecommendationConfiguration(userId);
+		final RecommendationConfigurationRequestResult config = facade.getRecommendationConfiguration(userId);
 		final RecommendationConfigurationDto configDto = new RecommendationConfigurationDto(
 				config.getConfigurationId(),
 				mapGenres(config.getGenres()),

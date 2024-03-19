@@ -1,8 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesId;
-import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendedMoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.lang.reflect.Field;
@@ -64,6 +64,11 @@ class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRepository
 						recommendedMovies.getCreationDate().isBefore(intervalEnd) &&
 						recommendedMovies.getEndInterval().isAfter(intervalStart)
 				);
+	}
+
+	@Override
+	public void removeAllBy(final UserId userId) {
+		movies.values().removeIf(movie -> movie.getUserId().equals(userId));
 	}
 
 	@Override
