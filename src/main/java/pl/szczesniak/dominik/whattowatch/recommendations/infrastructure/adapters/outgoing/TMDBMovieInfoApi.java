@@ -77,9 +77,18 @@ class TMDBMovieInfoApi implements MovieInfoApi {
 
 	}
 
+	private MovieGenreResponse mapToMovieGenreResponse(final MovieGenreResponseDto movieGenreResponseDto) {
+		final Map<Long, MovieGenre> genres = new HashMap<>();
+		final List<MovieGenreDto> genresDto = movieGenreResponseDto.getGenres();
+		genresDto.forEach(genre -> genres.put(genre.getId(), assignedGenreIds.get(genre.getId())));
+
+		return new MovieGenreResponse(genres);
+	}
+
 	@Override
-	public MovieInfoResponse getMoviesByGenre(final List<Long> genreId) {
-		final String finalGenres = prepareGenresForRequest(genreId);
+	public MovieInfoResponse getMoviesByGenre(final Set<MovieGenre> genres) {
+		final List<Long> genreIds = mapGenreNamesToApiIds(genres);
+		final String finalGenres = prepareGenresForRequest(genreIds);
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path("/discover/movie")
@@ -92,8 +101,7 @@ class TMDBMovieInfoApi implements MovieInfoApi {
 				.block();
 	}
 
-	@Override
-	public List<Long> mapGenreNamesToApiIds(final Set<MovieGenre> genres) {
+	private List<Long> mapGenreNamesToApiIds(final Set<MovieGenre> genres) {
 		return genres.stream()
 				.filter(assignedGenreIds::containsValue)
 				.map(genre -> assignedGenreIds.entrySet().stream()
@@ -110,14 +118,6 @@ class TMDBMovieInfoApi implements MovieInfoApi {
 			genres += id + "|";
 		}
 		return genres.substring(0, genres.length() - 1);
-	}
-
-	private MovieGenreResponse mapToMovieGenreResponse(final MovieGenreResponseDto movieGenreResponseDto) {
-		final Map<Long, MovieGenre> genres = new HashMap<>();
-		final List<MovieGenreDto> genresDto = movieGenreResponseDto.getGenres();
-		genresDto.forEach(genre -> genres.put(genre.getId(), assignedGenreIds.get(genre.getId())));
-
-		return new MovieGenreResponse(genres);
 	}
 
 	private MovieInfoResponse mapToMovieInfoResponse(final MovieInfoResponseDto movieInfoResponseDto) {

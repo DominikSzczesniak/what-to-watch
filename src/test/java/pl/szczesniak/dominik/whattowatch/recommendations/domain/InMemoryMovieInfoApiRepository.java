@@ -37,7 +37,8 @@ class InMemoryMovieInfoApiRepository implements MovieInfoApi {
 	}
 
 	@Override
-	public MovieInfoResponse getMoviesByGenre(final List<Long> genreIds) {
+	public MovieInfoResponse getMoviesByGenre(final Set<MovieGenre> genres) {
+		final List<Long> genreIds = mapGenreNamesToApiIds(genres);
 		final List<MovieInfo> moviesByGenres = movies.values().stream()
 				.filter(movieInfo -> movieInfo.getGenres().stream()
 						.anyMatch(movieGenre -> genreIds.stream()
@@ -48,8 +49,7 @@ class InMemoryMovieInfoApiRepository implements MovieInfoApi {
 		return new MovieInfoResponse(moviesByGenres);
 	}
 
-	@Override
-	public List<Long> mapGenreNamesToApiIds(final Set<MovieGenre> genres) {
+	private List<Long> mapGenreNamesToApiIds(final Set<MovieGenre> genres) {
 		return genres.stream()
 				.filter(assignedGenreIds::containsValue)
 				.map(genre -> assignedGenreIds.entrySet().stream()

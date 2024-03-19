@@ -7,6 +7,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -28,7 +29,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 class RecommendationConfiguration extends BaseEntity {
 
-	@ElementCollection(targetClass = MovieGenre.class)
+	@ElementCollection(fetch = FetchType.EAGER, targetClass = MovieGenre.class)
 	@Enumerated(EnumType.STRING)
 	@CollectionTable(name = "configuration_genres", joinColumns = @JoinColumn(name = "configuration_id"))
 	@Column(name = "genre")
