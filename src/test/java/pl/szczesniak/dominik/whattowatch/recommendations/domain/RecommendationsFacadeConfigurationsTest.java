@@ -105,4 +105,18 @@ class RecommendationsFacadeConfigurationsTest {
 		assertThat(allUsersWithRecommendationConfiguration).hasSize(3);
 	}
 
+	@Test
+	void should_remove_recommendation_configuration() {
+		// given
+		final UserId userId = createAnyUserId();
+		tut.create(CreateRecommendationConfigurationSample.builder().userId(userId).build());
+
+		// when
+		tut.handleUserDeleted(userId);
+
+		// then
+		final Throwable thrown = catchThrowable(() -> tut.getLatestRecommendationConfiguration(userId));
+		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
+	}
+
 }

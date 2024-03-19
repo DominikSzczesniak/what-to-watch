@@ -16,7 +16,7 @@ public class TestMoviesFacadeConfiguration {
 						new MoviesTagsService(repository, repository),
 						repository,
 						watchedRepository,
-						new UserDeletedService(repository, watchedRepository, repository, filesStorage)
+						new UserDeletedMoviesService(repository, watchedRepository, repository)
 				);
 	}
 

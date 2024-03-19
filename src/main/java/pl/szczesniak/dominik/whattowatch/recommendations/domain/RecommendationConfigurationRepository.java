@@ -15,11 +15,17 @@ interface RecommendationConfigurationRepository {
 
 	Optional<RecommendationConfiguration> findBy(UserId userId);
 
+	void removeAllBy(UserId userId);
 
 }
 
 @Repository
 interface SpringDataJpaRecommendationConfigurationRepository extends RecommendationConfigurationRepository, JpaRepository<RecommendationConfiguration, UserId> {
+
+	@Override
+	default void removeAllBy(UserId userId) {
+		removeAllByUserId(userId);
+	}
 
 	@Override
 	default ConfigurationId create(RecommendationConfiguration configuration) {
@@ -37,5 +43,7 @@ interface SpringDataJpaRecommendationConfigurationRepository extends Recommendat
 	}
 
 	Optional<RecommendationConfiguration> findByUserId(UserId userId);
+
+	void removeAllByUserId(final UserId userId);
 
 }

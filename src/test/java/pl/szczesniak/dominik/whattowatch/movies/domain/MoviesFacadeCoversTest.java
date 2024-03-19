@@ -118,24 +118,4 @@ public class MoviesFacadeCoversTest {
 		assertThat(actual).containsExactly(expected);
 	}
 
-	@Test
-	void should_delete_all_users_movie_covers() {
-		// given
-		final UserId user = userProvider.addUser(createAnyUserId());
-		final MovieId movieId_1 = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
-		final MovieId movieId_2 = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
-
-		tut.setMovieCover(SetMovieCoverSample.builder().movieId(movieId_1).userId(user).build());
-		tut.setMovieCover(SetMovieCoverSample.builder().movieId(movieId_2).userId(user).build());
-
-		// when
-		tut.handleUserDeleted(user);
-
-		// then
-		final Throwable thrown_1 = catchThrowable(() -> tut.getCoverForMovie(movieId_1, user));
-		final Throwable thrown_2 = catchThrowable(() -> tut.getCoverForMovie(movieId_2, user));
-		assertThat(thrown_1).isInstanceOf(ObjectDoesNotExistException.class);
-		assertThat(thrown_2).isInstanceOf(ObjectDoesNotExistException.class);
-	}
-
 }

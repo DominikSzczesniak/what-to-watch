@@ -23,6 +23,7 @@ public class RecommendationFacade {
 	private final RecommendationService recommendationService;
 	private final RecommendationConfigurationQueryService recommendationConfigurationQueryService;
 	private final RecommendedMoviesQueryService recommendedMoviesQueryService;
+	private final UserDeletedRecommendationsService userDeletedRecommendationsService;
 
 	public MovieInfoResponse recommendPopularMovies() {
 		return recommendationService.recommendPopularMovies();
@@ -53,6 +54,10 @@ public class RecommendationFacade {
 
 	public List<UserId> findAllUsersWithRecommendationConfiguration() {
 		return recommendationConfigurationQueryService.findAllUsersWithRecommendationConfigurations();
+	}
+
+	public void handleUserDeleted(final UserId userId) {
+		userDeletedRecommendationsService.removeAllDeletedUsersData(userId);
 	}
 
 }

@@ -48,8 +48,7 @@ class UserService {
 				.orElseThrow(() -> new InvalidCredentialsException("Invalid credentials, could not log in.")).getUserId();
 	}
 
-	@Transactional
-	public void deleteUser(final UserId userId) {
+	void deleteUser(final UserId userId) {
 		repository.deleteUser(userId);
 		domainEventsPublisher.publish(new UserDeleted(userId));
 	}

@@ -16,7 +16,7 @@ class MoviesFacadeConfiguration {
 									 final MoviesTagsService moviesTagsService,
 									 final MoviesQueryService moviesQueryService,
 									 final WatchedMoviesQueryService watchedMoviesQueryService,
-									 final UserDeletedService userDeletedService) {
+									 final UserDeletedMoviesService userDeletedService) {
 		return new MoviesFacade(
 				moviesWatchlistService,
 				movieListService,

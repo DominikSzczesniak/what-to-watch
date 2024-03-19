@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.files.infrastructure.outgoing.persistence;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -68,7 +69,7 @@ public class LocalDriveFilesStorage implements FilesStorage {
 	public void deleteFile(final StoredFileId storedFileId) {
 		try {
 			final Path filePath = Path.of(FILES_DIRECTORY, storedFileId.getValue().toString());
-			Files.deleteIfExists(filePath);
+			FileUtils.forceDelete(new File(filePath.toString()));
 		} catch (IOException e) {
 			logger.info("Cover not deleted, an error occurred.");
 			throw new UncheckedIOException(e);

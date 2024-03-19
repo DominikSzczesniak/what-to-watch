@@ -38,7 +38,7 @@ public class MoviesFacade {
 	private final MoviesTagsService moviesTagsService;
 	private final MoviesQueryService moviesQueryService;
 	private final WatchedMoviesQueryService watchedMoviesQueryService;
-	private final UserDeletedService userDeletedService;
+	private final UserDeletedMoviesService userDeletedService;
 
 	public MovieId addMovieToList(final AddMovieToList command) {
 		return moviesWatchlistService.addMovieToList(command);
