@@ -145,26 +145,38 @@ public class JdbcMoviesToWatchQueryService implements MoviesQueryService {
 		params.addValue("movieId", movieId.getValue());
 		params.addValue("userId", userId.getValue());
 
-		return jdbcTemplate.query(sql, params, rs -> {
-			if (rs.next()) {
-				final MovieQueryResult result = new MovieQueryResult(
-						rs.getInt("movie_id"),
-						rs.getString("movie_title"),
-						new HashSet<>(),
-						new HashSet<>()
-				);
+		final Set<MovieCommentQueryResult> comments = new HashSet<>();
+		final Set<MovieTagQueryResult> tags = new HashSet<>();
 
-				fillComments(rs, result.getComments());
-				fillTags(rs, result.getTags());
+		final Optional<MovieQueryResult> query = jdbcTemplate.query(sql, params, rs -> {
+			MovieQueryResult result = null;
+			while (rs.next()) {
+				if (result == null) {
+					result = new MovieQueryResult(
+							rs.getInt("movie_id"),
+							rs.getString("movie_title"),
+							new HashSet<>(),
+							new HashSet<>()
+					);
+				}
 
-				return Optional.of(result);
-			} else {
-				return Optional.empty();
+				addComment(rs, comments);
+				addTag(rs, tags);
 			}
+
+			return Optional.ofNullable(result);
 		});
+
+		if (query.isPresent()) {
+			comments.forEach(comment -> query.get().getComments().add(comment));
+			tags.forEach(tag -> query.get().getTags().add(tag));
+		}
+
+		return query;
+
 	}
 
-	private static void fillComments(final ResultSet rs, final Set<MovieCommentQueryResult> comments) throws SQLException {
+	private static void addComment(final ResultSet rs, final Set<MovieCommentQueryResult> comments) throws SQLException {
 		if (rs.getString("comment_id") != null) {
 			comments.add(
 					new MovieCommentQueryResult(
@@ -174,7 +186,7 @@ public class JdbcMoviesToWatchQueryService implements MoviesQueryService {
 		}
 	}
 
-	private static void fillTags(final ResultSet rs, final Set<MovieTagQueryResult> movieQueryResult) throws SQLException {
+	private static void addTag(final ResultSet rs, final Set<MovieTagQueryResult> movieQueryResult) throws SQLException {
 		if (rs.getString("tag_id") != null) {
 			movieQueryResult.add(
 					new MovieTagQueryResult(

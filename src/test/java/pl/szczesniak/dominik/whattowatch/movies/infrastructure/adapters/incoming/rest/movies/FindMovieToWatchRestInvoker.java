@@ -21,25 +21,25 @@ public class FindMovieToWatchRestInvoker extends BaseRestInvoker {
 		super(restTemplate);
 	}
 
-	public ResponseEntity<MovieDetailsDto> findMovieToWatch(final LoggedUser loggedUser, final Integer movieId) {
+	public ResponseEntity<MovieDetailsDTO> findMovieToWatch(final LoggedUser loggedUser, final Integer movieId) {
 		final HttpHeaders headers = new HttpHeaders();
 		addSessionIdHeader(headers, loggedUser);
 		return restTemplate.exchange(
 				URL,
 				HttpMethod.GET,
 				new HttpEntity<>(headers),
-				MovieDetailsDto.class,
+				MovieDetailsDTO.class,
 				movieId
 		);
 	}
 
 	@Value
-	public static class MovieDetailsDto {
+	public static class MovieDetailsDTO {
 		String title;
 		Integer movieId;
 		Integer userId;
 		List<MovieCommentDto> comments;
-		List<MovieTagDto> tags;
+		List<MovieTagDTO> tags;
 	}
 
 	@Value
@@ -50,7 +50,7 @@ public class FindMovieToWatchRestInvoker extends BaseRestInvoker {
 	}
 
 	@Value
-	public static class MovieTagDto {
+	public static class MovieTagDTO {
 		String tagId;
 		String tagLabel;
 	}
