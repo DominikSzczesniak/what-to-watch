@@ -50,7 +50,6 @@ class RecommendationService {
 		return movieInfoApi.getPopularMovies();
 	}
 
-	//	@Transactional
 	public void recommendMoviesByConfiguration(final UserId userId) {
 		if (!hasRecommendedMoviesForCurrentInterval(userId)) {
 			final RecommendationConfiguration configuration = getRecommendationConfiguration(userId);
@@ -59,13 +58,13 @@ class RecommendationService {
 
 			final List<MovieInfo> recommendedFromApi = getMovieInfosByConfig(configuration.getGenres());
 
-			czyJaChceToChowac(configuration, userMoviesRecommendations, recommendedFromApi);
+			generateRecommendedMovies(configuration, userMoviesRecommendations, recommendedFromApi);
 		}
 	}
 
-	private void czyJaChceToChowac(final RecommendationConfiguration configuration,
-								   final UserMoviesRecommendations userMoviesRecommendations,
-								   final List<MovieInfo> recommendedFromApi) {
+	private void generateRecommendedMovies(final RecommendationConfiguration configuration,
+										   final UserMoviesRecommendations userMoviesRecommendations,
+										   final List<MovieInfo> recommendedFromApi) {
 		final DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		final TransactionStatus status = transactionManager.getTransaction(def);
 
