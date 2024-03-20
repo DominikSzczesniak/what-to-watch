@@ -94,7 +94,6 @@ class RecommendationService {
 		final LocalDateTime now = LocalDateTime.now(clock);
 		final LocalDateTime intervalStart = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.WEDNESDAY)).with(LocalTime.parse("00:00:00"));
 		final LocalDateTime intervalEnd = now.with(TemporalAdjusters.next(DayOfWeek.TUESDAY)).with(LocalTime.parse("23:59:59"));
-//				final LocalDateTime intervalEnd = intervalStart.plusSeconds(1);
 
 		return repository.existsByUserIdAndRecommendationDateBetween(userId, intervalStart, intervalEnd);
 	}
