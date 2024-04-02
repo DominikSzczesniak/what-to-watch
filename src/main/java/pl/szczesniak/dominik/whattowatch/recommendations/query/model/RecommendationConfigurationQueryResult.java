@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Value
 @EqualsAndHashCode(of = "configurationId")
-public class RecommendationConfigurationRequestResult {
+public class RecommendationConfigurationQueryResult {
 
 	@NonNull Integer userId;
 
