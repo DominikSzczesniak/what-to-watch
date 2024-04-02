@@ -128,7 +128,7 @@ class UserModuleIntegrationTest {
 		assertThat(failedLoginUserResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
 
-	private LoggedUser getLoggedUser(final ResponseEntity<Integer> loggedUserResponse) { // todo
+	private LoggedUser getLoggedUser(final ResponseEntity<Integer> loggedUserResponse) {
 		final List<String> cookies = loggedUserResponse
 				.getHeaders()
 				.get("Set-Cookie");
