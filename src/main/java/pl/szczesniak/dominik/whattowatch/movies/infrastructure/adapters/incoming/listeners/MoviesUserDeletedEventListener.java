@@ -13,7 +13,7 @@ class MoviesUserDeletedEventListener {
 	private final MoviesFacade facade;
 
 	@EventListener(UserDeleted.class)
-	public void handleUserDeletedEvent(UserDeleted event) {
+	public void handleUserDeletedEvent(final UserDeleted event) {
 		facade.handleUserDeleted(event.getUserId());
 	}
 
