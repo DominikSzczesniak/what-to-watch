@@ -3,11 +3,12 @@ package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
-public class InMemoryUserRecommendationsRepository implements RecommendationsRepository {
+class InMemoryUserRecommendationsRepository implements RecommendationsRepository {
 
-	private final HashMap<UserId, UserMoviesRecommendations> aggregates = new HashMap<>();
+	private final Map<UserId, UserMoviesRecommendations> aggregates = new HashMap<>();
 
 	@Override
 	public Optional<UserMoviesRecommendations> findBy(final UserId userId) {

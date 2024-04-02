@@ -7,7 +7,7 @@ import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.Configurat
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfigurationSample;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfigurationSample;
-import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.Clock;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static pl.szczesniak.dominik.whattowatch.recommendations.domain.TestRecommendationServiceConfiguration.recommendationFacade;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
-class RecommendationsFacadeRecommendationConfigurationsTest {
+class RecommendationsFacadeConfigurationsTest {
 
 	private RecommendationFacade tut;
 
@@ -35,7 +35,7 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 
 		// when
 		final ConfigurationId configurationId = tut.create(CreateRecommendationConfigurationSample.builder().userId(userId).build());
-		final RecommendationConfigurationRequestResult configuration = tut.getLatestRecommendationConfiguration(userId);
+		final RecommendationConfigurationQueryResult configuration = tut.getLatestRecommendationConfiguration(userId);
 
 		// then
 		assertThat(configuration.getUserId()).isEqualTo(userId.getValue());
@@ -51,11 +51,11 @@ class RecommendationsFacadeRecommendationConfigurationsTest {
 				.genreNames(Set.of(MovieGenre.ADVENTURE))
 				.build());
 
-		final RecommendationConfigurationRequestResult configuration = tut.getLatestRecommendationConfiguration(userId);
+		final RecommendationConfigurationQueryResult configuration = tut.getLatestRecommendationConfiguration(userId);
 		tut.update(UpdateRecommendationConfigurationSample.builder().genreNames(Set.of(MovieGenre.ACTION)).userId(userId).build());
 
 		// when
-		final RecommendationConfigurationRequestResult updatedConfiguration = tut.getLatestRecommendationConfiguration(userId);
+		final RecommendationConfigurationQueryResult updatedConfiguration = tut.getLatestRecommendationConfiguration(userId);
 
 		// then
 		assertThat(updatedConfiguration).isEqualTo(configuration);

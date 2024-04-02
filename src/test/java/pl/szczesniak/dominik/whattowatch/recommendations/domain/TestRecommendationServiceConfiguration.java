@@ -18,7 +18,7 @@ class TestRecommendationServiceConfiguration {
 				configurationManager,
 				new RecommendationService(
 						configurationManager,
-						new InMemoryMovieInfoApiRepository(),
+						new InMemoryMovieInfoApi(),
 						repository,
 						new InMemoryUserRecommendationsRepository(),
 						clock,

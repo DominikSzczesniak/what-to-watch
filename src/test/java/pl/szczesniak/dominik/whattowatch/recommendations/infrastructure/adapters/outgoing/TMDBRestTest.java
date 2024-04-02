@@ -42,11 +42,11 @@ class TMDBRestTest {
 	//	@Test
 	void should_find_movies_by_genre_id() {
 		// given
-		final Map<Long, MovieGenre> genres = tut.getGenres().getGenres();
-		final Set<MovieGenre> genreIds = new HashSet<>(genres.values());
+		final Map<Long, MovieGenre> allGenres = tut.getGenres().getGenres();
+		final Set<MovieGenre> genres = new HashSet<>(allGenres.values());
 
 		// when
-		final MovieInfoResponse moviesByGenre = tut.getMoviesByGenre(genreIds);
+		final MovieInfoResponse moviesByGenre = tut.getMoviesByGenre(genres);
 
 		// then
 		assertThat(moviesByGenre.getResults()).isNotNull();

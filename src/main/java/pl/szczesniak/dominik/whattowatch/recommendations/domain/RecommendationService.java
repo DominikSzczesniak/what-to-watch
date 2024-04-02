@@ -23,7 +23,7 @@ class RecommendationService {
 
 	private final RecommendationConfigurationManager configurationManager;
 	private final MovieInfoApi movieInfoApi;
-	private final RecommendedMoviesRepository repository;
+	private final RecommendedMoviesRepository recommendedMoviesRepository;
 	private final RecommendationsRepository recommendationsRepository;
 	private final Clock clock;
 	private final PlatformTransactionManager transactionManager;
@@ -32,14 +32,14 @@ class RecommendationService {
 
 	RecommendationService(final RecommendationConfigurationManager configurationManager,
 						  final MovieInfoApi movieInfoApi,
-						  final RecommendedMoviesRepository repository,
+						  final RecommendedMoviesRepository recommendedMoviesRepository,
 						  final RecommendationsRepository recommendationsRepository,
 						  final Clock clock,
 						  final PlatformTransactionManager transactionManager,
 						  final @Value("${number.of.movies.to.recommend}") int numberOfMoviesToRecommend) {
 		this.configurationManager = configurationManager;
 		this.movieInfoApi = movieInfoApi;
-		this.repository = repository;
+		this.recommendedMoviesRepository = recommendedMoviesRepository;
 		this.recommendationsRepository = recommendationsRepository;
 		this.clock = clock;
 		this.transactionManager = transactionManager;
@@ -76,7 +76,7 @@ class RecommendationService {
 			);
 
 			recommendationsRepository.create(userMoviesRecommendations);
-			repository.create(recommendedMovies);
+			recommendedMoviesRepository.create(recommendedMovies);
 			transactionManager.commit(status);
 		} catch (Exception e) {
 			transactionManager.rollback(status);
@@ -95,7 +95,7 @@ class RecommendationService {
 		final LocalDateTime intervalStart = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.WEDNESDAY)).with(LocalTime.parse("00:00:00"));
 		final LocalDateTime intervalEnd = now.with(TemporalAdjusters.next(DayOfWeek.TUESDAY)).with(LocalTime.parse("23:59:59"));
 
-		return repository.existsByUserIdAndRecommendationDateBetween(userId, intervalStart, intervalEnd);
+		return recommendedMoviesRepository.existsByUserIdAndRecommendationDateBetween(userId, intervalStart, intervalEnd);
 	}
 
 	private List<MovieInfo> getMovieInfosByConfig(final Set<MovieGenre> genres) {

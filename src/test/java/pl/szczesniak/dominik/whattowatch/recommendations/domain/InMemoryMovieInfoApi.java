@@ -15,13 +15,13 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-class InMemoryMovieInfoApiRepository implements MovieInfoApi {
+class InMemoryMovieInfoApi implements MovieInfoApi {
 
 	private final Map<Integer, MovieInfo> movies = new HashMap<>();
 
 	private final Map<Long, MovieGenre> assignedGenreIds = new HashMap<>();
 
-	InMemoryMovieInfoApiRepository() {
+	InMemoryMovieInfoApi() {
 		addGenres();
 		addMovieInfos();
 	}

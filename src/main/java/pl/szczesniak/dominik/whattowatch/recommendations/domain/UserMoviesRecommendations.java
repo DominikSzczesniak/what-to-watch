@@ -34,7 +34,7 @@ import static java.util.Comparator.comparingLong;
 @Getter
 @NoArgsConstructor
 @ToString
-public class UserMoviesRecommendations extends BaseEntity {
+class UserMoviesRecommendations extends BaseEntity {
 
 	@OneToOne
 	@JoinTable(
