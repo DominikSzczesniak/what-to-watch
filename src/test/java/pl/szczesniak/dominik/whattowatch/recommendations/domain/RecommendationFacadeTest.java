@@ -7,9 +7,9 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
-import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfigurationSample;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfigurationSample;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.Clock;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static pl.szczesniak.dominik.whattowatch.recommendations.domain.TestRecommendationServiceConfiguration.recommendationFacade;
 import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.createAnyUserId;
 
-class RecommendationFacadeServiceTest {
+class RecommendationFacadeTest {
 
 	private RecommendationFacade tut;
 

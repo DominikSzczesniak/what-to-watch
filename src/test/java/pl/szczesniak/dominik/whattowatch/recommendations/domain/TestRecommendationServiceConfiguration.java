@@ -1,9 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionException;
-import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Clock;
 
@@ -22,7 +20,7 @@ class TestRecommendationServiceConfiguration {
 						repository,
 						new InMemoryUserRecommendationsRepository(),
 						clock,
-						dummyTransactionManager(),
+						new DummyTransactionTemplate(),
 						2
 				),
 				inMemoryRecommendationConfigurationRepository,
@@ -30,23 +28,16 @@ class TestRecommendationServiceConfiguration {
 		);
 	}
 
-	private static PlatformTransactionManager dummyTransactionManager() {
-		return new PlatformTransactionManager() {
-			@Override
-			public TransactionStatus getTransaction(final TransactionDefinition definition) throws TransactionException {
-				return null;
-			}
+	private static class DummyTransactionTemplate extends TransactionTemplate {
 
-			@Override
-			public void commit(final TransactionStatus status) throws TransactionException {
+		public DummyTransactionTemplate() {
+			super();
+		}
 
-			}
-
-			@Override
-			public void rollback(final TransactionStatus status) throws TransactionException {
-
-			}
-		};
+		@Override
+		public <T> T execute(TransactionCallback<T> action) {
+			return action.doInTransaction(null);
+		}
 	}
 
 }

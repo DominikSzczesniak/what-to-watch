@@ -1,4 +1,4 @@
-package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.scheduler;
+package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.scheduler;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +12,13 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Component
 @Slf4j
-public class RecommendationDecisionHandler {
+public class NewRecommendationsTrigger {
 
 	private final RecommendationFacade facade;
 
-	public void recommendMovies() {
+	public void recommendMovies() { // todo:
 		final List<UserId> usersWithRecommendationConfiguration = facade.findAllUsersWithRecommendationConfiguration();
+		// zrobic joina i pobrac userid, configuration-genres, latestRecommendationVersion(optional)
 		usersWithRecommendationConfiguration.forEach(facade::recommendMoviesByConfiguration);
 	}
 

@@ -1,6 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,7 +18,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+
 @Component
+@Slf4j
 class TMDBMovieInfoApi implements MovieInfoApi {
 
 	private final Map<Long, MovieGenre> assignedGenreIds;
@@ -52,28 +57,38 @@ class TMDBMovieInfoApi implements MovieInfoApi {
 
 	@Override
 	public MovieInfoResponse getPopularMovies() {
-		return webClient.get()
-				.uri(uriBuilder -> uriBuilder
-						.path("/movie/popular")
-						.queryParam("api_key", apiKey)
-						.build())
-				.retrieve()
-				.bodyToMono(MovieInfoResponseDto.class)
-				.map(this::mapToMovieInfoResponse)
-				.block();
+		try {
+			return webClient.get()
+					.uri(uriBuilder -> uriBuilder
+							.path("/movie/popular")
+							.queryParam("api_key", apiKey)
+							.build())
+					.retrieve()
+					.bodyToMono(MovieInfoResponseDto.class)
+					.map(this::mapToMovieInfoResponse)
+					.block();
+		} catch (Exception e) {
+			log.info("Unable to fetch movies from external API.");
+			return new MovieInfoResponse(emptyList());
+		}
 	}
 
 	@Override
 	public MovieGenreResponse getGenres() {
-		return webClient.get()
-				.uri(uriBuilder -> uriBuilder
-						.path("/genre/movie/list")
-						.queryParam("api_key", apiKey)
-						.build())
-				.retrieve()
-				.bodyToMono(MovieGenreResponseDto.class)
-				.map(this::mapToMovieGenreResponse)
-				.block();
+		try {
+			return webClient.get()
+					.uri(uriBuilder -> uriBuilder
+							.path("/genre/movie/list")
+							.queryParam("api_key", apiKey)
+							.build())
+					.retrieve()
+					.bodyToMono(MovieGenreResponseDto.class)
+					.map(this::mapToMovieGenreResponse)
+					.block();
+		} catch (Exception e) {
+			log.info("Unable to fetch genres from external API.");
+			return new MovieGenreResponse(emptyMap());
+		}
 
 	}
 
@@ -87,18 +102,23 @@ class TMDBMovieInfoApi implements MovieInfoApi {
 
 	@Override
 	public MovieInfoResponse getMoviesByGenre(final Set<MovieGenre> genres) {
-		final List<Long> genreIds = mapGenreNamesToApiIds(genres);
-		final String finalGenres = prepareGenresForRequest(genreIds);
-		return webClient.get()
-				.uri(uriBuilder -> uriBuilder
-						.path("/discover/movie")
-						.queryParam("api_key", apiKey)
-						.queryParam("with_genres", finalGenres)
-						.build())
-				.retrieve()
-				.bodyToMono(MovieInfoResponseDto.class)
-				.map(this::mapToMovieInfoResponse)
-				.block();
+		try {
+			final List<Long> genreIds = mapGenreNamesToApiIds(genres);
+			final String finalGenres = prepareGenresForRequest(genreIds);
+			return webClient.get()
+					.uri(uriBuilder -> uriBuilder
+							.path("/discover/movie")
+							.queryParam("api_key", apiKey)
+							.queryParam("with_genres", finalGenres)
+							.build())
+					.retrieve()
+					.bodyToMono(MovieInfoResponseDto.class)
+					.map(this::mapToMovieInfoResponse)
+					.block();
+		} catch (Exception e) {
+			log.info("Fetching recommendations failed, next scheduler should handle recommendation.");
+			return new MovieInfoResponse(emptyList());
+		}
 	}
 
 	private List<Long> mapGenreNamesToApiIds(final Set<MovieGenre> genres) {

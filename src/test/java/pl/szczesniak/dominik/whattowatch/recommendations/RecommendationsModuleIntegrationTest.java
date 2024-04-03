@@ -12,7 +12,7 @@ import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.configurations.GetMovieGenresInvoker;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.configurations.UpdateRecommendationConfigurationInvoker;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.rest.recommendedmovies.GetLatestRecommendedMoviesInvoker;
-import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.scheduler.RecommendationDecisionHandler;
+import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.incoming.scheduler.NewRecommendationsTrigger;
 import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider;
 import pl.szczesniak.dominik.whattowatch.security.LoggedUserProvider.LoggedUser;
 
@@ -30,7 +30,7 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.
 class RecommendationsModuleIntegrationTest {
 
 	@Autowired
-	private RecommendationDecisionHandler recommendationDecisionHandler;
+	private NewRecommendationsTrigger newRecommendationsTrigger;
 
 	@Autowired
 	private GetMovieGenresInvoker getMovieGenresRest;
@@ -180,7 +180,7 @@ class RecommendationsModuleIntegrationTest {
 	}
 
 	private void simulateRecommendationsAvailable() {
-		recommendationDecisionHandler.recommendMovies();
+		newRecommendationsTrigger.recommendMovies();
 	}
 
 }

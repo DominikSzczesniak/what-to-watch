@@ -8,16 +8,16 @@ import java.util.Optional;
 
 class InMemoryUserRecommendationsRepository implements RecommendationsRepository {
 
-	private final Map<UserId, UserMoviesRecommendations> aggregates = new HashMap<>();
+	private final Map<UserId, UserMoviesRecommendations> recommendations = new HashMap<>();
 
 	@Override
 	public Optional<UserMoviesRecommendations> findBy(final UserId userId) {
-		return Optional.ofNullable(aggregates.get(userId));
+		return Optional.ofNullable(recommendations.get(userId));
 	}
 
 	@Override
 	public void create(final UserMoviesRecommendations userMoviesRecommendations) {
-		aggregates.put(userMoviesRecommendations.getUserId(), userMoviesRecommendations);
+		recommendations.put(userMoviesRecommendations.getUserId(), userMoviesRecommendations);
 	}
 
 }
