@@ -1,6 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -18,6 +20,7 @@ interface RecommendationsRepository {
 interface SpringDataJpaAggregateRepository extends RecommendationsRepository, JpaRepository<UserMoviesRecommendations, UserId> {
 
 
+	@Lock(value = LockModeType.OPTIMISTIC_FORCE_INCREMENT)
 	@Override
 	default Optional<UserMoviesRecommendations> findBy(UserId userId) {
 		return findByUserId(userId);

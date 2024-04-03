@@ -7,6 +7,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,11 @@ import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
+import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +35,9 @@ import java.util.stream.Collectors;
 import static java.util.Comparator.comparingLong;
 
 @Entity
-@Table
+@Table(name = "user_movies_recommendations", uniqueConstraints = {
+		@UniqueConstraint(columnNames = {"user_id"})
+})
 @Getter
 @NoArgsConstructor
 @ToString
@@ -45,8 +52,6 @@ class UserMoviesRecommendations extends BaseEntity {
 	)
 	private RecommendedMovies currentRecommendation;
 
-	private LocalDateTime latestRecommendationDate;
-
 	@AttributeOverride(name = "value", column = @Column(name = "user_id"))
 	private UserId userId;
 
@@ -55,7 +60,6 @@ class UserMoviesRecommendations extends BaseEntity {
 
 	UserMoviesRecommendations(@NonNull final UserId userId) {
 		this.userId = userId;
-		this.latestRecommendationDate = LocalDateTime.now();
 	}
 
 	RecommendedMovies recommendMovies(final List<MovieInfo> recommendedFromApi,
@@ -112,11 +116,25 @@ class UserMoviesRecommendations extends BaseEntity {
 
 	private void updateCurrentRecommendation(final RecommendedMovies recommendedMovies) {
 		currentRecommendation = recommendedMovies;
-		this.latestRecommendationDate = LocalDateTime.now();
 	}
 
 	Optional<RecommendedMovies> getCurrentRecommendation() {
 		return Optional.ofNullable(currentRecommendation);
+	}
+
+	boolean hasRecommendedMoviesForCurrentInterval(final Clock clock) {
+		if (currentRecommendation == null) {
+			return false;
+		}
+		final LocalDateTime now = LocalDateTime.now(clock);
+		final LocalDateTime intervalStart = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.WEDNESDAY)).with(LocalTime.parse("00:00:00"));
+		final LocalDateTime intervalEnd = now.with(TemporalAdjusters.next(DayOfWeek.TUESDAY)).with(LocalTime.parse("23:59:59"));
+
+		final LocalDateTime latestRecommendationDate = currentRecommendation.getCreationDate();
+
+		return latestRecommendationDate != null &&
+				latestRecommendationDate.isAfter(intervalStart) &&
+				latestRecommendationDate.isBefore(intervalEnd);
 	}
 
 }

@@ -1,8 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesId;
-import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendedMoviesQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.lang.reflect.Field;
@@ -35,35 +35,6 @@ class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRepository
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Override
-	public Optional<RecommendedMovies> findLatestRecommendedMovies(final UserId userId) {
-		RecommendedMovies latestRecommendedMovies = null;
-		LocalDateTime latestDate = LocalDateTime.MIN;
-
-		for (RecommendedMovies recommendedMovies : movies.values()) {
-			if (recommendedMovies.getUserId().equals(userId)) {
-				final LocalDateTime recommendedDate = recommendedMovies.getCreationDate();
-				if (recommendedDate.isAfter(latestDate) || recommendedDate.isEqual(latestDate)) {
-					latestDate = recommendedDate;
-					latestRecommendedMovies = recommendedMovies;
-				}
-			}
-		}
-
-		return Optional.ofNullable(latestRecommendedMovies);
-	}
-
-	@Override
-	public boolean existsByUserIdAndRecommendationDateBetween(final UserId userId,
-															  final LocalDateTime intervalStart,
-															  final LocalDateTime intervalEnd) {
-		return movies.values().stream()
-				.anyMatch(recommendedMovies -> recommendedMovies.getUserId().equals(userId) &&
-						recommendedMovies.getCreationDate().isBefore(intervalEnd) &&
-						recommendedMovies.getEndInterval().isAfter(intervalStart)
-				);
 	}
 
 	@Override
