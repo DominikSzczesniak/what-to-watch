@@ -210,7 +210,7 @@ public class MoviesFacadeTagsTest {
 		tut.handleUserDeleted(user);
 
 		// then
-		assertThat(tut.getMovieTagsByUserId(user.getValue()).size()).isEqualTo(0);
+		assertThat(tut.getMovieTagsByUserId(user.getValue())).hasSize(0);
 	}
 
 }
