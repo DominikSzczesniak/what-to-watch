@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.RecommendMovies;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendationDataQueryService;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationDataQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.List;
@@ -16,10 +19,12 @@ public class NewRecommendationsTrigger {
 
 	private final RecommendationFacade facade;
 
-	public void recommendMovies() { // todo:
-		final List<UserId> usersWithRecommendationConfiguration = facade.findAllUsersWithRecommendationConfiguration();
-		// zrobic joina i pobrac userid, configuration-genres, latestRecommendationVersion(optional)
-		usersWithRecommendationConfiguration.forEach(facade::recommendMoviesByConfiguration);
+	private final RecommendationDataQueryService queryService;
+
+	public void recommendMovies() {
+		final List<RecommendationDataQueryResult> allRecommendationDataQueryResult = queryService.findAllRecommendationDataQueryResult();
+		allRecommendationDataQueryResult.forEach(recommendation -> facade.recommendMovies(
+				new RecommendMovies(new UserId(recommendation.getUserId()), recommendation.getGenres())));
 	}
 
 }

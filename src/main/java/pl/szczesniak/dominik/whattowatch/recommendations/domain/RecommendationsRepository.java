@@ -20,12 +20,12 @@ interface RecommendationsRepository {
 interface SpringDataJpaAggregateRepository extends RecommendationsRepository, JpaRepository<UserMoviesRecommendations, UserId> {
 
 
-	@Lock(value = LockModeType.OPTIMISTIC_FORCE_INCREMENT)
 	@Override
 	default Optional<UserMoviesRecommendations> findBy(UserId userId) {
 		return findByUserId(userId);
 	}
 
+	@Lock(value = LockModeType.OPTIMISTIC_FORCE_INCREMENT)
 	@Override
 	default void create(UserMoviesRecommendations userMoviesRecommendations) {
 		save(userMoviesRecommendations);

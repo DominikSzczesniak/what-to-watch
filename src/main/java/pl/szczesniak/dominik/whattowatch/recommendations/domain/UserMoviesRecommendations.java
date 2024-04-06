@@ -1,6 +1,7 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -43,7 +44,7 @@ import static java.util.Comparator.comparingLong;
 @ToString
 class UserMoviesRecommendations extends BaseEntity {
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinTable(
 			name = "user_recommendations_movies",
 			joinColumns = {

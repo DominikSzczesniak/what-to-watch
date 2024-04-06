@@ -1,10 +1,9 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
 import org.springframework.transaction.support.TransactionTemplate;
-import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.RecommendMovies;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.MovieInfoApi;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.Clock;
 
@@ -39,30 +38,19 @@ class RecommendationService {
 		return movieInfoApi.getPopularMovies();
 	}
 
-	public void recommendMoviesByConfiguration(final UserId userId) {
-		final RecommendationConfiguration configuration = getRecommendationConfiguration(userId);
-		final UserMoviesRecommendations userMoviesRecommendations = recommendationsRepository.findBy(userId)
-				.orElseGet(() -> new UserMoviesRecommendations(userId));
+	public void recommendMoviesByConfiguration(final RecommendMovies command) {
+		final UserMoviesRecommendations userMoviesRecommendations = recommendationsRepository.findBy(command.getUserId())
+				.orElseGet(() -> new UserMoviesRecommendations(command.getUserId()));
 		if (!userMoviesRecommendations.hasRecommendedMoviesForCurrentInterval(clock)) {
-			final MovieInfoResponse recommendedFromApi = movieInfoApi.getMoviesByGenre(configuration.getGenres());
-			RecommendedMovies recommendedMovies = userMoviesRecommendations.recommendMovies(recommendedFromApi.getResults(), configuration.getGenres(), numberOfMoviesToRecommend);
+			final MovieInfoResponse recommendedFromApi = movieInfoApi.getMoviesByGenre(command.getGenres());
+			userMoviesRecommendations.recommendMovies(recommendedFromApi.getResults(), command.getGenres(), numberOfMoviesToRecommend);
 
-			createInTransaction(userMoviesRecommendations, recommendedMovies);
+			createInTransaction(userMoviesRecommendations);
 		}
 	}
 
-	private void createInTransaction(final UserMoviesRecommendations userMoviesRecommendations, final RecommendedMovies recommendedMovies) {
-		transactionTemplate.executeWithoutResult(status -> {
-			recommendedMoviesRepository.create(recommendedMovies); // todo: przez agregat
-			recommendationsRepository.create(userMoviesRecommendations);
-		});
-	}
-
-	private RecommendationConfiguration getRecommendationConfiguration(final UserId userId) {
-		return configurationManager.findby(userId)
-				.orElseThrow(() -> new ObjectDoesNotExistException(
-						"Shouldn't happen, recommendations for user happen only when user has recommendation configuration")
-				);
+	private void createInTransaction(final UserMoviesRecommendations userMoviesRecommendations) {
+		transactionTemplate.executeWithoutResult(status -> recommendationsRepository.create(userMoviesRecommendations));
 	}
 
 }

@@ -6,6 +6,7 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfiguration;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.RecommendMovies;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfiguration;
 import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendationConfigurationQueryService;
 import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendedMoviesQueryService;
@@ -30,8 +31,8 @@ public class RecommendationFacade {
 		return recommendationService.recommendPopularMovies();
 	}
 
-	public void recommendMoviesByConfiguration(final UserId userId) {
-		recommendationService.recommendMoviesByConfiguration(userId);
+	public void recommendMovies(final RecommendMovies command) {
+		recommendationService.recommendMoviesByConfiguration(command);
 	}
 
 	public RecommendedMoviesQueryResult getLatestRecommendedMovies(final UserId userId) {

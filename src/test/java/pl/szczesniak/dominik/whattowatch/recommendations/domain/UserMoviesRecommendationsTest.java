@@ -19,11 +19,13 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UserIdSample.
 class UserMoviesRecommendationsTest {
 
 	private UserMoviesRecommendations tut;
+	private FakeClock clock;
 
 	private final static int AMOUNT_OF_MOVIES_TO_RECOMMEND = 2;
 
 	@BeforeEach
 	void setUp() {
+		clock = new FakeClock();
 		tut = new UserMoviesRecommendations(createAnyUserId());
 	}
 
@@ -123,7 +125,7 @@ class UserMoviesRecommendationsTest {
 	}
 
 	@Test
-	void should_recommend_movies() {
+	void should_recommend_movies_based_on_provided_genres() {
 		// given
 		final Set<MovieGenre> genres = Set.of(MovieGenre.TV_MOVIE, MovieGenre.ADVENTURE);
 
@@ -139,7 +141,6 @@ class UserMoviesRecommendationsTest {
 				expectedMovieToRecommend2,
 				CreateMovieInfoSample.builder().genres(List.of(MovieGenre.ACTION)).build()
 		);
-
 
 		// when
 		final RecommendedMovies newRecommendedMovies = tut.recommendMovies(fromApi, genres, AMOUNT_OF_MOVIES_TO_RECOMMEND);
@@ -177,6 +178,31 @@ class UserMoviesRecommendationsTest {
 		assertThat(newRecommendedMovies.getMovies()).doesNotContain(previouslyRecommendedMovie1, previouslyRecommendedMovie2);
 		assertThat(newRecommendedMovies.getMovies()).extracting(MovieInfo::getGenres)
 				.containsAnyOf(List.of(MovieGenre.TV_MOVIE), List.of(MovieGenre.ADVENTURE));
+	}
+
+	@Test
+	void should_check_for_recommended_movies_for_current_interval() {
+		// given
+		final Set<MovieGenre> genres = Collections.emptySet();
+
+		final List<MovieInfo> fromApi = List.of(
+				CreateMovieInfoSample.builder().genres(List.of(MovieGenre.TV_MOVIE)).build(),
+				CreateMovieInfoSample.builder().genres(List.of(MovieGenre.TV_MOVIE, MovieGenre.CRIME)).build()
+		);
+
+		// when
+		tut.recommendMovies(fromApi, genres, AMOUNT_OF_MOVIES_TO_RECOMMEND);
+		boolean hasRecommendedMoviesForWeekOne = tut.hasRecommendedMoviesForCurrentInterval(clock);
+
+		// then
+		assertThat(hasRecommendedMoviesForWeekOne).isTrue();
+
+		// when
+		clock.simulateWeeksIntoFuture(1);
+		boolean hasRecommendedMoviesForWeekTwo = tut.hasRecommendedMoviesForCurrentInterval(clock);
+
+		// then
+		assertThat(hasRecommendedMoviesForWeekTwo).isFalse();
 	}
 
 }

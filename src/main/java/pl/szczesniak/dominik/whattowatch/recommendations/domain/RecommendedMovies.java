@@ -56,14 +56,14 @@ class RecommendedMovies extends BaseEntity {
 		return new RecommendedMoviesId(getId());
 	}
 
-	@Override
-	public String toString() {
-		return "RecommendedMovies{" +
-				"id=" + getId() +
-				", userId=" + userId +
-				", creationDate=" + creationDate +
-				", endInterval=" + endInterval +
-				'}';
-	}
+//	@Override
+//	public String toString() {
+//		return "RecommendedMovies{" +
+//				"id=" + getId() +
+//				", userId=" + userId +
+//				", creationDate=" + creationDate +
+//				", endInterval=" + endInterval +
+//				'}';
+//	}
 
 }

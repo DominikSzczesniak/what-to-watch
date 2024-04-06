@@ -18,7 +18,7 @@ class InMemoryRecommendedMoviesRepository implements RecommendedMoviesRepository
 	private final Map<RecommendedMoviesId, RecommendedMovies> movies = new HashMap<>();
 
 	@Override
-	public RecommendedMoviesId create(final RecommendedMovies recommendedMovies) {
+	public RecommendedMoviesId saveRecommendedMovies(final RecommendedMovies recommendedMovies) {
 		final int id = nextId.incrementAndGet();
 		setId(recommendedMovies, id);
 		movies.put(new RecommendedMoviesId(id), recommendedMovies);
