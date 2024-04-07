@@ -51,7 +51,7 @@ public class RecommendationFacade {
 
 	public RecommendationConfigurationQueryResult getLatestRecommendationConfiguration(final UserId userId) {
 		return recommendationConfigurationQueryService.findRecommendationConfigurationQueryResultBy(userId)
-				.orElseThrow(() -> new ObjectDoesNotExistException("No recommended movies for user with id " + userId.getValue()));
+				.orElseThrow(() -> new ObjectDoesNotExistException("No recommendation configuration for user with id " + userId.getValue()));
 	}
 
 	public List<UserId> findAllUsersWithRecommendationConfiguration() {

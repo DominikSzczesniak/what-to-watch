@@ -40,17 +40,21 @@ class RecommendationService {
 
 	public void recommendMoviesByConfiguration(final RecommendMovies command) {
 		final UserMoviesRecommendations userMoviesRecommendations = recommendationsRepository.findBy(command.getUserId())
-				.orElseGet(() -> new UserMoviesRecommendations(command.getUserId()));
+				.orElseGet(() -> createInTransaction(new UserMoviesRecommendations(command.getUserId())));
 		if (!userMoviesRecommendations.hasRecommendedMoviesForCurrentInterval(clock)) {
 			final MovieInfoResponse recommendedFromApi = movieInfoApi.getMoviesByGenre(command.getGenres());
 			userMoviesRecommendations.recommendMovies(recommendedFromApi.getResults(), command.getGenres(), numberOfMoviesToRecommend);
-
-			createInTransaction(userMoviesRecommendations);
+			updateInTransaction(userMoviesRecommendations);
 		}
 	}
 
-	private void createInTransaction(final UserMoviesRecommendations userMoviesRecommendations) {
+	private UserMoviesRecommendations createInTransaction(final UserMoviesRecommendations userMoviesRecommendations) {
 		transactionTemplate.executeWithoutResult(status -> recommendationsRepository.create(userMoviesRecommendations));
+		return userMoviesRecommendations;
+	}
+
+	private void updateInTransaction(final UserMoviesRecommendations userMoviesRecommendations) {
+		transactionTemplate.executeWithoutResult(status -> recommendationsRepository.update(userMoviesRecommendations));
 	}
 
 }

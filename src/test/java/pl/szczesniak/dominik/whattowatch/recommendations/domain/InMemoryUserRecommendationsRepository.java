@@ -20,4 +20,9 @@ class InMemoryUserRecommendationsRepository implements RecommendationsRepository
 		recommendations.put(userMoviesRecommendations.getUserId(), userMoviesRecommendations);
 	}
 
+	@Override
+	public void update(final UserMoviesRecommendations userMoviesRecommendations) {
+		recommendations.replace(userMoviesRecommendations.getUserId(), userMoviesRecommendations);
+	}
+
 }

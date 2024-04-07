@@ -51,7 +51,7 @@ class RecommendationConfiguration extends BaseEntity {
 		return new ConfigurationId(getId());
 	}
 
-	Set<MovieGenre> getGenres() {
+	Set<MovieGenre> getGenres() { // todo tylko w testach uzywane
 		if (genres.isEmpty()) {
 			return MovieGenre.allValues();
 		} else {

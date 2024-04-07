@@ -7,8 +7,6 @@ import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.C
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfiguration;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 class RecommendationConfigurationManager {
 
@@ -23,10 +21,6 @@ class RecommendationConfigurationManager {
 		final RecommendationConfiguration config = getRecommendationConfigurationBy(command.getUserId());
 		config.update(command.getGenres());
 		repository.update(config);
-	}
-
-	Optional<RecommendationConfiguration> findby(final UserId userId) {
-		return repository.findBy(userId);
 	}
 
 	RecommendationConfiguration getRecommendationConfigurationBy(final UserId userId) {

@@ -14,6 +14,7 @@ interface RecommendationsRepository {
 
 	void create(UserMoviesRecommendations userMoviesRecommendations);
 
+	void update(UserMoviesRecommendations userMoviesRecommendations);
 }
 
 @Repository
@@ -28,6 +29,11 @@ interface SpringDataJpaAggregateRepository extends RecommendationsRepository, Jp
 	@Lock(value = LockModeType.OPTIMISTIC_FORCE_INCREMENT)
 	@Override
 	default void create(UserMoviesRecommendations userMoviesRecommendations) {
+		save(userMoviesRecommendations);
+	}
+
+	@Override
+	default void update(UserMoviesRecommendations userMoviesRecommendations) {
 		save(userMoviesRecommendations);
 	}
 

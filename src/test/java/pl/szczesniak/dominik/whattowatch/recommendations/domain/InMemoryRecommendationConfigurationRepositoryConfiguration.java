@@ -84,7 +84,8 @@ class InMemoryRecommendationConfigurationRepositoryConfiguration implements Reco
 		UserId userId;
 
 		static PersistedRecommendationConfiguration toPersisted(final RecommendationConfiguration configuration) {
-			return new PersistedRecommendationConfiguration(configuration.getUuid(), configuration.getConfigurationId(), configuration.getGenres(), configuration.getUserId());
+			return new PersistedRecommendationConfiguration(
+					configuration.getUuid(), configuration.getConfigurationId(), configuration.getGenres(), configuration.getUserId());
 		}
 
 		static RecommendationConfiguration fromPersisted(final PersistedRecommendationConfiguration persistedConfig) {
