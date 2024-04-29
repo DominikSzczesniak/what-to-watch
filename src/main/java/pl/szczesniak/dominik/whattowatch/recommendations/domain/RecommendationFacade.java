@@ -20,11 +20,8 @@ import java.util.List;
 public class RecommendationFacade {
 
 	private final RecommendationConfigurationManager configurationManager;
-
 	private final RecommendationService recommendationService;
-
 	private final RecommendationConfigurationQueryService recommendationConfigurationQueryService;
-
 	private final RecommendedMoviesQueryService recommendedMoviesQueryService;
 
 	public MovieInfoResponse recommendPopularMovies() {
@@ -32,7 +29,7 @@ public class RecommendationFacade {
 	}
 
 	public void recommendMovies(final RecommendMovies command) {
-		recommendationService.recommendMoviesByConfiguration(command);
+		recommendationService.recommendMovies(command);
 	}
 
 	public RecommendedMoviesQueryResult getLatestRecommendedMovies(final UserId userId) {

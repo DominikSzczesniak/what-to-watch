@@ -15,9 +15,7 @@ class TestRecommendationServiceConfiguration {
 		return new RecommendationFacade(
 				configurationManager,
 				new RecommendationService(
-						configurationManager,
 						new InMemoryMovieInfoApi(),
-						repository,
 						new InMemoryUserRecommendationsRepository(),
 						clock,
 						new DummyTransactionTemplate(),

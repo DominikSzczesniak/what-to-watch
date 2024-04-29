@@ -32,6 +32,7 @@ interface SpringDataJpaAggregateRepository extends RecommendationsRepository, Jp
 		save(userMoviesRecommendations);
 	}
 
+	@Lock(value = LockModeType.OPTIMISTIC_FORCE_INCREMENT)
 	@Override
 	default void update(UserMoviesRecommendations userMoviesRecommendations) {
 		save(userMoviesRecommendations);

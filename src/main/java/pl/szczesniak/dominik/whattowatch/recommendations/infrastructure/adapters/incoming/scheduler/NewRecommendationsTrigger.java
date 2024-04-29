@@ -2,7 +2,6 @@ package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapter
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.RecommendMovies;
@@ -14,7 +13,6 @@ import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Component
-@Slf4j
 public class NewRecommendationsTrigger {
 
 	private final RecommendationFacade facade;

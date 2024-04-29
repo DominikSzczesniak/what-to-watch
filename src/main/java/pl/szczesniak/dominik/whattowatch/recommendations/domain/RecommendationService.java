@@ -9,25 +9,19 @@ import java.time.Clock;
 
 class RecommendationService {
 
-	private final RecommendationConfigurationManager configurationManager;
 	private final MovieInfoApi movieInfoApi;
-	private final RecommendedMoviesRepository recommendedMoviesRepository;
 	private final RecommendationsRepository recommendationsRepository;
 	private final Clock clock;
 	private final TransactionTemplate transactionTemplate;
 
 	private final int numberOfMoviesToRecommend;
 
-	RecommendationService(final RecommendationConfigurationManager configurationManager,
-						  final MovieInfoApi movieInfoApi,
-						  final RecommendedMoviesRepository recommendedMoviesRepository,
+	RecommendationService(final MovieInfoApi movieInfoApi,
 						  final RecommendationsRepository recommendationsRepository,
 						  final Clock clock,
 						  final TransactionTemplate transactionTemplate,
 						  final int numberOfMoviesToRecommend) {
-		this.configurationManager = configurationManager;
 		this.movieInfoApi = movieInfoApi;
-		this.recommendedMoviesRepository = recommendedMoviesRepository;
 		this.recommendationsRepository = recommendationsRepository;
 		this.clock = clock;
 		this.transactionTemplate = transactionTemplate;
@@ -38,7 +32,7 @@ class RecommendationService {
 		return movieInfoApi.getPopularMovies();
 	}
 
-	public void recommendMoviesByConfiguration(final RecommendMovies command) {
+	void recommendMovies(final RecommendMovies command) {
 		final UserMoviesRecommendations userMoviesRecommendations = recommendationsRepository.findBy(command.getUserId())
 				.orElseGet(() -> createInTransaction(new UserMoviesRecommendations(command.getUserId())));
 		if (!userMoviesRecommendations.hasRecommendedMoviesForCurrentInterval(clock)) {

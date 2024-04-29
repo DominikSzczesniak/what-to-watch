@@ -12,16 +12,12 @@ import java.time.Clock;
 class RecommendationServiceConfiguration {
 
 	@Bean
-	RecommendationService recommendationService(final RecommendationConfigurationManager configurationManager,
-												final MovieInfoApi movieInfoApi,
-												final RecommendedMoviesRepository repository,
+	RecommendationService recommendationService(final MovieInfoApi movieInfoApi,
 												final RecommendationsRepository recommendationsRepository,
 												final TransactionTemplate transactionTemplate,
 												@Value("${number.of.movies.to.recommend}") final int numberOfMoviesToRecommend) {
 		return new RecommendationService(
-				configurationManager,
 				movieInfoApi,
-				repository,
 				recommendationsRepository,
 				Clock.systemDefaultZone(),
 				transactionTemplate,

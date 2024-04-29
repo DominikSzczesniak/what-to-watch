@@ -62,35 +62,4 @@ class RecommendationFacadeTest {
 		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
 	}
 
-//	@Test todo: tutaj potrzeba repo w serwisie, pytanie czy warto testowac - pokrywaja to testy w agregacie tak jakby
-//	void should_not_recommend_when_already_recommended_movies_in_current_interval() {
-//		// given
-//		final UserId user = createAnyUserId();
-//		Set<MovieGenre> genres = Set.of(MovieGenre.FANTASY, MovieGenre.ADVENTURE);
-//		tut.create(CreateRecommendationConfigurationSample.builder()
-//				.userId(user)
-//				.genreNames(genres)
-//				.build());
-//
-//		tut.recommendMovies(RecommendMoviesSample.builder().userId(user).genres(genres).build());
-//		final RecommendedMoviesQueryResult recommendedMovies = tut.getLatestRecommendedMovies(user);
-//
-//		final boolean genresMatch = recommendedMovies.getMovies().stream()
-//				.map(MovieInfo::getGenres)
-//				.allMatch(allGenres -> allGenres.contains(MovieGenre.FANTASY) && allGenres.contains(MovieGenre.ADVENTURE));
-//		assertThat(genresMatch).isTrue();
-//
-//		tut.update(UpdateRecommendationConfigurationSample.builder()
-//				.userId(user)
-//				.genreNames(Set.of(MovieGenre.ACTION, MovieGenre.WAR))
-//				.build());
-//
-//		// when
-//		tut.recommendMovies(RecommendMoviesSample.builder().userId(user).genres(genres).build());
-//		final RecommendedMoviesQueryResult latestRecommendedMovies = tut.getLatestRecommendedMovies(user);
-//
-//		// then
-//		assertThat(latestRecommendedMovies.getRecommendedMoviesId()).isEqualTo(recommendedMovies.getRecommendedMoviesId());
-//	}
-
 }
