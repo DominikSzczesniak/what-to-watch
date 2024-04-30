@@ -1,5 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import java.time.Clock;
 
 class TestRecommendationServiceConfiguration {
@@ -12,15 +15,27 @@ class TestRecommendationServiceConfiguration {
 		return new RecommendationFacade(
 				configurationManager,
 				new RecommendationService(
-						configurationManager,
-						new InMemoryMovieInfoApiRepository(),
-						repository,
-						new RecommendedMoviesFactory(2),
-						clock
+						new InMemoryMovieInfoApi(),
+						new InMemoryUserRecommendationsRepository(),
+						clock,
+						new DummyTransactionTemplate(),
+						2
 				),
 				inMemoryRecommendationConfigurationRepository,
 				repository
 		);
+	}
+
+	private static class DummyTransactionTemplate extends TransactionTemplate {
+
+		public DummyTransactionTemplate() {
+			super();
+		}
+
+		@Override
+		public <T> T execute(TransactionCallback<T> action) {
+			return action.doInTransaction(null);
+		}
 	}
 
 }

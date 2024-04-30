@@ -1,73 +1,54 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
-import jakarta.transaction.Transactional;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
-import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
+import org.springframework.transaction.support.TransactionTemplate;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.RecommendMovies;
 import pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapters.outgoing.MovieInfoApi;
-import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.time.Clock;
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class RecommendationService {
 
-	private final RecommendationConfigurationManager configurationManager;
 	private final MovieInfoApi movieInfoApi;
-	private final RecommendedMoviesRepository repository;
-	private final RecommendedMoviesFactory recommendedMoviesFactory;
+	private final RecommendationsRepository recommendationsRepository;
 	private final Clock clock;
+	private final TransactionTemplate transactionTemplate;
+
+	private final int numberOfMoviesToRecommend;
+
+	RecommendationService(final MovieInfoApi movieInfoApi,
+						  final RecommendationsRepository recommendationsRepository,
+						  final Clock clock,
+						  final TransactionTemplate transactionTemplate,
+						  final int numberOfMoviesToRecommend) {
+		this.movieInfoApi = movieInfoApi;
+		this.recommendationsRepository = recommendationsRepository;
+		this.clock = clock;
+		this.transactionTemplate = transactionTemplate;
+		this.numberOfMoviesToRecommend = numberOfMoviesToRecommend;
+	}
 
 	MovieInfoResponse recommendPopularMovies() {
 		return movieInfoApi.getPopularMovies();
 	}
 
-	@Transactional
-	public void recommendMoviesByConfiguration(final UserId userId) {
-		if (!hasRecommendedMoviesForCurrentInterval(userId)) {
-			final RecommendationConfiguration configuration = configurationManager.getRecommendationConfigurationBy(userId);
-			final List<MovieInfo> recommendedFromApi = getMovieInfosByConfig(configuration.getGenres());
-			final List<MovieInfo> latestRecommendedMovies = repository.findLatestRecommendedMovies(userId)
-					.map(RecommendedMovies::getMovies)
-					.orElse(Collections.emptyList());
-
-			final RecommendedMovies recommendedMovies = recommendedMoviesFactory.createNewRecommendedMovies(
-					configuration.getGenres(),
-					recommendedFromApi,
-					latestRecommendedMovies,
-					userId
-			);
-
-			repository.create(recommendedMovies);
+	void recommendMovies(final RecommendMovies command) {
+		final UserMoviesRecommendations userMoviesRecommendations = recommendationsRepository.findBy(command.getUserId())
+				.orElseGet(() -> createInTransaction(new UserMoviesRecommendations(command.getUserId())));
+		if (!userMoviesRecommendations.hasRecommendedMoviesForCurrentInterval(clock)) {
+			final MovieInfoResponse recommendedFromApi = movieInfoApi.getMoviesByGenre(command.getGenres());
+			userMoviesRecommendations.recommendMovies(recommendedFromApi.getResults(), command.getGenres(), numberOfMoviesToRecommend);
+			updateInTransaction(userMoviesRecommendations);
 		}
 	}
 
-	boolean hasRecommendedMoviesForCurrentInterval(final UserId userId) {
-		final LocalDateTime now = LocalDateTime.now(clock);
-		final LocalDateTime intervalStart = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.WEDNESDAY)).with(LocalTime.parse("00:00:00"));
-		final LocalDateTime intervalEnd = now.with(TemporalAdjusters.next(DayOfWeek.TUESDAY)).with(LocalTime.parse("23:59:59"));
-
-		return repository.existsByUserIdAndRecommendationDateBetween(userId, intervalStart, intervalEnd);
+	private UserMoviesRecommendations createInTransaction(final UserMoviesRecommendations userMoviesRecommendations) {
+		transactionTemplate.executeWithoutResult(status -> recommendationsRepository.create(userMoviesRecommendations));
+		return userMoviesRecommendations;
 	}
 
-	private List<MovieInfo> getMovieInfosByConfig(final Set<MovieGenre> genres) {
-		Set<MovieGenre> movieGenres = genres;
-		if (genres.size() == 0) {
-			movieGenres = MovieGenre.allValues();
-		}
-
-		final List<Long> userGenresIds = movieInfoApi.mapGenreNamesToApiIds(movieGenres);
-		final MovieInfoResponse moviesByGenre = movieInfoApi.getMoviesByGenre(userGenresIds);
-		return moviesByGenre.getResults();
+	private void updateInTransaction(final UserMoviesRecommendations userMoviesRecommendations) {
+		transactionTemplate.executeWithoutResult(status -> recommendationsRepository.update(userMoviesRecommendations));
 	}
 
 }

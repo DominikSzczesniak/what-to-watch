@@ -6,10 +6,11 @@ import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectD
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.CreateRecommendationConfiguration;
+import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.RecommendMovies;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfiguration;
 import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendationConfigurationQueryService;
 import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendedMoviesQueryService;
-import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationQueryResult;
 import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendedMoviesQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
@@ -19,19 +20,16 @@ import java.util.List;
 public class RecommendationFacade {
 
 	private final RecommendationConfigurationManager configurationManager;
-
 	private final RecommendationService recommendationService;
-
 	private final RecommendationConfigurationQueryService recommendationConfigurationQueryService;
-
 	private final RecommendedMoviesQueryService recommendedMoviesQueryService;
 
 	public MovieInfoResponse recommendPopularMovies() {
 		return recommendationService.recommendPopularMovies();
 	}
 
-	public void recommendMoviesByConfiguration(final UserId userId) {
-		recommendationService.recommendMoviesByConfiguration(userId);
+	public void recommendMovies(final RecommendMovies command) {
+		recommendationService.recommendMovies(command);
 	}
 
 	public RecommendedMoviesQueryResult getLatestRecommendedMovies(final UserId userId) {
@@ -48,9 +46,9 @@ public class RecommendationFacade {
 		configurationManager.update(command);
 	}
 
-	public RecommendationConfigurationRequestResult getLatestRecommendationConfiguration(final UserId userId) {
+	public RecommendationConfigurationQueryResult getLatestRecommendationConfiguration(final UserId userId) {
 		return recommendationConfigurationQueryService.findRecommendationConfigurationQueryResultBy(userId)
-				.orElseThrow(() -> new ObjectDoesNotExistException("No recommended movies for user with id " + userId.getValue()));
+				.orElseThrow(() -> new ObjectDoesNotExistException("No recommendation configuration for user with id " + userId.getValue()));
 	}
 
 	public List<UserId> findAllUsersWithRecommendationConfiguration() {

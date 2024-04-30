@@ -15,13 +15,13 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-class InMemoryMovieInfoApiRepository implements MovieInfoApi {
+class InMemoryMovieInfoApi implements MovieInfoApi {
 
 	private final Map<Integer, MovieInfo> movies = new HashMap<>();
 
 	private final Map<Long, MovieGenre> assignedGenreIds = new HashMap<>();
 
-	InMemoryMovieInfoApiRepository() {
+	InMemoryMovieInfoApi() {
 		addGenres();
 		addMovieInfos();
 	}
@@ -37,7 +37,8 @@ class InMemoryMovieInfoApiRepository implements MovieInfoApi {
 	}
 
 	@Override
-	public MovieInfoResponse getMoviesByGenre(final List<Long> genreIds) {
+	public MovieInfoResponse getMoviesByGenre(final Set<MovieGenre> genres) {
+		final List<Long> genreIds = mapGenreNamesToApiIds(genres);
 		final List<MovieInfo> moviesByGenres = movies.values().stream()
 				.filter(movieInfo -> movieInfo.getGenres().stream()
 						.anyMatch(movieGenre -> genreIds.stream()
@@ -48,8 +49,7 @@ class InMemoryMovieInfoApiRepository implements MovieInfoApi {
 		return new MovieInfoResponse(moviesByGenres);
 	}
 
-	@Override
-	public List<Long> mapGenreNamesToApiIds(final Set<MovieGenre> genres) {
+	private List<Long> mapGenreNamesToApiIds(final Set<MovieGenre> genres) {
 		return genres.stream()
 				.filter(assignedGenreIds::containsValue)
 				.map(genre -> assignedGenreIds.entrySet().stream()

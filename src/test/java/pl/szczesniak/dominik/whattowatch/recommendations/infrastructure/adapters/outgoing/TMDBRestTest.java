@@ -5,9 +5,9 @@ import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenreResponse;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfoResponse;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,11 +42,11 @@ class TMDBRestTest {
 	//	@Test
 	void should_find_movies_by_genre_id() {
 		// given
-		final Map<Long, MovieGenre> genres = tut.getGenres().getGenres();
-		final List<Long> genreIds = new ArrayList<>(genres.keySet());
+		final Map<Long, MovieGenre> allGenres = tut.getGenres().getGenres();
+		final Set<MovieGenre> genres = new HashSet<>(allGenres.values());
 
 		// when
-		final MovieInfoResponse moviesByGenre = tut.getMoviesByGenre(List.of(genreIds.get(0), genreIds.get(1)));
+		final MovieInfoResponse moviesByGenre = tut.getMoviesByGenre(genres);
 
 		// then
 		assertThat(moviesByGenre.getResults()).isNotNull();

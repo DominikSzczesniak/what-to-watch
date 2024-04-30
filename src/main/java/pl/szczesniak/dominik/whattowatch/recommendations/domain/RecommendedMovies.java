@@ -4,12 +4,12 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.ToString;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.BaseEntity;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieInfo;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.RecommendedMoviesId;
@@ -23,10 +23,9 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@ToString
 class RecommendedMovies extends BaseEntity {
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "id")
 	private List<MovieInfo> movies;
 
@@ -56,5 +55,15 @@ class RecommendedMovies extends BaseEntity {
 	RecommendedMoviesId getRecommendedMoviesId() {
 		return new RecommendedMoviesId(getId());
 	}
+
+//	@Override
+//	public String toString() {
+//		return "RecommendedMovies{" +
+//				"id=" + getId() +
+//				", userId=" + userId +
+//				", creationDate=" + creationDate +
+//				", endInterval=" + endInterval +
+//				'}';
+//	}
 
 }

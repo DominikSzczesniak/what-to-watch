@@ -1,6 +1,5 @@
 package pl.szczesniak.dominik.whattowatch.recommendations.domain;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
@@ -8,7 +7,7 @@ import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.C
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.commands.UpdateRecommendationConfiguration;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@RequiredArgsConstructor
 class RecommendationConfigurationManager {
 
 	private final RecommendationConfigurationRepository repository;

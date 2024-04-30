@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendationConfigurationQueryService;
-import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.sql.ResultSet;
@@ -24,7 +24,7 @@ public class JdbcRecommendationConfigurationQueryService implements Recommendati
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Override
-	public Optional<RecommendationConfigurationRequestResult> findRecommendationConfigurationQueryResultBy(final UserId userId) {
+	public Optional<RecommendationConfigurationQueryResult> findRecommendationConfigurationQueryResultBy(final UserId userId) {
 		final String sql = "SELECT r.user_id, r.id, c.genre " +
 				"FROM recommendation_configuration r " +
 				"JOIN configuration_genres c ON r.id = c.configuration_id " +
@@ -33,8 +33,8 @@ public class JdbcRecommendationConfigurationQueryService implements Recommendati
 		final MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("userId", userId.getValue());
 
-		final List<RecommendationConfigurationRequestResult> results = namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
-			final RecommendationConfigurationRequestResult result = new RecommendationConfigurationRequestResult(
+		final List<RecommendationConfigurationQueryResult> results = namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
+			final RecommendationConfigurationQueryResult result = new RecommendationConfigurationQueryResult(
 					rs.getInt("user_id"),
 					rs.getInt("id"),
 					new HashSet<>()

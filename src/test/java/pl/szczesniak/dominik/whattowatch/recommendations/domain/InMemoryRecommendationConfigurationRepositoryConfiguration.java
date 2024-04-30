@@ -5,7 +5,7 @@ import lombok.Value;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.ConfigurationId;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.model.MovieGenre;
 import pl.szczesniak.dominik.whattowatch.recommendations.query.RecommendationConfigurationQueryService;
-import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationRequestResult;
+import pl.szczesniak.dominik.whattowatch.recommendations.query.model.RecommendationConfigurationQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.lang.reflect.Field;
@@ -55,11 +55,11 @@ class InMemoryRecommendationConfigurationRepositoryConfiguration implements Reco
 	}
 
 	@Override
-	public Optional<RecommendationConfigurationRequestResult> findRecommendationConfigurationQueryResultBy(final UserId userId) {
+	public Optional<RecommendationConfigurationQueryResult> findRecommendationConfigurationQueryResultBy(final UserId userId) {
 		return configurations.values().stream()
 				.filter(configuration -> configuration.getUserId().equals(userId))
 				.findFirst()
-				.map(config -> new RecommendationConfigurationRequestResult(
+				.map(config -> new RecommendationConfigurationQueryResult(
 						config.getUserId().getValue(),
 						config.getConfigurationId().getValue(),
 						config.getLimitToGenres())
@@ -84,7 +84,8 @@ class InMemoryRecommendationConfigurationRepositoryConfiguration implements Reco
 		UserId userId;
 
 		static PersistedRecommendationConfiguration toPersisted(final RecommendationConfiguration configuration) {
-			return new PersistedRecommendationConfiguration(configuration.getUuid(), configuration.getConfigurationId(), configuration.getGenres(), configuration.getUserId());
+			return new PersistedRecommendationConfiguration(
+					configuration.getUuid(), configuration.getConfigurationId(), configuration.getGenres(), configuration.getUserId());
 		}
 
 		static RecommendationConfiguration fromPersisted(final PersistedRecommendationConfiguration persistedConfig) {
