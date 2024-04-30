@@ -10,12 +10,10 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 class UserDeletedRecommendationsService {
 
 	private final RecommendationConfigurationRepository recommendationConfigurationRepository;
-	private final RecommendedMoviesRepository recommendedMoviesRepository;
 
 	@Transactional
 	public void removeAllDeletedUsersData(final UserId userId) {
 		recommendationConfigurationRepository.removeAllBy(userId);
-		recommendedMoviesRepository.removeAllBy(userId);
 	}
 
 }
