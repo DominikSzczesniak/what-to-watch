@@ -7,6 +7,6 @@ public interface DomainEventsPublisher {
 
 	void publish(DomainEvent event);
 
-	List<DomainEvent> getPublishedEvents();
+	void publish(List<DomainEvent> events);
 
 }

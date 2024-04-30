@@ -3,8 +3,7 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.szczesniak.dominik.whattowatch.commons.domain.DomainEvent;
-import pl.szczesniak.dominik.whattowatch.commons.domain.DomainEventsPublisher;
-import pl.szczesniak.dominik.whattowatch.commons.infrastructure.adapters.outgoing.publishers.InMemoryEventPublisher;
+import pl.szczesniak.dominik.whattowatch.commons.domain.InMemoryEventPublisher;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserPassword;
@@ -25,7 +24,7 @@ import static pl.szczesniak.dominik.whattowatch.users.domain.model.UsernameSampl
 class UserServiceTest {
 
 	private UserFacade tut;
-	private DomainEventsPublisher eventPublisher;
+	private InMemoryEventPublisher eventPublisher;
 
 	@BeforeEach
 	void setUp() {

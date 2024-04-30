@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,6 +44,7 @@ public class UserRestController {
 	private final AuthenticationManager authenticationManager;
 	private final LoggedInUserProvider loggedInUserProvider;
 	private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+	private final SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
 
 	@PostMapping("/api/login")
 	public ResponseEntity<Integer> loginUser(@RequestBody final LoginUserDto userDto, final HttpServletRequest request, final HttpServletResponse response) {
@@ -77,10 +79,17 @@ public class UserRestController {
 	}
 
 	@DeleteMapping("api/users")
-	public ResponseEntity<?> deleteUser(@AuthenticationPrincipal final UserDetails userDetails) {
+	public ResponseEntity<?> deleteUser(@AuthenticationPrincipal final UserDetails userDetails, final HttpServletRequest request, final HttpServletResponse response) {
 		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));
 		userFacade.deleteUser(userId);
+		logoutUser(request, response, userDetails);
 		return ResponseEntity.status(204).build();
+	}
+
+	private void logoutUser(final HttpServletRequest request, final HttpServletResponse response, final UserDetails userDetails) {
+		final UsernamePasswordAuthenticationToken token = UsernamePasswordAuthenticationToken.authenticated(
+				userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
+		securityContextLogoutHandler.logout(request, response, token);
 	}
 
 	@GetMapping("/api/username-availability/{username}")

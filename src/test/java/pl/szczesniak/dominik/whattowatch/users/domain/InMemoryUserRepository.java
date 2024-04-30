@@ -14,10 +14,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class InMemoryUserRepository implements UserRepository, UserQueryService {
+class InMemoryUserRepository implements UserRepository, UserQueryService {
 
 	private final Map<UserId, User> users = new HashMap<>();
-	public final AtomicInteger nextId = new AtomicInteger(0);
+	private final AtomicInteger nextId = new AtomicInteger(0);
 
 	@Override
 	public void create(final User user) {
