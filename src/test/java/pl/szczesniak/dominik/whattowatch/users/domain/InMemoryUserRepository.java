@@ -2,10 +2,10 @@ package pl.szczesniak.dominik.whattowatch.users.domain;
 
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
-import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.UsernameIsTakenException;
 import pl.szczesniak.dominik.whattowatch.users.query.UserQueryService;
+import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -14,10 +14,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class InMemoryUserRepository implements UserRepository, UserQueryService {
+class InMemoryUserRepository implements UserRepository, UserQueryService {
 
 	private final Map<UserId, User> users = new HashMap<>();
-	public final AtomicInteger nextId = new AtomicInteger(0);
+	private final AtomicInteger nextId = new AtomicInteger(0);
 
 	@Override
 	public void create(final User user) {
@@ -69,6 +69,11 @@ public class InMemoryUserRepository implements UserRepository, UserQueryService 
 	@Override
 	public Optional<User> findBy(final Username username) {
 		return users.values().stream().filter(user -> user.getUsername().equals(username)).findFirst();
+	}
+
+	@Override
+	public void deleteUser(final UserId userId) {
+		users.remove(userId);
 	}
 
 	private boolean usernameIsTaken(final String username) {

@@ -15,10 +15,16 @@ interface UserRepository {
 
 	Optional<User> findBy(Username username);
 
+	void deleteUser(UserId userId);
 }
 
 @Repository
 interface SpringDataJpaUserRepository extends UserRepository, JpaRepository<User, Integer> {
+
+	@Override
+	default void deleteUser(UserId userId) {
+		deleteById(userId.getValue());
+	}
 
 	@Override
 	default void create(User user) {

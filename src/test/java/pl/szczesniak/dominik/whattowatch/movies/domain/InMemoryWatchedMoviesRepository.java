@@ -20,6 +20,11 @@ public class InMemoryWatchedMoviesRepository implements WatchedMoviesRepository,
 	}
 
 	@Override
+	public void removeAllBy(final UserId userId) {
+		watchedMovies.values().removeIf(watchedMovie -> watchedMovie.getUserId().equals(userId));
+	}
+
+	@Override
 	public PagedWatchedMovies getWatchedMovies(final UserId userId, final Integer page, final Integer moviesPerPage) {
 		final List<WatchedMovie> foundMovies = watchedMovies.values().stream()
 				.filter(movie -> movie.getUserId().equals(userId))

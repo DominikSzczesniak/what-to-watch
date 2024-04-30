@@ -12,8 +12,10 @@ class RecommendationFacadeConfiguration {
 	RecommendationFacade recommendationFacade(final RecommendationConfigurationManager manager,
 											  final RecommendationService service,
 											  final RecommendationConfigurationQueryService recommendationConfigurationQueryService,
-											  final RecommendedMoviesQueryService recommendedMoviesQueryService) {
-		return new RecommendationFacade(manager, service, recommendationConfigurationQueryService, recommendedMoviesQueryService);
+											  final RecommendedMoviesQueryService recommendedMoviesQueryService,
+											  final UserDeletedRecommendationsService userDeletedRecommendationService) {
+		return new RecommendationFacade(
+				manager, service, recommendationConfigurationQueryService, recommendedMoviesQueryService, userDeletedRecommendationService);
 	}
 
 }

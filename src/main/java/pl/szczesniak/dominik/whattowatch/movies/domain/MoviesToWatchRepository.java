@@ -23,10 +23,17 @@ interface MoviesToWatchRepository {
 				.orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't match userId: " + userId));
 	}
 
+	void removeAllBy(UserId userId);
+
 }
 
 @Repository
 interface SpringDataJpaMoviesRepository extends MoviesToWatchRepository, JpaRepository<Movie, Integer> {
+
+	@Override
+	default void removeAllBy(UserId userId) {
+		deleteAllByUserId(userId);
+	}
 
 	@Override
 	default void removeMovie(MovieId movieId, UserId userId) {
@@ -51,5 +58,7 @@ interface SpringDataJpaMoviesRepository extends MoviesToWatchRepository, JpaRepo
 	Optional<Movie> findByIdAndUserId(Integer movieId, UserId userId);
 
 	void deleteByIdAndUserId(final Integer id, final UserId userId);
+
+	void deleteAllByUserId(final UserId userId);
 
 }

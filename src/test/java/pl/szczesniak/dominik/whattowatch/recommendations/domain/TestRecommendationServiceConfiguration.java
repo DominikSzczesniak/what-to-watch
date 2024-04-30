@@ -22,7 +22,8 @@ class TestRecommendationServiceConfiguration {
 						2
 				),
 				inMemoryRecommendationConfigurationRepository,
-				repository
+				repository,
+				new UserDeletedRecommendationsService(inMemoryRecommendationConfigurationRepository)
 		);
 	}
 

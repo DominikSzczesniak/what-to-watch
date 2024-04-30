@@ -193,4 +193,24 @@ public class MoviesFacadeTagsTest {
 		assertThat(thrown).isInstanceOf(ObjectDoesNotExistException.class);
 	}
 
+	@Test
+	void should_delete_all_user_movie_tags() {
+		// given
+		final UserId user = userProvider.addUser(createAnyUserId());
+
+		final MovieId movieId = tut.addMovieToList(AddMovieToListSample.builder().userId(user).build());
+		tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieId).userId(user).build());
+		tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieId).userId(user).build());
+		tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieId).userId(user).build());
+
+		final List<MovieTagQueryResult> movieTagsByUserId = tut.getMovieTagsByUserId(user.getValue());
+		assertThat(movieTagsByUserId.size()).isEqualTo(3);
+
+		// when
+		tut.handleUserDeleted(user);
+
+		// then
+		assertThat(tut.getMovieTagsByUserId(user.getValue())).hasSize(0);
+	}
+
 }
