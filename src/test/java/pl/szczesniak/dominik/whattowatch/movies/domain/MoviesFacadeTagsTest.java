@@ -69,7 +69,7 @@ public class MoviesFacadeTagsTest {
 		final MovieTagId thirdTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(thirdTagLabel).movieId(movieId).userId(user).build());
 		final MovieTagId fourthTagId = tut.addTagToMovie(AddTagToMovieSample.builder().tagLabel(fourthTagLabel).movieId(movieId).userId(user).build());
 
-		final List<MovieTagQueryResult> tags = tut.getMovieTagsByUserId(user.getValue());
+		final List<MovieTagQueryResult> tags = tut.getMovieTagsByUserId(user);
 
 		// then
 		assertThat(tags).hasSize(4);
@@ -203,14 +203,14 @@ public class MoviesFacadeTagsTest {
 		tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieId).userId(user).build());
 		tut.addTagToMovie(AddTagToMovieSample.builder().movieId(movieId).userId(user).build());
 
-		final List<MovieTagQueryResult> movieTagsByUserId = tut.getMovieTagsByUserId(user.getValue());
+		final List<MovieTagQueryResult> movieTagsByUserId = tut.getMovieTagsByUserId(user);
 		assertThat(movieTagsByUserId.size()).isEqualTo(3);
 
 		// when
 		tut.handleUserDeleted(user);
 
 		// then
-		assertThat(tut.getMovieTagsByUserId(user.getValue())).hasSize(0);
+		assertThat(tut.getMovieTagsByUserId(user)).hasSize(0);
 	}
 
 }

@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ public class UpdateMovieController {
 	private final LoggedInUserProvider loggedInUserProvider;
 
 	@PutMapping("/api/movies/{movieId}")
+	@PreAuthorize("hasAnyRole('USER')")
 	public void updateMovie(@AuthenticationPrincipal final UserDetails userDetails, @PathVariable final Integer movieId,
 							@RequestBody final UpdateMovieDto updateMovieDto) {
 		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));

@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapter
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.szczesniak.dominik.whattowatch.recommendations.domain.RecommendationFacade;
@@ -19,6 +20,7 @@ public class GetPopularMoviesController {
 	private final RecommendationFacade facade;
 
 	@GetMapping("/api/recommendations/popular")
+	@PreAuthorize("hasAnyRole('USER')")
 	public ResponseEntity<RecommendedMoviesDto> getPopularMovies() {
 		final List<MovieInfo> movies = facade.recommendPopularMovies().getResults();
 

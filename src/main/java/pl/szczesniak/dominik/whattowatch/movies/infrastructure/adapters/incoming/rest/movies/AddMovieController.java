@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ public class AddMovieController {
 	private final LoggedInUserProvider loggedInUserProvider;
 
 	@PostMapping("/api/movies")
+	@PreAuthorize("hasAnyRole('USER')")
 	public Integer addMovie(@AuthenticationPrincipal final UserDetails userDetails, @RequestBody final CreateMovieDto movieDto) {
 		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));
 		return moviesFacade.addMovieToList(AddMovieToList.builder(new MovieTitle(movieDto.getTitle()), userId).build()).getValue();

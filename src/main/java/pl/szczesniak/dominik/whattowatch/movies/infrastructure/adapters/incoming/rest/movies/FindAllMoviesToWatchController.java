@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,7 @@ public class FindAllMoviesToWatchController {
 	private final LoggedInUserProvider loggedInUserProvider;
 
 	@GetMapping("/api/movies")
+	@PreAuthorize("hasAnyRole('USER')")
 	public ResponseEntity<PagedMoviesDto> findAllMoviesToWatch(@AuthenticationPrincipal final UserDetails userDetails,
 															   @RequestParam(value = "tags", required = false) final String tags,
 															   @RequestParam(value = "page") final Integer page,

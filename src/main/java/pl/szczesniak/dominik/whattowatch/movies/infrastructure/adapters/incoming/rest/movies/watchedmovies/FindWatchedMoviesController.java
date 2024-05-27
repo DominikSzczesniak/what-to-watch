@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ public class FindWatchedMoviesController {
 	private final LoggedInUserProvider loggedInUserProvider;
 
 	@GetMapping("/api/movies/watched")
+	@PreAuthorize("hasAnyRole('USER')")
 	public PagedWatchedMoviesDto findWatchedMovies(@AuthenticationPrincipal final UserDetails userDetails,
 												   @RequestParam(value = "page") final Integer page,
 												   @RequestParam(value = "moviesPerPage") final Integer moviesPerPage) {

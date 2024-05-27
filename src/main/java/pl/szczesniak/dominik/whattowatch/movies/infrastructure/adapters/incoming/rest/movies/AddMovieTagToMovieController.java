@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ public class AddMovieTagToMovieController {
 	private final LoggedInUserProvider loggedInUserProvider;
 
 	@PostMapping("/api/movies/{movieId}/tags")
+	@PreAuthorize("hasAnyRole('USER')")
 	public ResponseEntity<?> addMovieTagToMovie(@AuthenticationPrincipal final UserDetails userDetails,
 												@RequestParam(value = "tagId", required = false) final Optional<String> tagId,
 												@PathVariable final Integer movieId,

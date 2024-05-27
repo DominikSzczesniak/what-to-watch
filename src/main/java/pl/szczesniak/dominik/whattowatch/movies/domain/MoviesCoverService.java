@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.files.domain.FilesStorage;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
@@ -13,7 +12,6 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import java.io.InputStream;
 
 @RequiredArgsConstructor
-@Service
 class MoviesCoverService {
 
 	private final MoviesToWatchRepository moviesRepository;
@@ -25,9 +23,9 @@ class MoviesCoverService {
 		return movie.getCover().orElseThrow(() -> new ObjectDoesNotExistException("Movie doesn't have a cover."));
 	}
 
-	MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId user) {
-		checkUserExists(user);
-		final Movie movie = moviesRepository.getMovie(movieId, user);
+	MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId userId) {
+		checkUserExists(userId);
+		final Movie movie = moviesRepository.getMovie(movieId, userId);
 		final MovieCover movieCover = getMovieCover(movie);
 		final InputStream coverContent = filesStorage.findStoredFileContent(movieCover.getCoverId())
 				.orElseThrow(() -> new ObjectDoesNotExistException("Cover content is empty"));

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -51,7 +50,7 @@ public class InMemoryMoviesToWatchRepository implements MoviesToWatchRepository,
 	}
 
 	@Override
-	public void removeMovie(final MovieId movieId, final UserId userId) {
+	public void remove(final MovieId movieId, final UserId userId) {
 		if (movieBelongsToUser(movieId, userId)) {
 			movies.remove(movieId);
 		} else {
@@ -76,8 +75,8 @@ public class InMemoryMoviesToWatchRepository implements MoviesToWatchRepository,
 	}
 
 	@Override
-	public Optional<MovieTag> findTagByTagId(final String tagId) {
-		return Optional.ofNullable(tags.get(new MovieTagId(UUID.fromString(tagId))));
+	public Optional<MovieTag> findTagByTagId(final MovieTagId tagId) {
+		return Optional.ofNullable(tags.get(tagId));
 	}
 
 	@Override
@@ -147,9 +146,9 @@ public class InMemoryMoviesToWatchRepository implements MoviesToWatchRepository,
 	}
 
 	@Override
-	public List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {
+	public List<MovieTagQueryResult> getMovieTagsByUserId(final UserId userId) {
 		final List<MovieTag> foundTags = tags.values().stream()
-				.filter(movieTag -> movieTag.getUserId().equals(new UserId(userId)))
+				.filter(movieTag -> movieTag.getUserId().equals(userId))
 				.toList();
 		return foundTags.stream().map(tag -> new MovieTagQueryResult(tag.getTagId().getValue(), tag.getLabel().getValue(), tag.getUserId().getValue())).toList();
 	}

@@ -5,7 +5,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Clock;
 
-class TestRecommendationServiceConfiguration {
+class TestRecommendationFacadeConfiguration {
 
 	static RecommendationFacade recommendationFacade(final Clock clock) {
 		final InMemoryRecommendationConfigurationRepositoryConfiguration inMemoryRecommendationConfigurationRepository =

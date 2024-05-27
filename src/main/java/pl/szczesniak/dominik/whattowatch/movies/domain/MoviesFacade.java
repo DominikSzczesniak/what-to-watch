@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
@@ -33,7 +34,7 @@ import java.util.UUID;
 public class MoviesFacade {
 
 	private final MoviesWatchlistService moviesWatchlistService;
-	private final MoviesCoverService movieListService;
+	private final MoviesCoverService moviesCoverService;
 	private final MoviesCommentsService moviesCommentsService;
 	private final MoviesTagsService moviesTagsService;
 	private final MoviesQueryService moviesQueryService;
@@ -44,6 +45,7 @@ public class MoviesFacade {
 		return moviesWatchlistService.addMovieToList(command);
 	}
 
+	@Transactional
 	public void removeMovieFromList(final MovieId movieId, final UserId userId) {
 		moviesWatchlistService.removeMovieFromList(movieId, userId);
 	}
@@ -56,6 +58,7 @@ public class MoviesFacade {
 		return watchedMoviesQueryService.getWatchedMovies(command.getUserId(), command.getPage(), command.getMoviesPerPage());
 	}
 
+	@Transactional
 	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
 		moviesWatchlistService.moveMovieToWatchedList(command);
 	}
@@ -70,15 +73,15 @@ public class MoviesFacade {
 	}
 
 	public MovieCoverDTO getCoverForMovie(final MovieId movieId, final UserId user) {
-		return movieListService.getCoverForMovie(movieId, user);
+		return moviesCoverService.getCoverForMovie(movieId, user);
 	}
 
 	public void setMovieCover(final SetMovieCover command) {
-		movieListService.setMovieCover(command);
+		moviesCoverService.setMovieCover(command);
 	}
 
 	public void deleteCover(final MovieId movieId, final UserId userId) {
-		movieListService.deleteCover(movieId, userId);
+		moviesCoverService.deleteCover(movieId, userId);
 	}
 
 	public UUID addCommentToMovie(final AddCommentToMovie command) {
@@ -105,7 +108,7 @@ public class MoviesFacade {
 		return moviesQueryService.getMoviesByTags(command.getTags(), command.getUserId(), command.getPage(), command.getMoviesPerPage());
 	}
 
-	public List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {
+	public List<MovieTagQueryResult> getMovieTagsByUserId(final UserId userId) {
 		return moviesQueryService.getMovieTagsByUserId(userId);
 	}
 
