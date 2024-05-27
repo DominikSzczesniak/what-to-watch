@@ -2,6 +2,7 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ public class FindMovieToWatchController {
 	private final LoggedInUserProvider loggedInUserProvider;
 
 	@GetMapping("/api/movies/{movieId}")
+	@PreAuthorize("hasAnyRole('USER')")
 	public MovieDetailsDto findMovieToWatch(@AuthenticationPrincipal final UserDetails userDetails, @PathVariable Integer movieId) {
 		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));
 		final MovieQueryResult movie = moviesFacade.getMovie(new MovieId(movieId), userId);

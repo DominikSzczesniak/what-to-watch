@@ -1,8 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.szczesniak.dominik.whattowatch.commons.domain.DomainEventsPublisher;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.RoleName;
@@ -14,7 +12,6 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.events.UserDeleted;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.exceptions.InvalidCredentialsException;
 
 @RequiredArgsConstructor
-@Slf4j
 class UserService {
 
 	private final UserRepository repository;
@@ -25,8 +22,7 @@ class UserService {
 
 	private final DomainEventsPublisher domainEventsPublisher;
 
-	@Transactional
-	public UserId createUser(final CreateUser command) {
+	UserId createUser(final CreateUser command) {
 		final User user = createFrom(command);
 		addDefaultRoleToUser(user);
 		repository.create(user);
@@ -48,8 +44,7 @@ class UserService {
 				.orElseThrow(() -> new InvalidCredentialsException("Invalid credentials, could not log in.")).getUserId();
 	}
 
-	@Transactional
-	public void deleteUser(final UserId userId) {
+	void deleteUser(final UserId userId) {
 		repository.deleteUser(userId);
 		domainEventsPublisher.publish(new UserDeleted(userId));
 	}

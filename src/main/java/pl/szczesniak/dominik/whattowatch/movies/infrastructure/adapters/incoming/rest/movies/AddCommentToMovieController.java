@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.movies.infrastructure.adapters.incomin
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ public class AddCommentToMovieController {
 	private final LoggedInUserProvider loggedInUserProvider;
 
 	@PostMapping("/api/movies/{movieId}/comments")
+	@PreAuthorize("hasAnyRole('USER')")
 	public ResponseEntity<?> addCommentToMovie(@AuthenticationPrincipal final UserDetails userDetails,
 											   @PathVariable final Integer movieId,
 											   @RequestBody final CommentDto commentDto) {

@@ -1,14 +1,12 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddCommentToMovie;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.DeleteCommentFromMovie;
 
 import java.util.UUID;
 
 @RequiredArgsConstructor
-@Service
 class MoviesCommentsService {
 
 	private final MoviesToWatchRepository repository;

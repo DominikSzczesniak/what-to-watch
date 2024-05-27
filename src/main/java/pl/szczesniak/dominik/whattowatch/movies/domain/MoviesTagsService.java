@@ -1,7 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagLabel;
@@ -12,7 +11,6 @@ import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
 @RequiredArgsConstructor
 class MoviesTagsService {
 
@@ -32,7 +30,7 @@ class MoviesTagsService {
 	}
 
 	private Optional<MovieTag> checkMovieTagBelongsToUser(final UserId userId, final MovieTagId tagId) {
-		final Optional<MovieTag> tagByTagId = tagsRepository.findTagByTagId(tagId.getValue());
+		final Optional<MovieTag> tagByTagId = tagsRepository.findTagByTagId(tagId);
 		if (tagByTagId.isPresent() && !tagByTagId.get().getUserId().equals(userId)) {
 			throw new ObjectDoesNotExistException("MovieTag does not belong to user");
 		}

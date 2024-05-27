@@ -8,8 +8,7 @@ public class TestMoviesFacadeConfiguration {
 		final InMemoryMoviesToWatchRepository repository = new InMemoryMoviesToWatchRepository();
 		final InMemoryWatchedMoviesRepository watchedRepository = new InMemoryWatchedMoviesRepository();
 		final InMemoryFilesStorage filesStorage = new InMemoryFilesStorage();
-		return new MoviesFacadeConfiguration()
-				.moviesFacade(
+		return new MoviesFacade(
 						new MoviesWatchlistService(repository, userProvider, watchedRepository),
 						new MoviesCoverService(repository, userProvider, filesStorage),
 						new MoviesCommentsService(repository),

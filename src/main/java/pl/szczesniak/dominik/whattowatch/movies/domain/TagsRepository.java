@@ -6,11 +6,10 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieTagId;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
 import java.util.Optional;
-import java.util.UUID;
 
 interface TagsRepository {
 
-	Optional<MovieTag> findTagByTagId(String tagId);
+	Optional<MovieTag> findTagByTagId(MovieTagId tagId);
 
 	void deleteAllMovieTagsBy(UserId userId);
 }
@@ -24,8 +23,8 @@ interface SpringDataJpaMovieTagsRepository extends TagsRepository, JpaRepository
 	}
 
 	@Override
-	default Optional<MovieTag> findTagByTagId(String tagId) {
-		return findById(new MovieTagId(UUID.fromString(tagId)));
+	default Optional<MovieTag> findTagByTagId(MovieTagId tagId) {
+		return findById(tagId);
 	}
 
 	void deleteAllByUserId(final UserId userId);

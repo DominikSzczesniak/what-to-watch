@@ -3,6 +3,7 @@ package pl.szczesniak.dominik.whattowatch.recommendations.infrastructure.adapter
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,6 +32,7 @@ public class UpdateRecommendationConfigurationController {
 	private final LoggedInUserProvider loggedInUserProvider;
 
 	@PutMapping("/api/users/recommendations/configuration")
+	@PreAuthorize("hasAnyRole('USER')")
 	public ResponseEntity<?> updateRecommendationConfiguration(@AuthenticationPrincipal final UserDetails userDetails,
 															   @RequestBody final UpdateRecommendationConfigurationDto dto) {
 		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));

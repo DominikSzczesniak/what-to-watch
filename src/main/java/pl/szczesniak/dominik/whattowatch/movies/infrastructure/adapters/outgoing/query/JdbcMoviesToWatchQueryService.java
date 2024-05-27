@@ -223,13 +223,13 @@ public class JdbcMoviesToWatchQueryService implements MoviesQueryService {
 	}
 
 	@Override
-	public List<MovieTagQueryResult> getMovieTagsByUserId(final Integer userId) {
+	public List<MovieTagQueryResult> getMovieTagsByUserId(final UserId userId) {
 		final String sql = "SELECT tag_id, tag_label, tag_user_id " +
 				"FROM tags " +
 				"WHERE tag_user_id = :userId";
 
 		final MapSqlParameterSource params = new MapSqlParameterSource();
-		params.addValue("userId", userId);
+		params.addValue("userId", userId.getValue());
 
 		return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
 			final MovieTagQueryResult movieTagQueryResult = new MovieTagQueryResult(

@@ -9,6 +9,7 @@ import lombok.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -79,6 +80,7 @@ public class UserRestController {
 	}
 
 	@DeleteMapping("api/users")
+	@PreAuthorize("hasAnyRole('USER')")
 	public ResponseEntity<?> deleteUser(@AuthenticationPrincipal final UserDetails userDetails, final HttpServletRequest request, final HttpServletResponse response) {
 		final UserId userId = loggedInUserProvider.getLoggedUser(new Username(userDetails.getUsername()));
 		userFacade.deleteUser(userId);

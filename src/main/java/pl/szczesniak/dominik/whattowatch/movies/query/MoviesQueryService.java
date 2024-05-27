@@ -20,6 +20,6 @@ public interface MoviesQueryService {
 
 	PagedMovies getMoviesByTags(List<MovieTagId> tags, UserId userId, Integer page, Integer moviesPerPage);
 
-	List<MovieTagQueryResult> getMovieTagsByUserId(Integer userId);
+	List<MovieTagQueryResult> getMovieTagsByUserId(UserId userId);
 
 }

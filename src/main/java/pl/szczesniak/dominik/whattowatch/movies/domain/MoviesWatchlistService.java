@@ -1,8 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.MovieId;
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.AddMovieToList;
@@ -10,7 +8,6 @@ import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.MoveMovieT
 import pl.szczesniak.dominik.whattowatch.movies.domain.model.commands.UpdateMovie;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
-@Service
 @RequiredArgsConstructor
 class MoviesWatchlistService {
 
@@ -31,18 +28,16 @@ class MoviesWatchlistService {
 		}
 	}
 
-	@Transactional
-	public void removeMovieFromList(final MovieId movieId, final UserId userId) {
-		moviesToWatchRepository.removeMovie(movieId, userId);
+	void removeMovieFromList(final MovieId movieId, final UserId userId) {
+		moviesToWatchRepository.remove(movieId, userId);
 	}
 
-	@Transactional
-	public void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
+	void moveMovieToWatchedList(final MoveMovieToWatchedMoviesList command) {
 		checkUserExists(command.getUserId());
 		final Movie movie = getMovie(command.getMovieId(), command.getUserId());
 		final WatchedMovie watchedMovie = movie.markAsWatched();
 		watchedMoviesRepository.add(watchedMovie);
-		moviesToWatchRepository.removeMovie(command.getMovieId(), command.getUserId());
+		moviesToWatchRepository.remove(command.getMovieId(), command.getUserId());
 	}
 
 	void updateMovie(final UpdateMovie command) {

@@ -1,5 +1,6 @@
 package pl.szczesniak.dominik.whattowatch.users.domain;
 
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import pl.szczesniak.dominik.whattowatch.commons.domain.model.exceptions.ObjectDoesNotExistException;
@@ -17,6 +18,7 @@ public class UserFacade {
 
 	private final UserQueryService userQueryService;
 
+	@Transactional
 	public UserId createUser(final CreateUser command) {
 		return userService.createUser(command);
 	}
@@ -38,6 +40,7 @@ public class UserFacade {
 				() -> new ObjectDoesNotExistException("User with username: " + username.getValue() + " does not exist"));
 	}
 
+	@Transactional
 	public void deleteUser(final UserId userId) {
 		userService.deleteUser(userId);
 	}

@@ -1,10 +1,8 @@
 package pl.szczesniak.dominik.whattowatch.movies.domain;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.UserId;
 
-@Service
 @RequiredArgsConstructor
 class UserDeletedMoviesService {
 

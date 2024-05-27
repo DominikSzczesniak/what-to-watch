@@ -13,12 +13,10 @@ class UserFacadeConfiguration {
 	public UserFacade userFacade(final UserRepository userRepository,
 								 final UserRoleRepository userRoleRepository,
 								 final PasswordEncoder passwordEncoder,
-								 final UserQueryService userQuerService,
+								 final UserQueryService userQueryService,
 								 final DomainEventsPublisher domainEventsPublisher) {
 		return new UserFacade(
-				new UserService(userRepository, userRoleRepository, passwordEncoder, domainEventsPublisher),
-				userQuerService
-		);
+				new UserService(userRepository, userRoleRepository, passwordEncoder, domainEventsPublisher), userQueryService);
 	}
 
 }

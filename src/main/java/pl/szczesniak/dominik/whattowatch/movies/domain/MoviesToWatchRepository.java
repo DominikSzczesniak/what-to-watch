@@ -14,7 +14,7 @@ interface MoviesToWatchRepository {
 
 	void update(Movie movie);
 
-	void removeMovie(MovieId movieId, UserId userId);
+	void remove(MovieId movieId, UserId userId);
 
 	Optional<Movie> findBy(MovieId movieId, UserId userId);
 
@@ -36,7 +36,7 @@ interface SpringDataJpaMoviesRepository extends MoviesToWatchRepository, JpaRepo
 	}
 
 	@Override
-	default void removeMovie(MovieId movieId, UserId userId) {
+	default void remove(MovieId movieId, UserId userId) {
 		deleteByIdAndUserId(movieId.getValue(), userId);
 	}
 
