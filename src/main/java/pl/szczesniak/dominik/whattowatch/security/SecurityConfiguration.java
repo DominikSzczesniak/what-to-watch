@@ -17,6 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import pl.szczesniak.dominik.whattowatch.users.domain.UserFacade;
 import pl.szczesniak.dominik.whattowatch.users.domain.model.Username;
 import pl.szczesniak.dominik.whattowatch.users.query.model.UserQueryResult;
@@ -32,6 +34,7 @@ public class SecurityConfiguration {
 	public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
 		http
 				.csrf().disable()
+				.cors().and()
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/login").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/users").permitAll()
@@ -39,6 +42,22 @@ public class SecurityConfiguration {
 				)
 				.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
 		return http.build();
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
+		config.setAllowCredentials(true);
+		config.addAllowedOrigin("http://localhost:3000");
+		config.addAllowedMethod("GET");
+		config.addAllowedMethod("POST");
+		config.addAllowedMethod("PUT");
+		config.addAllowedMethod("DELETE");
+		config.addAllowedMethod("OPTIONS");
+		config.addAllowedHeader("*");
+		source.registerCorsConfiguration("/api/**", config);
+		return source;
 	}
 
 	@Bean
