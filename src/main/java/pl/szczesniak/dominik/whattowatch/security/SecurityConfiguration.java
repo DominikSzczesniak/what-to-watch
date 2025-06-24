@@ -50,6 +50,7 @@ public class SecurityConfiguration {
 		org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
 		config.setAllowCredentials(true);
 		config.addAllowedOrigin("http://localhost:3000");
+		config.addAllowedOrigin("https://what-to-watch-front.onrender.com");
 		config.addAllowedMethod("GET");
 		config.addAllowedMethod("POST");
 		config.addAllowedMethod("PUT");
